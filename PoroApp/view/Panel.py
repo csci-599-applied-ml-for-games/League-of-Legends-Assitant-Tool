@@ -8,9 +8,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBox, qApp, QWidgetAction, QSlider, QLabel, \
     QVBoxLayout
 
+from conf.Settings import DEFAULT_OPACITY
 from model.Pet import Poro
-
-DEFAULT_OPACITY = 60
 
 
 class TrayMenuPanel(QWidget):
@@ -54,7 +53,7 @@ class TrayMenuPanel(QWidget):
     def initOpacitySlider(self, widget):
         opacity_slider_widget = QWidget(self)
         layout = QVBoxLayout(opacity_slider_widget)
-        self.opacity_label = QLabel("Opacity: 60 %", self)
+        self.opacity_label = QLabel("Opacity: {} %".format(DEFAULT_OPACITY), self)
         self.opacity_label.setAlignment(Qt.AlignCenter)
         slider = QSlider(Qt.Horizontal, self.opacity_label)
         slider.setSingleStep(10)
@@ -87,7 +86,7 @@ class TrayMenuPanel(QWidget):
         else:
             # make avatar position fixed
             self.drag_action.setChecked(False)
-            self.pet.setFreezeOrNot(True)
+            self.pet.setFreezeOrNot(False)
 
     def aboutInfo(self):
         QMessageBox.about(self.pet, 'About',
@@ -100,6 +99,5 @@ class TrayMenuPanel(QWidget):
                                 border-color: #999999;
                                 border-collapse: collapse;
                             }
-                          ...里面众多的CSS内容，我就省略了，节约空间
                             
                           """)

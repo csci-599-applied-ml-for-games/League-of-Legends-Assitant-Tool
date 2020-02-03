@@ -27,12 +27,12 @@ class PoroStatus():
     def getAllImgPaths(self):
         return list(self.dict_data.values())
 
-    def getSomeImgPaths(self, keys):
-        return list(self.dict_data.values())
+    def getSomeImgPaths(self, key):
+        return list(self.dict_data[key])
 
 
 if __name__ == '__main__':
     path = "../resources/assets"
     sss = PoroStatus()
     sss.loadData(path)
-    print(sss.getImgPaths())
+    print(sss.getSomeImgPaths("angry"))

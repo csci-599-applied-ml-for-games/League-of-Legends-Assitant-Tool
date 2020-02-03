@@ -9,17 +9,17 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtWidgets import QWidget, QLabel, QDesktopWidget
 
-from Utils.ImgUtil import loadSingleImgFromPath, loadAllImgFromDirPath
+from conf.Settings import ASSETS_DIR, TIME_INTERVAL
+from utils.ImgUtil import loadSingleImgFromPath, loadAllImgFromDirPath
 from model.PetsStatus import PoroStatus
-
-ASSETS_DIR = "resources/assets/"
-ABS_ASSETS_DIR = "../resources/assets"
 
 
 class Poro(QWidget):
     def __init__(self, draggable, opacity, parent=None):
         QtWidgets.QWidget.__init__(self)
         self.graphics_opacity_effect = QtWidgets.QGraphicsOpacityEffect()
+        self.pet_status = PoroStatus()
+        self.pet_status.loadData(ASSETS_DIR)
         self.initUI(draggable, opacity)
 
     def initUI(self, draggable, opacity):
@@ -31,9 +31,10 @@ class Poro(QWidget):
         # init avatar
         self.initAvatar(draggable, opacity)
 
+        # every 0.8s update a img, making avatar alive
         self.timer = QTimer()
         self.timer.timeout.connect(self.animationSetUp)
-        self.timer.start(800)
+        self.timer.start(TIME_INTERVAL)
 
         self.fixedPos()
         self.show()
@@ -48,40 +49,60 @@ class Poro(QWidget):
         # load first frame
         self.avatar.setPixmap(QPixmap.fromImage(loadSingleImgFromPath(ASSETS_DIR + 'stare/poro-stare-0.png')))
 
-        pet_s_status = PoroStatus()
-        pet_s_status.loadData(ASSETS_DIR)
-        seq_imgs_paths = pet_s_status.getAllImgPaths()
-
-        self.initData(seq_imgs_paths)
+        # init animation sequence
+        self.initAnimationDataSet()
         self.avatar.resize(128, 128)
 
-    def initData(self, seq_img_paths):
-        self.index = 0
+        # could draggable or not
+        self.could_draggable = True
+
+    def initAnimationDataSet(self):
+        # get img data
+        all_imgs_path = self.pet_status.getAllImgPaths()
+        # whether animation is running
         self.running = False
+        # the times of animation type None runs
+        self.none_times = 0
+        # all the emoji data saved in here
         self.activated_move_data = []
-        for seq in seq_img_paths:
-            imgs = loadAllImgFromDirPath(ASSETS_DIR, seq)
+        for img_paths in all_imgs_path:
+            imgs = loadAllImgFromDirPath(ASSETS_DIR, img_paths)
             self.activated_move_data.append(imgs)
 
     def animationSetUp(self):
         if not self.running:
-            # control which img could be play
-            self.move_index = self.setMovement()
-            self.index = 0
+            # control which emoji could be play
+            self.emojis = self.setEmoji()
+            # basically, every emoji play from 1 frame to the end
+            self.frame_index = 0
             self.running = True
-        self.play(self.activated_move_data[self.move_index])
+        self.play(self.activated_move_data[self.emojis])
 
-    def setMovement(self, animation_name=None):
-        print(animation_name)
-        return random.randint(0, len(self.activated_move_data) - 1)
+    def setEmoji(self, animation_name=None):
+        if None is animation_name:
+            self.none_times += 1
+            if self.none_times >= 3:
+                self.initAnimationDataSet()
+            return random.randint(0, len(self.activated_move_data) - 1)
+        else:
+            specific_movement = self.pet_status.getSomeImgPaths(animation_name)
+            self.updateAnimationDateSet(specific_movement)
+            return 0
+
+    def updateAnimationDateSet(self, img_paths):
+        self.activated_move_data = []
+        imgs = loadAllImgFromDirPath(ASSETS_DIR, img_paths)
+        self.activated_move_data.append(imgs)
+        self.activated_move_data.append(imgs)
+        self.activated_move_data.append(imgs)
 
     def play(self, imgs):
-        if self.index >= len(imgs):
-            self.index = 0
+        if self.frame_index >= len(imgs):
+            self.frame_index = 0
             self.running = False
 
-        self.avatar.setPixmap(QPixmap.fromImage(imgs[self.index]))
-        self.index += 1
+        self.avatar.setPixmap(QPixmap.fromImage(imgs[self.frame_index]))
+        self.frame_index += 1
 
     def fixedPos(self):
         screen = QDesktopWidget().screenGeometry()
@@ -90,23 +111,22 @@ class Poro(QWidget):
                   (screen.height() - size.height() - 200))
 
     def updateAvatarOpacity(self, opacity):
-        pass
+        self.graphics_opacity_effect.setOpacity(opacity)
+        self.avatar.setGraphicsEffect(self.graphics_opacity_effect)
 
     def setFreezeOrNot(self, bool_value):
-        pass
+        self.could_draggable = bool_value
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.m_drag = True
-            self.m_DragPosition = event.globalPos() - self.pos()
+        if event.button() == Qt.LeftButton and self.could_draggable:
+            self.dragged_new_pos = event.globalPos() - self.pos()
             event.accept()
             self.setCursor(QCursor(Qt.OpenHandCursor))
 
     def mouseMoveEvent(self, event):
-        if Qt.LeftButton and self.m_drag:
-            self.move(event.globalPos() - self.m_DragPosition)
+        if Qt.LeftButton and self.could_draggable:
+            self.move(event.globalPos() - self.dragged_new_pos)
             event.accept()
 
     def mouseReleaseEvent(self, event):
-        self.m_drag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
