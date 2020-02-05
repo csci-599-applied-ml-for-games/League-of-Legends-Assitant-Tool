@@ -10,8 +10,9 @@ from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtWidgets import QWidget, QLabel, QDesktopWidget
 
 from conf.Settings import ASSETS_DIR, TIME_INTERVAL
-from utils.ImgUtil import loadSingleImgFromPath, loadAllImgFromDirPath
 from model.PetsStatus import PoroStatus
+from utils.ImgUtil import loadSingleImgFromPath, loadAllImgFromDirPath
+from view.NotificationWindow import NotificationWindow
 
 
 class Poro(QWidget):
@@ -54,7 +55,7 @@ class Poro(QWidget):
         self.avatar.resize(128, 128)
 
         # could draggable or not
-        self.could_draggable = True
+        self.could_draggable = draggable
 
     def initAnimationDataSet(self):
         # get img data
@@ -78,14 +79,14 @@ class Poro(QWidget):
             self.running = True
         self.play(self.activated_move_data[self.emojis])
 
-    def setEmoji(self, animation_name=None):
-        if None is animation_name:
+    def setEmoji(self, emoji_name=None):
+        if None is emoji_name:
             self.none_times += 1
             if self.none_times >= 3:
                 self.initAnimationDataSet()
             return random.randint(0, len(self.activated_move_data) - 1)
         else:
-            specific_movement = self.pet_status.getSomeImgPaths(animation_name)
+            specific_movement = self.pet_status.getSomeImgPaths(emoji_name)
             self.updateAnimationDateSet(specific_movement)
             return 0
 
@@ -124,9 +125,14 @@ class Poro(QWidget):
             self.setCursor(QCursor(Qt.OpenHandCursor))
 
     def mouseMoveEvent(self, event):
+        # print("self. pos - >", self.pos()) #where the pet shows
         if Qt.LeftButton and self.could_draggable:
             self.move(event.globalPos() - self.dragged_new_pos)
             event.accept()
 
     def mouseReleaseEvent(self, event):
+        NotificationWindow.info('Tips',
+                                '<html><head/><body><p><span style=" font-style:italic; color:teal;"><img src="resources/assets/angry/poro-angry-0.png">这是提示文案这是提示文案这是提示文案这是提示文案这是提示<br>文案这是提示文案这是提示文案这是提示文案</span></p></body></html>',
+                                callback=None)
+
         self.setCursor(QCursor(Qt.ArrowCursor))

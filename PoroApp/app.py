@@ -2,14 +2,16 @@ __author__ = 'Aaron Yang'
 __email__ = 'byang971@usc.edu'
 __date__ = '1/31/2020 1:23 PM'
 
+import cgitb
 import sys
-import PyQt5.sip
+
 from PyQt5.QtWidgets import QApplication
 
-from view.Panel import TrayMenuPanel
+from view.TrayMenuWindow import TrayMenuWindow
 
 if __name__ == "__main__":
+    sys.excepthook = cgitb.Hook(1, None, 5, sys.stderr, 'text')
     app = QApplication(sys.argv)
-    trayMenu = TrayMenuPanel()
+    trayMenu = TrayMenuWindow()
     # trayMenu.pet.setEmoji("angry")
     sys.exit(app.exec_())

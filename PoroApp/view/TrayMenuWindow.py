@@ -12,7 +12,7 @@ from conf.Settings import DEFAULT_OPACITY
 from model.Pet import Poro
 
 
-class TrayMenuPanel(QWidget):
+class TrayMenuWindow(QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         self.initPet()
