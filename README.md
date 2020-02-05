@@ -1,7 +1,12 @@
 # League-of-Legends-Assitant-Tool
 
+<<<<<<< HEAD
 | No| Task           | SkillSet | Assigned to   | Current Status | Finished | 
 |---|----------------|---------------|---------------|----------------|-----------|
+=======
+|No| Task           | SkillSet | Assigned to   | Current Status | Finished | 
+|----------------|---------------|---------------|----------------|-----------|
+>>>>>>> ced6093f788fa9714e5ffba1672694ab9cb4ad86
 | 1 |宠物的贴边显示 | pyqt5  | Aaron | in progress|  <ul><li>[ ] item1</li><li>[ ] item2</li></ul>
 | 2 |宠物动效补充   | ps, pyqt5  |  | in progress | <ul><li>[] item1</li><li>[ ] item2</li></ul>
 | 3 |全局异常处理   | python  |  | in progress | <ul><li>- [] item1</li><li>- [ ] item2</li></ul>
