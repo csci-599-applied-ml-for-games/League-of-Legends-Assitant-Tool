@@ -10,7 +10,7 @@ from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtWidgets import QWidget, QLabel, QDesktopWidget
 
 from conf.Settings import ASSETS_DIR, TIME_INTERVAL
-from model.PetsStatus import PoroStatus
+from model.PetsStatus import PoroAssets
 from utils.ImgUtil import loadSingleImgFromPath, loadAllImgFromDirPath
 from view.NotificationWindow import NotificationWindow
 
@@ -19,7 +19,7 @@ class Poro(QWidget):
     def __init__(self, draggable, opacity, parent=None):
         QtWidgets.QWidget.__init__(self)
         self.graphics_opacity_effect = QtWidgets.QGraphicsOpacityEffect()
-        self.pet_status = PoroStatus()
+        self.pet_status = PoroAssets()
         self.pet_status.loadData(ASSETS_DIR)
         self.initUI(draggable, opacity)
 
@@ -107,9 +107,8 @@ class Poro(QWidget):
 
     def fixedPos(self):
         screen = QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move((screen.width() - size.width() - 150),
-                  (screen.height() - size.height() - 200))
+        self.move((screen.width() - 300),
+                  (screen.height() - 315))
 
     def updateAvatarOpacity(self, opacity):
         self.graphics_opacity_effect.setOpacity(opacity)

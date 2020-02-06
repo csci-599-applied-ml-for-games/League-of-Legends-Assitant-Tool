@@ -5,7 +5,35 @@ __date__ = '2/1/2020 5:07 PM'
 import os
 
 
-class PoroStatus():
+class PoroEmoji():
+    # index 0 to 5
+    Angry, Success, Warning, Error, Close = range(5)
+    Types = {
+        Angry: None,
+        Success: None,
+        Warning: None,
+        Error: None,
+        Close: None
+    }
+
+    @classmethod
+    def init(cls):
+        # icon img -> base64
+        cls.Types[cls.Angry] = None
+        cls.Types[cls.Success] = None
+
+        cls.Types[cls.Warning] = None
+
+        cls.Types[cls.Error] = None
+
+        cls.Types[cls.Close] = None
+
+    @classmethod
+    def emoji(cls, ntype):
+        return cls.Types.get(ntype)
+
+
+class PoroAssets():
 
     def __init__(self):
         self.pet_s_name = "Poro"

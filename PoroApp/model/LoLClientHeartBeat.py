@@ -22,6 +22,9 @@ class ClientInfo():
         assert position is not None, "LoL Client Position cannot be None"
         self.position = position
 
+    def getPosition(self):
+        return self.position
+
 
 class ClientHeartBeat(QObject):
     keeper = pyqtSignal(ClientInfo)

@@ -2,6 +2,7 @@ __author__ = 'Aaron Yang'
 __email__ = 'byang971@usc.edu'
 __date__ = '2/1/2020 5:01 PM'
 
+from PIL import ImageGrab
 from PyQt5.QtGui import QImage
 
 
@@ -17,3 +18,11 @@ def loadAllImgFromDirPath(base_path, img_paths):
         img = loadSingleImgFromPath(base_path + path)
         img_list.append(img)
     return img_list
+
+
+def cropImgByRect(position):
+    im = ImageGrab.grab(bbox=(position))
+    im.show()
+    # to file
+
+    im.save('ssss.png')

@@ -9,9 +9,13 @@ from PyQt5.QtWidgets import QApplication
 
 from view.TrayMenuWindow import TrayMenuWindow
 
+
+def showup(data):
+    print(data.getPosition())
+
+
 if __name__ == "__main__":
     sys.excepthook = cgitb.Hook(1, None, 5, sys.stderr, 'text')
     app = QApplication(sys.argv)
     trayMenu = TrayMenuWindow()
-    # trayMenu.pet.setEmoji("angry")
     sys.exit(app.exec_())

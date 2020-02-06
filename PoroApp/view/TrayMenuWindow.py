@@ -3,20 +3,23 @@ __email__ = 'byang971@usc.edu'
 __date__ = '1/31/2020 1:27 PM'
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBox, qApp, QWidgetAction, QSlider, QLabel, \
     QVBoxLayout
 
 from conf.Settings import DEFAULT_OPACITY
-from model.LoLClientHeartBeat import ClientHeartBeat
+from model.ImgProcessor import ImgCpaturer
+from model.LoLClientHeartBeat import ClientHeartBeat, ClientInfo
 from model.Pet import Poro
 from view.NotificationWindow import NotificationWindow
 
 
-# global count_false
-# global h
 class TrayMenuWindow(QWidget):
+    client_info_sender = pyqtSignal(ClientInfo)
+    # save previous client position in window
+    old_client_position = None
+
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         self.initPet()
@@ -55,37 +58,17 @@ class TrayMenuWindow(QWidget):
         tray_icon.show()
 
         self.count_false = 0
-        self.has_connected = False
+        self.has_client_connected = False
         # init thread using to monitor lol client
-        self.lol_client_thread = ClientHeartBeat(2)
+        self.lol_client_thread = ClientHeartBeat(1)
         self.lol_client_thread.keeper.connect(self.getClientInfo)
         self.thread = QThread()
         self.lol_client_thread.moveToThread(self.thread)
         self.thread.started.connect(self.lol_client_thread.run)
         self.thread.start()
 
-    def getClientInfo(self, lol_client):
-        # print("lol is alive", lol_client.isAlive)
-        # print("has_connected -> ", self.has_connected)
-        # print("count_false -> ", self.count_false)
-        if lol_client.isAlive and (not self.has_connected):
-            self.has_connected = True
-            NotificationWindow.success('Success',
-                                       '''Connected to LOL Client''',
-                                       callback=None)
-            # 设置poro 表情
-
-        elif lol_client.isAlive and self.has_connected:
-            pass
-        elif not lol_client.isAlive:
-            self.has_connected = False
-            self.count_false += 1
-            if (self.count_false == 1) or (self.count_false % 3 == 0):
-                # 如果等了10次都没连上， 发个提示
-                NotificationWindow.error('Error',
-                                         '''Haven't connect LOL Client''',
-                                         callback=None)
-                # 设置poro 表情
+        # when the signal got new position, send to ImgCapturer
+        self.client_info_sender.connect(go_capture)
 
     def initOpacitySlider(self, widget):
         opacity_slider_widget = QWidget(self)
@@ -115,7 +98,6 @@ class TrayMenuWindow(QWidget):
         self.pet.updateAvatarOpacity(float(int(value) / 100))
 
     def freezeOrNot(self, bool_value):
-        # TODO make update to the avatar
         if bool_value:
             # make avatar draggable
             self.drag_action.setChecked(True)
@@ -138,3 +120,45 @@ class TrayMenuWindow(QWidget):
                             }
                             
                           """)
+
+    def getClientInfo(self, lol_client):
+        global old_client_position
+        if lol_client.isAlive and (not self.has_client_connected):
+            # first connected, and send a notification
+            self.has_client_connected = True
+            old_client_position = lol_client.getPosition()
+            NotificationWindow.success('Success',
+                                       '''Connected to LOL Client''',
+                                       callback=None)
+            self.client_info_sender.emit(lol_client)
+            # 设置poro 表情 TODO  表情有问题 具体看测试用例
+            # self.pet.setEmoji('coolguy')
+
+
+        elif lol_client.isAlive and self.has_client_connected:
+            # when you got here that means you have connected stably
+            if lol_client.getPosition() != old_client_position:
+                # TODO delete later
+                # print("old", old_client_position)
+                # print("new", lol_client.getPosition())
+                old_client_position = lol_client.getPosition()
+                self.client_info_sender.emit(lol_client)
+
+        elif not lol_client.isAlive:
+            self.has_client_connected = False
+            self.count_false += 1
+            old_client_position = None
+            if (self.count_false == 1) or (self.count_false % 5 == 0):
+                # 如果等了10次都没连上， 发个提示
+                NotificationWindow.error('Error',
+                                         '''Haven't connect LOL Client''',
+                                         callback=None)
+                # 设置poro 表情
+                # self.pet.setEmoji('shock')
+
+
+# initialize an image capturer
+# and use position data to crop several imgs
+def go_capture(client_info):
+    capturer = ImgCpaturer()
+    capturer.receivePosition(client_info.getPosition())
