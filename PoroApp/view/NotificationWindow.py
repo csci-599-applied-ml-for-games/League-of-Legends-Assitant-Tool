@@ -1,4 +1,9 @@
-__author__ = 'Aaron Yang'
+__Author__ = """By: Irony
+QQ: 892768447
+Email: 892768447@qq.com"""
+__Copyright__ = 'Copyright (c) 2018 Irony'
+__Version__ = 1.0
+__update__ = 'Aaron Yang'
 __email__ = 'byang971@usc.edu'
 __date__ = '2/4/2020 9:42 PM'
 
@@ -34,7 +39,7 @@ class NotificationWindow(QListWidget):
         rect = QApplication.instance().desktop().availableGeometry(self)
         self.setMinimumHeight(rect.height())
         self.setMaximumHeight(rect.height())
-        self.move(rect.width() - self.minimumWidth() - 180, 0)
+        self.move(rect.width() - self.minimumWidth() - 50, 0)
 
     def removeItem(self, item):
         w = self.itemWidget(item)

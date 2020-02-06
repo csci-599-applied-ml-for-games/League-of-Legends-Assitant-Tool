@@ -102,9 +102,11 @@ class NotificationItem(QWidget):
             self.callback()  # 回调
 
     def paintEvent(self, event):
-        # 圆角以及背景色
+        # create round rect
         super(NotificationItem, self).paintEvent(event)
         painter = QPainter(self)
         path = QPainterPath()
         path.addRoundedRect(QRectF(self.rect()), 6, 6)
+
+        # background color setting
         painter.fillPath(path, self.BackgroundColor)

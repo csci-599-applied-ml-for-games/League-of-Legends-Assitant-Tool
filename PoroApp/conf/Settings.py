@@ -8,3 +8,6 @@ ASSETS_DIR = "resources/assets/"
 
 # the interval(ms) in every frame of emoji
 TIME_INTERVAL = 800
+
+# LOL client name in Task Manager
+LOL_CLIENT_NAME = 'League of Legends'

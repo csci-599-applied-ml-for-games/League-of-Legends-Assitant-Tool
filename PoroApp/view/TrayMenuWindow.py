@@ -3,15 +3,19 @@ __email__ = 'byang971@usc.edu'
 __date__ = '1/31/2020 1:27 PM'
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBox, qApp, QWidgetAction, QSlider, QLabel, \
     QVBoxLayout
 
 from conf.Settings import DEFAULT_OPACITY
+from model.LoLClientHeartBeat import ClientHeartBeat
 from model.Pet import Poro
+from view.NotificationWindow import NotificationWindow
 
 
+# global count_false
+# global h
 class TrayMenuWindow(QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
@@ -49,6 +53,39 @@ class TrayMenuWindow(QWidget):
         tray_icon.setIcon(QIcon("resources/ico/poro.ico"))
         tray_icon.setContextMenu(tray_menu)
         tray_icon.show()
+
+        self.count_false = 0
+        self.has_connected = False
+        # init thread using to monitor lol client
+        self.lol_client_thread = ClientHeartBeat(2)
+        self.lol_client_thread.keeper.connect(self.getClientInfo)
+        self.thread = QThread()
+        self.lol_client_thread.moveToThread(self.thread)
+        self.thread.started.connect(self.lol_client_thread.run)
+        self.thread.start()
+
+    def getClientInfo(self, lol_client):
+        # print("lol is alive", lol_client.isAlive)
+        # print("has_connected -> ", self.has_connected)
+        # print("count_false -> ", self.count_false)
+        if lol_client.isAlive and (not self.has_connected):
+            self.has_connected = True
+            NotificationWindow.success('Success',
+                                       '''Connected to LOL Client''',
+                                       callback=None)
+            # 设置poro 表情
+
+        elif lol_client.isAlive and self.has_connected:
+            pass
+        elif not lol_client.isAlive:
+            self.has_connected = False
+            self.count_false += 1
+            if (self.count_false == 1) or (self.count_false % 3 == 0):
+                # 如果等了10次都没连上， 发个提示
+                NotificationWindow.error('Error',
+                                         '''Haven't connect LOL Client''',
+                                         callback=None)
+                # 设置poro 表情
 
     def initOpacitySlider(self, widget):
         opacity_slider_widget = QWidget(self)
