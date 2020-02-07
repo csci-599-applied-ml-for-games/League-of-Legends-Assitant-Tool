@@ -7,15 +7,64 @@ import time
 import win32gui
 from PyQt5.QtCore import pyqtSignal, QObject
 
-from conf.Settings import LOL_CLIENT_NAME
+from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME
+from utils.ImgUtil import cropImgByRect
+from utils.OCRUtil import img2Str
+
+
+class ClientStatus():
+    # index 0 to 6
+    Closed, Loading, Home, Profile, Collection, TFT, InGame = range(7)
+    Types = {
+        Closed: None,
+        Loading: None,
+        Home: None,
+        Profile: None,
+        Collection: None,
+        TFT: None,
+        InGame: None
+    }
+
+    @classmethod
+    def init(cls):
+        # icon img -> base64
+        cls.Types[cls.Closed] = {'index': 0, 'client_name': LOL_CLIENT_NAME, 'name': "Closed"}
+        cls.Types[cls.Loading] = {'index': 1, 'client_name': LOL_CLIENT_NAME, 'name': "Loading"}
+        cls.Types[cls.Home] = {'index': 2, 'client_name': LOL_CLIENT_NAME, 'name': "Home"}
+        cls.Types[cls.Profile] = {'index': 3, 'client_name': LOL_CLIENT_NAME, 'name': "Profile"}
+        cls.Types[cls.Collection] = {'index': 4, 'client_name': LOL_CLIENT_NAME, 'name': "Collection"}
+        cls.Types[cls.TFT] = {'index': 5, 'client_name': LOL_CLIENT_NAME, 'name': "TFT"}
+        cls.Types[cls.InGame] = {'index': 6, 'client_name': LOL_CLIENT_NAME, 'name': "InGame"}
+
+    @classmethod
+    def status(cls, ntype):
+        # only work when you call init() first
+        return cls.Types.get(ntype)
+
+    @classmethod
+    def str2Status(cls, status_str: str) -> object:
+        inverted_index = {
+            "Closed": 0,
+            "Loading": 1,
+            "Home": 2,
+            "Profile": 3,
+            "Collection": 4,
+            "TFT": 5,
+            "InGame": 6
+        }
+        return inverted_index.get(status_str, 2)
 
 
 class ClientInfo():
 
-    def __init__(self, isAlive):
+    def __init__(self, isAlive, status=None):
         self.isAlive = isAlive
+        if None is status:
+            self.status = ClientStatus.Loading if isAlive else ClientStatus.Closed
+        else:
+            self.status = status
 
-    def isAlive(self):
+    def hasAlive(self):
         return self.isAlive
 
     def setPosition(self, position):
@@ -24,6 +73,17 @@ class ClientInfo():
 
     def getPosition(self):
         return self.position
+
+    def getStatusIndex(self):
+        return self.status
+
+    def getStatus(self):
+        return ClientStatus.status(self.status)
+
+    def __str__(self):
+        return "ClientInfo { 'isAlive' : '" + str(self.isAlive) + "', " + \
+               "'Status' : '" + str(ClientStatus.status(self.status)) + "', " + \
+               "'Position' : '" + str(self.position) + "'"
 
 
 class ClientHeartBeat(QObject):
@@ -38,12 +98,27 @@ class ClientHeartBeat(QObject):
 
     def run(self):
         while (True):
-            hwnd = win32gui.FindWindow(None, LOL_CLIENT_NAME)
-            if hwnd != 0:
-                client_info = ClientInfo(True)
-                rect = win32gui.GetWindowRect(hwnd)
+            # 大厅和游戏进程 名字不同
+            lobby_client = win32gui.FindWindow(None, LOL_CLIENT_NAME)
+            game_client = win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME)
+            if lobby_client != 0:
+                # 正常逻辑,现在去截张图 然后看页面是什么状态
+                rect = win32gui.GetWindowRect(lobby_client)
+                current_status = self._getCurrentStatus(rect)
+                client_info = ClientInfo(True, current_status)
+                client_info.setPosition(rect)
+                self.keeper.emit(client_info)
+            elif game_client != 0:
+                client_info = ClientInfo(True, ClientStatus.InGame)
+                rect = win32gui.GetWindowRect(game_client)
                 client_info.setPosition(rect)
                 self.keeper.emit(client_info)
             else:
                 self.keeper.emit(ClientInfo(False))  # lol client haven't start yet
             time.sleep(self._rate)
+
+    def _getCurrentStatus(self, position):
+        # only crop image in 600 * 80 area
+        client_banner_img = cropImgByRect((position[0], position[1] + 20, position[0] + 600, position[1] + 60))
+        highlight_name = img2Str(client_banner_img)
+        return ClientStatus.str2Status(highlight_name)

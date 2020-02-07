@@ -20,7 +20,7 @@ class NotificationWindow(QListWidget):
 
     def __init__(self, *args, **kwargs):
         super(NotificationWindow, self).__init__(*args, **kwargs)
-        self.setSpacing(20)
+        self.setSpacing(10)
         self.setMinimumWidth(412)
         self.setMaximumWidth(412)
         QApplication.instance().setQuitOnLastWindowClosed(True)
@@ -39,7 +39,7 @@ class NotificationWindow(QListWidget):
         rect = QApplication.instance().desktop().availableGeometry(self)
         self.setMinimumHeight(rect.height())
         self.setMaximumHeight(rect.height())
-        self.move(rect.width() - self.minimumWidth() - 50, 0)
+        self.move(rect.width() - self.minimumWidth() - 20, 20)
 
     def removeItem(self, item):
         w = self.itemWidget(item)

@@ -5,6 +5,8 @@ __date__ = '2/1/2020 5:01 PM'
 from PIL import ImageGrab
 from PyQt5.QtGui import QImage
 
+from utils.StringUtil import genRandomStr
+
 
 def loadSingleImgFromPath(path):
     img = QImage()
@@ -20,9 +22,9 @@ def loadAllImgFromDirPath(base_path, img_paths):
     return img_list
 
 
-def cropImgByRect(position):
+def cropImgByRect(position, save_file=False):
     im = ImageGrab.grab(bbox=(position))
-    im.show()
     # to file
-
-    im.save('ssss.png')
+    if save_file:
+        imgName = genRandomStr() + ".png"
+        im.save(imgName)

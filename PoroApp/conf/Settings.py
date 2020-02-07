@@ -11,3 +11,4 @@ TIME_INTERVAL = 800
 
 # LOL client name in Task Manager
 LOL_CLIENT_NAME = 'League of Legends'
+LOL_IN_GAME_CLIENT_NAME = "League of Legends (TM) Client"

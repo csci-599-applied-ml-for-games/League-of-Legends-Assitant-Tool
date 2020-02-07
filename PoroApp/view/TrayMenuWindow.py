@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBo
 
 from conf.Settings import DEFAULT_OPACITY
 from model.ImgProcessor import ImgCpaturer
-from model.LoLClientHeartBeat import ClientHeartBeat, ClientInfo
+from model.LoLClientHeartBeat import ClientHeartBeat, ClientInfo, ClientStatus
 from model.Pet import Poro
 from view.NotificationWindow import NotificationWindow
 
@@ -19,6 +19,7 @@ class TrayMenuWindow(QWidget):
     client_info_sender = pyqtSignal(ClientInfo)
     # save previous client position in window
     old_client_position = None
+    old_client_status = 0
 
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
@@ -57,18 +58,19 @@ class TrayMenuWindow(QWidget):
         tray_icon.setContextMenu(tray_menu)
         tray_icon.show()
 
+        ClientStatus.init()
         self.count_false = 0
         self.has_client_connected = False
         # init thread using to monitor lol client
-        self.lol_client_thread = ClientHeartBeat(1)
-        self.lol_client_thread.keeper.connect(self.getClientInfo)
+        self.lol_client_heart_beat_thread = ClientHeartBeat(1)
+        self.lol_client_heart_beat_thread.keeper.connect(self.getClientInfo)
         self.thread = QThread()
-        self.lol_client_thread.moveToThread(self.thread)
-        self.thread.started.connect(self.lol_client_thread.run)
+        self.lol_client_heart_beat_thread.moveToThread(self.thread)
+        self.thread.started.connect(self.lol_client_heart_beat_thread.run)
         self.thread.start()
 
         # when the signal got new position, send to ImgCapturer
-        self.client_info_sender.connect(go_capture)
+        self.client_info_sender.connect(statusChange)
 
     def initOpacitySlider(self, widget):
         opacity_slider_widget = QWidget(self)
@@ -123,10 +125,12 @@ class TrayMenuWindow(QWidget):
 
     def getClientInfo(self, lol_client):
         global old_client_position
+        global old_client_status
         if lol_client.isAlive and (not self.has_client_connected):
             # first connected, and send a notification
             self.has_client_connected = True
             old_client_position = lol_client.getPosition()
+            old_client_status = lol_client.getStatusIndex()
             NotificationWindow.success('Success',
                                        '''Connected to LOL Client''',
                                        callback=None)
@@ -137,28 +141,45 @@ class TrayMenuWindow(QWidget):
 
         elif lol_client.isAlive and self.has_client_connected:
             # when you got here that means you have connected stably
-            if lol_client.getPosition() != old_client_position:
+            if (lol_client.getPosition() != old_client_position) or \
+                    (lol_client.getStatusIndex() != old_client_status):
                 # TODO delete later
                 # print("old", old_client_position)
                 # print("new", lol_client.getPosition())
                 old_client_position = lol_client.getPosition()
+                old_client_status = lol_client.getStatusIndex()
                 self.client_info_sender.emit(lol_client)
+
 
         elif not lol_client.isAlive:
             self.has_client_connected = False
             self.count_false += 1
             old_client_position = None
+            old_client_status = 0
             if (self.count_false == 1) or (self.count_false % 5 == 0):
                 # 如果等了10次都没连上， 发个提示
                 NotificationWindow.error('Error',
                                          '''Haven't connect LOL Client''',
                                          callback=None)
+                self.client_info_sender.emit(lol_client)
                 # 设置poro 表情
                 # self.pet.setEmoji('shock')
+
+
+def statusChange(client):
+    if client.hasAlive():
+        NotificationWindow.info('Info',
+                                "LOL Client Status: {}".format(client.getStatus()["name"]),
+                                callback=None)
+        # go_capture(client)
+    else:
+        # if the client has dead
+        print("statusChange ->", client.getStatus())
 
 
 # initialize an image capturer
 # and use position data to crop several imgs
 def go_capture(client_info):
     capturer = ImgCpaturer()
+    print("go_capture -> ", client_info.getStatus())
     capturer.receivePosition(client_info.getPosition())
