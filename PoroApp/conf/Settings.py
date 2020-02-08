@@ -12,3 +12,7 @@ TIME_INTERVAL = 800
 # LOL client name in Task Manager
 LOL_CLIENT_NAME = 'League of Legends'
 LOL_IN_GAME_CLIENT_NAME = "League of Legends (TM) Client"
+LOL_CLIENT_HEART_BEAT_RATE = 1
+
+# Notification_Item Setting
+LAST_TIME = 4000

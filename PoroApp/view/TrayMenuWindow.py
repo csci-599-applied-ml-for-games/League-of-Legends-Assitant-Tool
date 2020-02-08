@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBox, qApp, QWidgetAction, QSlider, QLabel, \
     QVBoxLayout
 
-from conf.Settings import DEFAULT_OPACITY
+from conf.Settings import DEFAULT_OPACITY, LOL_CLIENT_HEART_BEAT_RATE
 from model.ImgProcessor import ImgCpaturer
 from model.LoLClientHeartBeat import ClientHeartBeat, ClientInfo, ClientStatus
 from model.Pet import Poro
@@ -62,7 +62,7 @@ class TrayMenuWindow(QWidget):
         self.count_false = 0
         self.has_client_connected = False
         # init thread using to monitor lol client
-        self.lol_client_heart_beat_thread = ClientHeartBeat(1)
+        self.lol_client_heart_beat_thread = ClientHeartBeat(LOL_CLIENT_HEART_BEAT_RATE)
         self.lol_client_heart_beat_thread.keeper.connect(self.getClientInfo)
         self.thread = QThread()
         self.lol_client_heart_beat_thread.moveToThread(self.thread)
@@ -168,9 +168,26 @@ class TrayMenuWindow(QWidget):
 
 def statusChange(client):
     if client.hasAlive():
-        NotificationWindow.info('Info',
-                                "LOL Client Status: {}".format(client.getStatus()["name"]),
-                                callback=None)
+        if not client.isGameMode():
+            # 还在大厅 或者 房间里
+            NotificationWindow.info('Info',
+                                    "LOL Client Status: Your are in {} Panel".format(client.getStatus()["name"]),
+                                    callback=None)
+        else:
+            # picking champions
+            if client.getStatusIndex() == ClientStatus.ChooseChampion:
+                NotificationWindow.suggest('Picking Champion ...',
+                                           "Poro recommends these following champions for you".format(
+                                               client.getStatus()["name"]),
+                                           callback=None)
+            else:
+                # InGame
+                # TODO
+                NotificationWindow.suggest('Picking Champion ...',
+                                           "Poro recommends these following champions for you".format(
+                                               client.getStatus()["name"]),
+                                           callback=None)
+
         # go_capture(client)
     else:
         # if the client has dead

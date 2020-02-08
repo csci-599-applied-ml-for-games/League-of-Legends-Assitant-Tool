@@ -14,17 +14,18 @@ from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, \
     QGridLayout, QSpacerItem, QSizePolicy, QGraphicsDropShadowEffect, \
     QListWidgetItem
 
+from conf.Settings import LAST_TIME
 from model.NotificationIcon import NotificationIcon
 
 
 class NotificationItem(QWidget):
     closed = pyqtSignal(QListWidgetItem)
-    BackgroundColor = QColor(195, 195, 195)
-    BorderColor = QColor(150, 150, 150)
 
-    def __init__(self, title, message, item, *args, ntype=0, callback=None, **kwargs):
+    def __init__(self, title, message, item, *args, ntype=0, callback=None, bg_color=QColor(195, 195, 195),
+                 msg_color="black", **kwargs):
         super(NotificationItem, self).__init__(*args, **kwargs)
         self.item = item
+        self.bg_color = bg_color
         self.callback = callback
         layout = QHBoxLayout(self, spacing=0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -45,6 +46,8 @@ class NotificationItem(QWidget):
         font.setBold(True)
         font.setPixelSize(15)
         self.labelTitle.setFont(font)
+        self.labelTitle.setStyleSheet('color: {}; padding-left: 3px'.format(msg_color))
+        # self.labelTitle.move(50, 30)
 
         # close button
         self.labelClose = QLabel(
@@ -56,6 +59,7 @@ class NotificationItem(QWidget):
         font = self.labelMessage.font()
         font.setPixelSize(15)
         self.labelMessage.setFont(font)
+        self.labelMessage.setStyleSheet('color: {}; padding-left: 3px'.format(msg_color))
         self.labelMessage.adjustSize()
 
         # add to the grid layout
@@ -77,7 +81,7 @@ class NotificationItem(QWidget):
         # after 5 sec, close window
         self._timer = QTimer(self, timeout=self.doClose)
         self._timer.setSingleShot(True)
-        self._timer.start(3000)
+        self._timer.start(LAST_TIME)
 
     def doClose(self):
         try:
@@ -109,4 +113,4 @@ class NotificationItem(QWidget):
         path.addRoundedRect(QRectF(self.rect()), 6, 6)
 
         # background color setting
-        painter.fillPath(path, self.BackgroundColor)
+        painter.fillPath(path, self.bg_color)

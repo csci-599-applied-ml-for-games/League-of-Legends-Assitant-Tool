@@ -8,8 +8,10 @@ __email__ = 'byang971@usc.edu'
 __date__ = '2/4/2020 9:42 PM'
 
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem
+from colormap import rgb2hex
 
 from model.NotificationIcon import NotificationIcon
 from model.NotificationItem import NotificationItem
@@ -57,44 +59,65 @@ class NotificationWindow(QListWidget):
             NotificationIcon.init()
 
     @classmethod
-    def info(cls, title, message, callback=None):
+    def info(cls, title, message, callback=None, disabled=False):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item, cls._instance,
-                             ntype=NotificationIcon.Info, callback=callback)
+                             ntype=NotificationIcon.Info, callback=callback,
+                             bg_color=QColor(237, 242, 252),
+                             msg_color=rgb2hex(144, 147, 153))
         w.closed.connect(cls._instance.removeItem)
         item.setSizeHint(QSize(cls._instance.width() -
                                cls._instance.spacing(), w.height()))
         cls._instance.setItemWidget(item, w)
 
     @classmethod
-    def success(cls, title, message, callback=None):
+    def success(cls, title, message, callback=None, disabled=False):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item, cls._instance,
-                             ntype=NotificationIcon.Success, callback=callback)
+                             ntype=NotificationIcon.Success, callback=callback,
+                             bg_color=QColor(240, 249, 235),
+                             msg_color=rgb2hex(103, 194, 58))
         w.closed.connect(cls._instance.removeItem)
         item.setSizeHint(QSize(cls._instance.width() -
                                cls._instance.spacing(), w.height()))
         cls._instance.setItemWidget(item, w)
 
     @classmethod
-    def warning(cls, title, message, callback=None):
+    def warning(cls, title, message, callback=None, disabled=False):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item, cls._instance,
-                             ntype=NotificationIcon.Warning, callback=callback)
+                             ntype=NotificationIcon.Warning, callback=callback,
+                             bg_color=QColor(253, 246, 236),
+                             msg_color=rgb2hex(230, 162, 60))
         w.closed.connect(cls._instance.removeItem)
         item.setSizeHint(QSize(cls._instance.width() -
                                cls._instance.spacing(), w.height()))
         cls._instance.setItemWidget(item, w)
 
     @classmethod
-    def error(cls, title, message, callback=None):
+    def error(cls, title, message, callback=None, disabled=False):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item,
-                             ntype=NotificationIcon.Error, callback=callback)
+                             ntype=NotificationIcon.Error, callback=callback,
+                             bg_color=QColor(254, 240, 240),
+                             msg_color=rgb2hex(245, 108, 108))
+        w.closed.connect(cls._instance.removeItem)
+        width = cls._instance.width() - cls._instance.spacing()
+        item.setSizeHint(QSize(width, w.height()))
+        cls._instance.setItemWidget(item, w)
+
+    @classmethod
+    def suggest(cls, title, message, callback=None, disabled=True):
+        cls._createInstance()
+        item = QListWidgetItem(cls._instance)
+        w = NotificationItem(title, message, item,
+                             ntype=NotificationIcon.Suggest, callback=callback,
+                             bg_color=QColor(7, 73, 83),
+                             msg_color=rgb2hex(244, 244, 244))
         w.closed.connect(cls._instance.removeItem)
         width = cls._instance.width() - cls._instance.spacing()
         item.setSizeHint(QSize(width, w.height()))

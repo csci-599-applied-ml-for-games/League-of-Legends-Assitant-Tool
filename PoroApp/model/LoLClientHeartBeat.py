@@ -14,14 +14,16 @@ from utils.OCRUtil import img2Str
 
 class ClientStatus():
     # index 0 to 6
-    Closed, Loading, Home, Profile, Collection, TFT, InGame = range(7)
+    Closed, Loading, InRoom, Home, Profile, Collection, TFT, ChooseChampion, InGame = range(9)
     Types = {
         Closed: None,
         Loading: None,
+        InRoom: None,
         Home: None,
         Profile: None,
         Collection: None,
         TFT: None,
+        ChooseChampion: None,
         InGame: None
     }
 
@@ -30,11 +32,13 @@ class ClientStatus():
         # icon img -> base64
         cls.Types[cls.Closed] = {'index': 0, 'client_name': LOL_CLIENT_NAME, 'name': "Closed"}
         cls.Types[cls.Loading] = {'index': 1, 'client_name': LOL_CLIENT_NAME, 'name': "Loading"}
-        cls.Types[cls.Home] = {'index': 2, 'client_name': LOL_CLIENT_NAME, 'name': "Home"}
-        cls.Types[cls.Profile] = {'index': 3, 'client_name': LOL_CLIENT_NAME, 'name': "Profile"}
-        cls.Types[cls.Collection] = {'index': 4, 'client_name': LOL_CLIENT_NAME, 'name': "Collection"}
-        cls.Types[cls.TFT] = {'index': 5, 'client_name': LOL_CLIENT_NAME, 'name': "TFT"}
-        cls.Types[cls.InGame] = {'index': 6, 'client_name': LOL_CLIENT_NAME, 'name': "InGame"}
+        cls.Types[cls.InRoom] = {'index': 2, 'client_name': LOL_CLIENT_NAME, 'name': "InRoom"}
+        cls.Types[cls.Home] = {'index': 3, 'client_name': LOL_CLIENT_NAME, 'name': "Home"}
+        cls.Types[cls.Profile] = {'index': 4, 'client_name': LOL_CLIENT_NAME, 'name': "Profile"}
+        cls.Types[cls.Collection] = {'index': 5, 'client_name': LOL_CLIENT_NAME, 'name': "Collection"}
+        cls.Types[cls.TFT] = {'index': 6, 'client_name': LOL_CLIENT_NAME, 'name': "TFT"}
+        cls.Types[cls.ChooseChampion] = {'index': 7, 'client_name': LOL_CLIENT_NAME, 'name': "ChooseChampion"}
+        cls.Types[cls.InGame] = {'index': 8, 'client_name': LOL_IN_GAME_CLIENT_NAME, 'name': "InGame"}
 
     @classmethod
     def status(cls, ntype):
@@ -44,15 +48,18 @@ class ClientStatus():
     @classmethod
     def str2Status(cls, status_str: str) -> object:
         inverted_index = {
-            "Closed": 0,
+            "closed": 0,
             "Loading": 1,
-            "Home": 2,
-            "Profile": 3,
-            "Collection": 4,
-            "TFT": 5,
-            "InGame": 6
+            "InRoom": 2,
+            "HOME": 3,
+            "PROFILE": 4,
+            "COLLECTION": 5,
+            "TFT": 6,
+            "CHAMPION!": 7,
+            "InGame": 8,
+            "PLAY": 2
         }
-        return inverted_index.get(status_str, 2)
+        return inverted_index.get(status_str, 3)
 
 
 class ClientInfo():
@@ -84,6 +91,12 @@ class ClientInfo():
         return "ClientInfo { 'isAlive' : '" + str(self.isAlive) + "', " + \
                "'Status' : '" + str(ClientStatus.status(self.status)) + "', " + \
                "'Position' : '" + str(self.position) + "'"
+
+    def isGameMode(self):
+        if self.status in (ClientStatus.ChooseChampion, ClientStatus.InGame):
+            return True
+        else:
+            return False
 
 
 class ClientHeartBeat(QObject):
@@ -119,6 +132,6 @@ class ClientHeartBeat(QObject):
 
     def _getCurrentStatus(self, position):
         # only crop image in 600 * 80 area
-        client_banner_img = cropImgByRect((position[0], position[1] + 20, position[0] + 600, position[1] + 60))
+        client_banner_img = cropImgByRect((position[0] + 50, position[1] + 20, position[0] + 840, position[1] + 52))
         highlight_name = img2Str(client_banner_img)
         return ClientStatus.str2Status(highlight_name)
