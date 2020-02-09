@@ -8,10 +8,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBox, qApp, QWidgetAction, QSlider, QLabel, \
     QVBoxLayout
 
-from conf.Settings import DEFAULT_OPACITY, LOL_CLIENT_HEART_BEAT_RATE
-from model.ImgProcessor import ImgCpaturer
+from conf.Settings import DEFAULT_OPACITY, DEFAULT_DRAGGABLE, LOL_CLIENT_HEART_BEAT_RATE, BAN_AREA_YOU, BAN_AREA_ENEMY, \
+    POSITION_AREA
+from model.ImgProcessor import ImgCatcherThread
 from model.LoLClientHeartBeat import ClientHeartBeat, ClientInfo, ClientStatus
 from model.Pet import Poro
+from utils.PositionUtil import genRelativePos
 from view.NotificationWindow import NotificationWindow
 
 
@@ -32,7 +34,7 @@ class TrayMenuWindow(QWidget):
         # setting -> draggable
         self.drag_action = QAction("Draggable", self)
         self.drag_action.setCheckable(True)
-        self.drag_action.setChecked(True)
+        self.drag_action.setChecked(DEFAULT_DRAGGABLE)
         self.drag_action.triggered.connect(self.freezeOrNot)
 
         # setting -> opacity slider
@@ -63,13 +65,15 @@ class TrayMenuWindow(QWidget):
         self.has_client_connected = False
         # init thread using to monitor lol client
         self.lol_client_heart_beat_thread = ClientHeartBeat(LOL_CLIENT_HEART_BEAT_RATE)
+        # client 的监听信号 会发给 self.getClientInfo 这个函数
         self.lol_client_heart_beat_thread.keeper.connect(self.getClientInfo)
         self.thread = QThread()
+        # QObject 转 Qthread
         self.lol_client_heart_beat_thread.moveToThread(self.thread)
         self.thread.started.connect(self.lol_client_heart_beat_thread.run)
         self.thread.start()
 
-        # when the signal got new position, send to ImgCapturer
+        # when the signal got new position, send to ImgCatcher
         self.client_info_sender.connect(statusChange)
 
     def initOpacitySlider(self, widget):
@@ -90,7 +94,7 @@ class TrayMenuWindow(QWidget):
         widget.setDefaultWidget(opacity_slider_widget)
         return widget
 
-    def initPet(self, draggable=True, opacity=float(DEFAULT_OPACITY / 100)):
+    def initPet(self, draggable=DEFAULT_DRAGGABLE, opacity=float(DEFAULT_OPACITY / 100)):
         self.pet = Poro(draggable, opacity)
 
     def updateOpacity(self, value):
@@ -138,18 +142,14 @@ class TrayMenuWindow(QWidget):
             # 设置poro 表情 TODO  表情有问题 具体看测试用例
             # self.pet.setEmoji('coolguy')
 
-
         elif lol_client.isAlive and self.has_client_connected:
             # when you got here that means you have connected stably
             if (lol_client.getPosition() != old_client_position) or \
                     (lol_client.getStatusIndex() != old_client_status):
-                # TODO delete later
-                # print("old", old_client_position)
-                # print("new", lol_client.getPosition())
+                # 如果跟之前状态不一样 我们法院一条信息， 如果一样就不发
                 old_client_position = lol_client.getPosition()
                 old_client_status = lol_client.getStatusIndex()
                 self.client_info_sender.emit(lol_client)
-
 
         elif not lol_client.isAlive:
             self.has_client_connected = False
@@ -169,9 +169,9 @@ class TrayMenuWindow(QWidget):
 def statusChange(client):
     if client.hasAlive():
         if not client.isGameMode():
-            # 还在大厅 或者 房间里
             NotificationWindow.info('Info',
-                                    "LOL Client Status: Your are in {} Panel".format(client.getStatus()["name"]),
+                                    "LOL Client Status: Your are in <u><b>{}</b></u> Panel".format(
+                                        client.getStatus()["name"]),
                                     callback=None)
         else:
             # picking champions
@@ -180,23 +180,44 @@ def statusChange(client):
                                            "Poro recommends these following champions for you".format(
                                                client.getStatus()["name"]),
                                            callback=None)
+                # 这里开启一个线程 去捕捉 图片 预测 不需要跟pyqt挂钩
+                goCaptureAndAnalysis(client)
             else:
                 # InGame
                 # TODO
-                NotificationWindow.suggest('Picking Champion ...',
-                                           "Poro recommends these following champions for you".format(
+                NotificationWindow.suggest('Game Mode',
+                                           "continue to give you suggestions".format(
                                                client.getStatus()["name"]),
                                            callback=None)
+                # goCaptureAndAnalysis(client)
 
-        # go_capture(client)
+
     else:
-        # if the client has dead
-        print("statusChange ->", client.getStatus())
+        NotificationWindow.warning('Warning',
+                                   "Assistant has lost connection to LOL client",
+                                   callback=None)
 
 
-# initialize an image capturer
-# and use position data to crop several imgs
-def go_capture(client_info):
-    capturer = ImgCpaturer()
-    print("go_capture -> ", client_info.getStatus())
-    capturer.receivePosition(client_info.getPosition())
+# initialize an image catcher
+# and use position data to crop imgs in every n sec.
+def goCaptureAndAnalysis(client_info):
+    if client_info.getStatusIndex() == ClientStatus.ChooseChampion:
+        ban_you_catcher = ImgCatcherThread("BAN_YOU_IMG_CATCHER", client_info,
+                                           genRelativePos(client_info.getPosition(), BAN_AREA_YOU,
+                                                          client_info.getEnlargementFactor()))
+
+        ban_enemy_catcher = ImgCatcherThread("BAN_ENEMY_IMG_CATCHER", client_info,
+                                             genRelativePos(client_info.getPosition(), BAN_AREA_ENEMY,
+                                                            client_info.getEnlargementFactor()))
+
+        position_catcher = ImgCatcherThread("POS_IMG_CATCHER", client_info,
+                                            genRelativePos(client_info.getPosition(), POSITION_AREA,
+                                                           client_info.getEnlargementFactor()))
+
+        ban_you_catcher.start()
+        ban_enemy_catcher.start()
+        position_catcher.start()
+    else:
+        # when you got here, it means you are in the game mode
+        print("go_capture -> ", client_info.getStatus())
+    # capturer.receivePosition(client_info.getPosition())

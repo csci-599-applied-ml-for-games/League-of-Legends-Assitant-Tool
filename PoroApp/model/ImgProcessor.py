@@ -2,8 +2,20 @@ __author__ = 'Aaron Yang'
 __email__ = 'byang971@usc.edu'
 __date__ = '2/5/2020 10:11 PM'
 
+import threading
 
-class ImgCpaturer():
+
+class ImgCatcherThread(threading.Thread):
+    def __init__(self, name, client_info, crop_position):
+        threading.Thread.__init__(self)
+        self.name = name
+        self.client_info = client_info
+        self.crop_position = crop_position
+
+    def run(self):
+        for i in range(3):
+            print("Starting " + self.name)
+
     client_position = None
 
     def receivePosition(self, client_position):

@@ -7,9 +7,10 @@ import time
 import win32gui
 from PyQt5.QtCore import pyqtSignal, QObject
 
-from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME
+from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME, STATUS_AREA, LOL_CLIENT_SIZE
 from utils.ImgUtil import cropImgByRect
 from utils.OCRUtil import img2Str
+from utils.PositionUtil import genRelativePos
 
 
 class ClientStatus():
@@ -57,7 +58,9 @@ class ClientStatus():
             "TFT": 6,
             "CHAMPION!": 7,
             "InGame": 8,
-            "PLAY": 2
+            "PLAY": 2,
+            "LOADOUT!": 8,
+            "BATTLE!": 8
         }
         return inverted_index.get(status_str, 3)
 
@@ -76,7 +79,13 @@ class ClientInfo():
 
     def setPosition(self, position):
         assert position is not None, "LoL Client Position cannot be None"
+        actual_client_size = (position[2] - position[0], position[3] - position[1])
+        self.enlargement_factor = \
+            (list(float(actual / default) for default, actual in zip(LOL_CLIENT_SIZE, actual_client_size)))[0]
         self.position = position
+
+    def getEnlargementFactor(self):
+        return self.enlargement_factor
 
     def getPosition(self):
         return self.position
@@ -104,7 +113,7 @@ class ClientHeartBeat(QObject):
 
     def __init__(self, rate=1):
         super(ClientHeartBeat, self).__init__()
-        self._rate = rate
+        self._heart_beat_rate = rate
 
     def __del__(self):
         self.wait()
@@ -114,24 +123,34 @@ class ClientHeartBeat(QObject):
             # 大厅和游戏进程 名字不同
             lobby_client = win32gui.FindWindow(None, LOL_CLIENT_NAME)
             game_client = win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME)
-            if lobby_client != 0:
+            if lobby_client != 0 and game_client == 0:
                 # 正常逻辑,现在去截张图 然后看页面是什么状态
                 rect = win32gui.GetWindowRect(lobby_client)
-                current_status = self._getCurrentStatus(rect)
+                # keep the func work properly when user open different size of client,
+                # we create a variable called enlargement factor
+                enlargement_factor = self._getEnlargementFactor(rect)
+                current_status = self._getCurrentStatus(rect, enlargement_factor)
                 client_info = ClientInfo(True, current_status)
                 client_info.setPosition(rect)
                 self.keeper.emit(client_info)
             elif game_client != 0:
+                print("game mode detected")
                 client_info = ClientInfo(True, ClientStatus.InGame)
                 rect = win32gui.GetWindowRect(game_client)
                 client_info.setPosition(rect)
                 self.keeper.emit(client_info)
             else:
                 self.keeper.emit(ClientInfo(False))  # lol client haven't start yet
-            time.sleep(self._rate)
+            time.sleep(self._heart_beat_rate)
 
-    def _getCurrentStatus(self, position):
-        # only crop image in 600 * 80 area
-        client_banner_img = cropImgByRect((position[0] + 50, position[1] + 20, position[0] + 840, position[1] + 52))
+    def _getEnlargementFactor(self, position):
+        actual_client_size = (position[2] - position[0], position[3] - position[1])
+        enlargement_factor = \
+            (list(float(actual / default) for default, actual in zip(LOL_CLIENT_SIZE, actual_client_size)))[0]
+        return enlargement_factor
+
+    def _getCurrentStatus(self, position, factor=1.0):
+        client_banner_img = cropImgByRect(
+            genRelativePos(position, STATUS_AREA, factor))
         highlight_name = img2Str(client_banner_img)
         return ClientStatus.str2Status(highlight_name)

@@ -8,6 +8,7 @@ from PyQt5.QtGui import QImage
 from utils.StringUtil import genRandomStr
 
 
+# 二值化图片
 def binarize_image(img, threshold=200):
     img = img.convert('L')
     img = img.point(lambda p: p > threshold and 255)
