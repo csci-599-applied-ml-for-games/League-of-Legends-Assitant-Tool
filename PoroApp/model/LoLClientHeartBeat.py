@@ -13,8 +13,8 @@ from utils.OCRUtil import img2Str
 from utils.PositionUtil import genRelativePos
 
 
-class ClientStatus():
-    # index 0 to 6
+class ClientStatus:
+    # index 0 to 9
     Closed, Loading, InRoom, Home, Profile, Collection, TFT, ChooseChampion, InGame = range(9)
     Types = {
         Closed: None,
@@ -56,6 +56,7 @@ class ClientStatus():
             "PROFILE": 4,
             "COLLECTION": 5,
             "TFT": 6,
+            "TFT.": 6,
             "CHAMPION!": 7,
             "InGame": 8,
             "PLAY": 2,
@@ -65,7 +66,7 @@ class ClientStatus():
         return inverted_index.get(status_str, 3)
 
 
-class ClientInfo():
+class ClientInfo:
 
     def __init__(self, isAlive, status=None):
         self.isAlive = isAlive

@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QAction, QWidget, QMenu, QSystemTrayIcon, QMessageBo
 
 from conf.Settings import DEFAULT_OPACITY, DEFAULT_DRAGGABLE, LOL_CLIENT_HEART_BEAT_RATE, BAN_AREA_YOU, BAN_AREA_ENEMY, \
     POSITION_AREA
-from model.ImgProcessor import ImgCatcherThread
+from model.ImgProcessor import ImgCatcherThread, ImgCropType
 from model.LoLClientHeartBeat import ClientHeartBeat, ClientInfo, ClientStatus
 from model.Pet import Poro
 from utils.PositionUtil import genRelativePos
@@ -201,16 +201,17 @@ def statusChange(client):
 # initialize an image catcher
 # and use position data to crop imgs in every n sec.
 def goCaptureAndAnalysis(client_info):
+    ImgCropType.init()
     if client_info.getStatusIndex() == ClientStatus.ChooseChampion:
-        ban_you_catcher = ImgCatcherThread("BAN_YOU_IMG_CATCHER", client_info,
+        ban_you_catcher = ImgCatcherThread("BAN_YOU_IMG_CATCHER", client_info, ImgCropType.BAN_5_CHAMP,
                                            genRelativePos(client_info.getPosition(), BAN_AREA_YOU,
                                                           client_info.getEnlargementFactor()))
 
-        ban_enemy_catcher = ImgCatcherThread("BAN_ENEMY_IMG_CATCHER", client_info,
+        ban_enemy_catcher = ImgCatcherThread("BAN_ENEMY_IMG_CATCHER", client_info, ImgCropType.BAN_5_CHAMP,
                                              genRelativePos(client_info.getPosition(), BAN_AREA_ENEMY,
                                                             client_info.getEnlargementFactor()))
 
-        position_catcher = ImgCatcherThread("POS_IMG_CATCHER", client_info,
+        position_catcher = ImgCatcherThread("POS_IMG_CATCHER", client_info, ImgCropType.POSITION_LABEL,
                                             genRelativePos(client_info.getPosition(), POSITION_AREA,
                                                            client_info.getEnlargementFactor()))
 

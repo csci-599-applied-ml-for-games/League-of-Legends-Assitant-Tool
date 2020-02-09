@@ -9,7 +9,7 @@ from utils.StringUtil import genRandomStr
 
 
 # 二值化图片
-def binarize_image(img, threshold=200):
+def binarize_processing(img, threshold=200):
     img = img.convert('L')
     img = img.point(lambda p: p > threshold and 255)
     # Contrast
@@ -33,11 +33,13 @@ def loadAllImgFromDirPath(base_path, img_paths):
     return img_list
 
 
-def cropImgByRect(position, save_file=False):
+def cropImgByRect(position, binarize=True, save_file=False):
     img = ImageGrab.grab(bbox=(position))
-    img = binarize_image(img)
+    if binarize:
+        img = binarize_processing(img)
     # to file
     if save_file:
         imgName = genRandomStr() + ".png"
         img.save(imgName)
+        print("saved a png file whose name is: ", imgName)
     return img
