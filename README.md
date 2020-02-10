@@ -9,13 +9,13 @@
 | 4 |win32程序识别句柄   | pywin32  | Aliven & Aaron | Finished | <ul><li>[x] 获取句柄</li></ul>
 | 5 |opencv定位截取   | cv2 | Oscar | Finished |  <ul><li>[x] 截取</li></ul>
 | 6 |OCR   | tesseract  | Oscar | Finished |  <ul><li>[x] 识别</li></ul>
-| 7 |CNN扩充   | tensorflow  | Aliven | in progress |  <ul><li>[x] 原始CNN(148)</li><li>[ ] 装备 none图片素材数据</li></ul>
+| 7 |CNN扩充   | tensorflow  | Alvin | in progress |  <ul><li>[x] 原始CNN(148)</li><li>[ ] 装备 none图片素材数据</li></ul>
 | 8 |图片文字识别LSTM   | tensorflow  | Oscar | in progress |  <ul><li>[ ] item1</li></ul>
 | 9 |退出后， 系统托盘未清空   | pyqt5  | Aaron | paused |  <ul><li>[ ] item1</li></ul>
 | 10 |About无边弹框 | pyqt5  |  | paused|  <ul><li>[ ] item1</li></ul>
 | 11 |宠物禁用后仍能点击 | pyqt5  |  | paused|  <ul><li>[ ] item1</li></ul>
-| 12 |EDD 文档 | pyqt5  | Aliven | in progress|  <ul><li>[ ] item1</li></ul>
-| 13 |英雄推荐模型 | tensorflow  | Aliven | Finished|  <ul><li>[x] 预测</li></ul>
+| 12 |EDD 文档 | pyqt5  | Alvin | in progress|  <ul><li>[ ] item1</li></ul>
+| 13 |英雄推荐模型 | tensorflow  | Alvin | Finished|  <ul><li>[x] 预测</li></ul>
 | 14 |玩家位置信息识别 | tesseract  | Aaron | in progress|  <ul><li>[ ] 检测</li></ul>
 | 15 |推荐结果页面 | pyqt5  | Aaron | in progress|  <ul><li>[ ] 设计</li></ul>
 | 16 |PPT | ppt  | Hao | in progress|  <ul><li>[ ] 设计</li></ul>
