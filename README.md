@@ -20,4 +20,4 @@
 | 15 |推荐结果页面 | pyqt5  | Aaron | in progress|  <ul><li>[ ] 设计</li></ul>
 | 16 |PPT | ppt  | Hao | in progress|  <ul><li>[ ] 设计</li></ul>
 | 17 |游戏录像收集 | lol  | Hao | in progress|  <ul><li>[ ] 采集</li></ul>
-| 18 |英雄BP逻辑   | python  | Alvin | Finished |  <ul><li>[x] </li></ul>
+| 18 |英雄BP逻辑   | python  | Alvin | Finished |  <ul><li>[x] item1</li></ul>
