@@ -21,3 +21,4 @@
 | 16 |PPT | ppt  | Hao | in progress|  <ul><li>[ ] 设计</li></ul>
 | 17 |游戏录像收集 | lol  | Hao | in progress|  <ul><li>[ ] 采集</li></ul>
 | 18 |英雄BP逻辑   | python  | Alvin | Finished |  <ul><li>[x] item1</li></ul>
+| 19 |item信息爬取   | python  | Oscar | Finished |  <ul><li>[x] item1</li></ul>
