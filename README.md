@@ -7,7 +7,7 @@
 | 2 |宠物动效补充   | PS, PyQt5  |  | in progress |  <ul><li>[ ] item1</li><li>[ ] item2</li></ul>
 | 3 |全局异常处理   | Python  |  | in progress |  <ul><li>[ ] item1</li><li>[ ] item2</li></ul>
 | 4 |win32 程序识别句柄   | pywin32  | Alvin & Aaron | Finished | <ul><li>[x] 获取句柄</li></ul>
-| 5 OpenCV 定位截取   | cv2 | Oscar | Finished |  <ul><li>[x] 截取</li></ul>
+| 5 | OpenCV 定位截取   | OpenCV 2 | Oscar | Finished |  <ul><li>[x] 截取</li></ul>
 | 6 |OCR   | tesseract  | Oscar | Finished |  <ul><li>[x] 识别</li></ul>
 | 7 |CNN 扩充   | TensorFlow  | Alvin | in progress |  <ul><li>[x] 原始CNN(148)</li><li>[ ] 装备 none图片素材数据</li></ul>
 | 8 |图片文字识别 LSTM   | TensorFlow  | Oscar | in progress |  <ul><li>[ ] item1</li></ul>
