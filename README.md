@@ -9,7 +9,7 @@
 | 4 |win32 程序识别句柄   | pywin32  | Alvin & Aaron | Finished | <ul><li>[x] 获取句柄</li></ul>
 | 5 | OpenCV 定位截取   | OpenCV 2 | Oscar | Finished |  <ul><li>[x] 截取</li></ul>
 | 6 |OCR   | tesseract  | Oscar | Finished |  <ul><li>[x] 识别</li></ul>
-| 7 |CNN 扩充   | TensorFlow  | Alvin | in progress |  <ul><li>[x] 原始CNN(148)</li><li>[ ] 装备 none图片素材数据</li></ul>
+| 7 |CNN 扩充   | TensorFlow  | Alvin | in progress |  <ul><li>[x] 原始CNN(148)</li><li>[x] 装备 none图片素材数据</li></ul>
 | 8 |图片文字识别 LSTM   | TensorFlow  | Oscar | in progress |  <ul><li>[ ] item1</li></ul>
 | 9 |退出后， 系统托盘未清空   | PyQt5  | Aaron | paused |  <ul><li>[ ] item1</li></ul>
 | 10 |About 无边弹框 | PyQt5  |  | paused|  <ul><li>[ ] item1</li></ul>
