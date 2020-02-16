@@ -48,27 +48,37 @@ class ImgCatcherThread(threading.Thread):
         self._heart_beat_rate = IMG_CATCHER_RATE
 
     def run(self):
-        print("name: " + self.name + " has started.")
+        print(self.name + " has started.")
         while self.__running.isSet():
             if self.client_info.getStatusIndex() == ClientStatus.ChooseChampion:
                 if self.img_crop_type == ImgCropType.BAN_5_CHAMP:
                     # crop the image
-                    client_banner_img = cropImgByRect(self.crop_position, binarize=False)
+                    five_profiles = cropImgByRect(self.crop_position, binarize=False, save_file=True)
+
+                    # TODO 把这个图片分成五份, 但这里面的图片有的是自己的有的是敌方的
+                    # UserInGameInfo addChampions 要改
                     print("ready to use model to predict")
                     self.stop()
 
                 elif self.img_crop_type == ImgCropType.POSITION_LABEL:
-                    print(self.crop_position)
-                    client_banner_img = cropImgByRect(self.crop_position, binarize=True, save_file=True)
+                    client_banner_img = cropImgByRect(self.crop_position, binarize=False, save_file=True)
 
                     user_position_in_game = img2Str(client_banner_img)
                     print("ssssssss", user_position_in_game)
                     if user_position_in_game == "AYAY666":
                         self.stop()
+                    if not self.client_info.isGameMode():
+                        # 中途退出， 停止线程
+                        print("img process will stop")
+                        self.stop()
 
 
             elif self.client_info.getStatusIndex() == ClientStatus.InGame:
                 pass
+
+            else:
+                print("GameMode : ", self.client_info.isGameMode())
+                print("img process will stop2222222222")
 
             time.sleep(self._heart_beat_rate)
 

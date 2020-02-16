@@ -33,10 +33,10 @@ def loadAllImgFromDirPath(base_path, img_paths):
     return img_list
 
 
-def cropImgByRect(position, binarize=True, save_file=False):
+def cropImgByRect(position, binarize=True, save_file=False, threshold=200):
     img = ImageGrab.grab(bbox=(position))
     if binarize:
-        img = binarize_processing(img)
+        img = binarize_processing(img, threshold)
     # to file
     if save_file:
         imgName = genRandomStr() + ".png"

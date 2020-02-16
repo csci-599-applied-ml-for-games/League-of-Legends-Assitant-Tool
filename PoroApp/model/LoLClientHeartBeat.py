@@ -7,15 +7,17 @@ import time
 import win32gui
 from PyQt5.QtCore import pyqtSignal, QObject
 
-from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME, STATUS_AREA, LOL_CLIENT_SIZE
+from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME, STATUS_AREA, LOL_CLIENT_SIZE, POSITION_AREA, \
+    POSITION_SET
+from model.InGameInfo import UserInGameInfo
 from utils.ImgUtil import cropImgByRect
-from utils.OCRUtil import img2Str
+from utils.OCRUtil import img2Str, decodePositionLabelImg
 from utils.PositionUtil import genRelativePos
 
 
 class ClientStatus:
     # index 0 to 9
-    Closed, Loading, InRoom, Home, Profile, Collection, TFT, ChooseChampion, InGame = range(9)
+    Closed, Loading, InRoom, Home, Profile, Collection, TFT, AssignPosition, ChooseChampion, InGame = range(10)
     Types = {
         Closed: None,
         Loading: None,
@@ -24,6 +26,7 @@ class ClientStatus:
         Profile: None,
         Collection: None,
         TFT: None,
+        AssignPosition: None,
         ChooseChampion: None,
         InGame: None
     }
@@ -38,8 +41,9 @@ class ClientStatus:
         cls.Types[cls.Profile] = {'index': 4, 'client_name': LOL_CLIENT_NAME, 'name': "Profile"}
         cls.Types[cls.Collection] = {'index': 5, 'client_name': LOL_CLIENT_NAME, 'name': "Collection"}
         cls.Types[cls.TFT] = {'index': 6, 'client_name': LOL_CLIENT_NAME, 'name': "TFT"}
-        cls.Types[cls.ChooseChampion] = {'index': 7, 'client_name': LOL_CLIENT_NAME, 'name': "ChooseChampion"}
-        cls.Types[cls.InGame] = {'index': 8, 'client_name': LOL_IN_GAME_CLIENT_NAME, 'name': "InGame"}
+        cls.Types[cls.AssignPosition] = {'index': 7, 'client_name': LOL_CLIENT_NAME, 'name': "AssignPosition"}
+        cls.Types[cls.ChooseChampion] = {'index': 8, 'client_name': LOL_CLIENT_NAME, 'name': "ChooseChampion"}
+        cls.Types[cls.InGame] = {'index': 9, 'client_name': LOL_IN_GAME_CLIENT_NAME, 'name': "InGame"}
 
     @classmethod
     def status(cls, ntype):
@@ -57,11 +61,16 @@ class ClientStatus:
             "COLLECTION": 5,
             "TFT": 6,
             "TFT.": 6,
-            "CHAMPION!": 7,
-            "InGame": 8,
+            "CHAMPION!": 8,
+            "InGame": 9,
             "PLAY": 2,
-            "LOADOUT!": 8,
-            "BATTLE!": 8
+            "LOADOUT!": 9,
+            "BATTLE!": 9,
+            "TOP": 7,
+            "SUPPORT": 7,
+            "BOTTOM": 7,
+            "JUNGLE": 7,
+            "MID": 7,
         }
         return inverted_index.get(status_str, 3)
 
@@ -103,7 +112,9 @@ class ClientInfo:
                "'Position' : '" + str(self.position) + "'"
 
     def isGameMode(self):
-        if self.status in (ClientStatus.ChooseChampion, ClientStatus.InGame):
+        if self.status in (ClientStatus.AssignPosition,
+                           ClientStatus.ChooseChampion,
+                           ClientStatus.InGame):
             return True
         else:
             return False
@@ -131,10 +142,12 @@ class ClientHeartBeat(QObject):
                 # we create a variable called enlargement factor
                 enlargement_factor = self._getEnlargementFactor(rect)
                 current_status = self._getCurrentStatus(rect, enlargement_factor)
+                print("current_status ->", current_status)
                 client_info = ClientInfo(True, current_status)
                 client_info.setPosition(rect)
                 self.keeper.emit(client_info)
             elif game_client != 0:
+                # 进入游戏阶段
                 print("game mode detected")
                 client_info = ClientInfo(True, ClientStatus.InGame)
                 rect = win32gui.GetWindowRect(game_client)
@@ -152,6 +165,19 @@ class ClientHeartBeat(QObject):
 
     def _getCurrentStatus(self, position, factor=1.0):
         client_banner_img = cropImgByRect(
-            genRelativePos(position, STATUS_AREA, factor))
+            genRelativePos(position, STATUS_AREA, factor), save_file=True, threshold=200)
         highlight_name = img2Str(client_banner_img)
+        print("highlight_name ->", highlight_name)
+        # 如果返回的是InRoom 状态， 这时需要多加一步判断
+        if highlight_name == "InRoom":
+            position_label_img = cropImgByRect(
+                genRelativePos(position, POSITION_AREA, factor), threshold=140)
+            position = img2Str(position_label_img)
+            # 如果没有
+            if (position is not None) and (position != "") and position in POSITION_SET:
+                print("Assigned user position in ", position)
+                UserInGameInfo.getInstance().setPosition(position)
+                return ClientStatus.str2Status(position)
+            else:
+                return ClientStatus.str2Status("InRoom")
         return ClientStatus.str2Status(highlight_name)
