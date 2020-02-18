@@ -12,14 +12,8 @@ def img2Str(img=None):
     # 现在先用OCR代替 先把逻辑跑通  然后再用TF模型代替
     strs = image_to_string(img, lang='eng')
 
-    if None is not strs and strs is "":
-        # 如果为None 再尝试一次
-        img = binarize_processing(img, 140)
-        strs = image_to_string(img, lang='eng')
-        if None is not strs and strs is "":
-            print("twice fail")
-            return "InRoom"
-        return strs.split(" ")[-1]
+    if strs is "":
+        return "InRoom"
 
     elif None is not strs:
         selected_name = strs.split(" ")[-1]

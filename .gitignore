@@ -1,2 +1,13 @@
 
 .DS_Store
+/PoroApp/.idea
+/PoroApp/venv
+/PoroApp/build
+/PoroApp/conf/__pycache__
+/PoroApp/model/__pycache__
+/PoroApp/test/ocr.py
+/PoroApp/test/opencv_ocr.py
+/PoroApp/test/qwerq.py
+/PoroApp/utils/__pycache__
+/PoroApp/view/__pycache__
+/PoroApp/backup

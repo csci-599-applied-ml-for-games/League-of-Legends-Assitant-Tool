@@ -5,25 +5,31 @@ __date__ = '2/5/2020 10:11 PM'
 import threading
 import time
 
-from conf.Settings import IMG_CATCHER_RATE
+from conf.ProfileModelLabel import NONE_LIST
+from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE
+from model.FaceRecognitionModel import ProfileModel
+from model.InGameInfo import UserInGameInfo
 from model.LoLClientHeartBeat import ClientStatus
-from utils.ImgUtil import cropImgByRect
-from utils.OCRUtil import img2Str
+from utils.ImgUtil import cropImgByRect, cutIntoFivePieces
+from view.NotificationWindow import NotificationWindow
+
+local_you_banned_list = set()
+local_enemy_banned_list = set()
 
 
 class ImgCropType:
     # index 0 to 3
-    BAN_5_CHAMP, POSITION_LABEL, TAB_PANEL = range(3)
+    BAN_5_CHAMP, ENEMY_5_CHAMP, TAB_PANEL = range(3)
     Types = {
         BAN_5_CHAMP: None,
-        POSITION_LABEL: None,
+        ENEMY_5_CHAMP: None,
         TAB_PANEL: None
     }
 
     @classmethod
     def init(cls):
         cls.Types[cls.BAN_5_CHAMP] = {'index': 0}
-        cls.Types[cls.POSITION_LABEL] = {'index': 1}
+        cls.Types[cls.ENEMY_5_CHAMP] = {'index': 1}
         cls.Types[cls.TAB_PANEL] = {'index': 2}
 
     @classmethod
@@ -48,37 +54,50 @@ class ImgCatcherThread(threading.Thread):
         self._heart_beat_rate = IMG_CATCHER_RATE
 
     def run(self):
+        global local_you_banned_list
+        global local_enemy_banned_list
         print(self.name + " has started.")
         while self.__running.isSet():
             if self.client_info.getStatusIndex() == ClientStatus.ChooseChampion:
                 if self.img_crop_type == ImgCropType.BAN_5_CHAMP:
                     # crop the image
-                    five_profiles = cropImgByRect(self.crop_position, binarize=False, save_file=True)
+                    five_profiles = cropImgByRect(self.crop_position, binarize=False)
+                    # 把整张图片切成五份
+                    five_imgs = cutIntoFivePieces(five_profiles)
+                    # 预测五张图片
+                    results = ProfileModel.getInstance().predictImgs(five_imgs)
+                    print("you  ->", results)
+                    new_add = list(set(set(results) - set(NONE_LIST)) - set(local_you_banned_list))
+                    if len(new_add) > 0:
+                        local_you_banned_list.add(new_add[0])
+                        print("local_you_banned_list", local_you_banned_list)
+                        UserInGameInfo.getInstance().addBannedChampions(new_add[0])
 
-                    # TODO 把这个图片分成五份, 但这里面的图片有的是自己的有的是敌方的
-                    # UserInGameInfo addChampions 要改
-                    print("ready to use model to predict")
-                    self.stop()
-
-                elif self.img_crop_type == ImgCropType.POSITION_LABEL:
-                    client_banner_img = cropImgByRect(self.crop_position, binarize=False, save_file=True)
-
-                    user_position_in_game = img2Str(client_banner_img)
-                    print("ssssssss", user_position_in_game)
-                    if user_position_in_game == "AYAY666":
-                        self.stop()
-                    if not self.client_info.isGameMode():
-                        # 中途退出， 停止线程
-                        print("img process will stop")
+                    if len(local_you_banned_list) == BANNED_CHAMP_SIZE:
                         self.stop()
 
+                elif self.img_crop_type == ImgCropType.ENEMY_5_CHAMP:
+                    five_profiles = cropImgByRect(self.crop_position, binarize=False)
+                    # 把整张图片切成五份
+                    five_imgs = cutIntoFivePieces(five_profiles)
+                    # 预测五张图片
+                    results = ProfileModel.getInstance().predictImgs(five_imgs)
+                    print("enemy ->", results)
+                    new_add = list(set(set(results) - set(NONE_LIST)) - set(local_enemy_banned_list))
+                    if len(new_add) > 0:
+                        local_enemy_banned_list.add(new_add[0])
+                        print("local_enemy_banned_list", local_enemy_banned_list)
+                        UserInGameInfo.getInstance().addEnemyBannedChampions(new_add[0])
+
+                    if len(local_enemy_banned_list) == BANNED_CHAMP_SIZE:
+                        self.stop()
 
             elif self.client_info.getStatusIndex() == ClientStatus.InGame:
                 pass
 
             else:
                 print("GameMode : ", self.client_info.isGameMode())
-                print("img process will stop2222222222")
+                print("You shouldn't be here. ---from ImgCatcherThread.py")
 
             time.sleep(self._heart_beat_rate)
 

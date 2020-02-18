@@ -111,12 +111,38 @@ class NotificationWindow(QListWidget):
         cls._instance.setItemWidget(item, w)
 
     @classmethod
+    def detect(cls, title, message, callback=None, disabled=True):
+        cls._createInstance()
+        item = QListWidgetItem(cls._instance)
+        w = NotificationItem(title, message, item,
+                             ntype=NotificationIcon.Detect, callback=callback,
+                             bg_color=QColor(7, 73, 83),
+                             msg_color=rgb2hex(244, 244, 244))
+        w.closed.connect(cls._instance.removeItem)
+        width = cls._instance.width() - cls._instance.spacing()
+        item.setSizeHint(QSize(width, w.height()))
+        cls._instance.setItemWidget(item, w)
+
+    @classmethod
+    def threat(cls, title, message, callback=None, disabled=True):
+        cls._createInstance()
+        item = QListWidgetItem(cls._instance)
+        w = NotificationItem(title, message, item,
+                             ntype=NotificationIcon.Detect, callback=callback,
+                             bg_color=QColor(150, 30, 42),
+                             msg_color=rgb2hex(244, 244, 244))
+        w.closed.connect(cls._instance.removeItem)
+        width = cls._instance.width() - cls._instance.spacing()
+        item.setSizeHint(QSize(width, w.height()))
+        cls._instance.setItemWidget(item, w)
+
+    @classmethod
     def suggest(cls, title, message, callback=None, disabled=True):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item,
                              ntype=NotificationIcon.Suggest, callback=callback,
-                             bg_color=QColor(7, 73, 83),
+                             bg_color=QColor(1, 10, 19),
                              msg_color=rgb2hex(244, 244, 244))
         w.closed.connect(cls._instance.removeItem)
         width = cls._instance.width() - cls._instance.spacing()

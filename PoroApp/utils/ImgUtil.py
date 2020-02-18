@@ -43,3 +43,20 @@ def cropImgByRect(position, binarize=True, save_file=False, threshold=200):
         img.save(imgName)
         print("saved a png file whose name is: ", imgName)
     return img
+
+
+def cutIntoFivePieces(img, interval=10):
+    length = int((img.size[0] - 4 * interval) / 5)
+    width = img.size[1]
+    rect_list = []
+    five_imags = []
+    for index in range(5):
+        left = (length + interval) * index
+        right = length + left
+        rect_list.append((left, 0, right, width))
+
+    for rect in rect_list:
+        cropped = img.crop(rect)
+        five_imags.append(cropped)
+
+    return five_imags

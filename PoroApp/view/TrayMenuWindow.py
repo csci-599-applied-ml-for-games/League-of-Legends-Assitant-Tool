@@ -143,7 +143,8 @@ class TrayMenuWindow(QWidget):
         elif lol_client.isAlive and self.has_client_connected:
             # when you got here that means you have connected stably
             if (lol_client.getPosition() != old_client_position) or \
-                    (lol_client.getStatusIndex() != old_client_status):
+                    (lol_client.getStatusIndex() != old_client_status) or \
+                    (lol_client.isGameMode()):
                 # 如果跟之前状态不一样 我们发送一条信息， 如果一样就不发
                 old_client_position = lol_client.getPosition()
                 old_client_status = lol_client.getStatusIndex()
