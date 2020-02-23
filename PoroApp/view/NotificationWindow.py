@@ -52,11 +52,20 @@ class NotificationWindow(QListWidget):
         del item
 
     @classmethod
+    def saveLastMessage(cls, message):
+        cls.last_message = message
+
+    @classmethod
+    def getLastMessage(cls):
+        return cls.last_message
+
+    @classmethod
     def _createInstance(cls):
         if not cls._instance:
             cls._instance = NotificationWindow()
             cls._instance.show()
             NotificationIcon.init()
+        return cls._instance
 
     @classmethod
     def info(cls, title, message, callback=None, disabled=False):
@@ -70,6 +79,21 @@ class NotificationWindow(QListWidget):
         item.setSizeHint(QSize(cls._instance.width() -
                                cls._instance.spacing(), w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)
+
+    @classmethod
+    def last(cls, callback=None, disabled=False):
+        cls._createInstance()
+        item = QListWidgetItem(cls._instance)
+        w = NotificationItem("The Last Message", cls.getLastMessage(), item, cls._instance,
+                             ntype=NotificationIcon.Info, callback=callback,
+                             bg_color=QColor(237, 242, 252),
+                             msg_color=rgb2hex(144, 147, 153))
+        w.closed.connect(cls._instance.removeItem)
+        item.setSizeHint(QSize(cls._instance.width() -
+                               cls._instance.spacing(), w.height()))
+        cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(cls.getLastMessage())
 
     @classmethod
     def success(cls, title, message, callback=None, disabled=False):
@@ -83,6 +107,7 @@ class NotificationWindow(QListWidget):
         item.setSizeHint(QSize(cls._instance.width() -
                                cls._instance.spacing(), w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)
 
     @classmethod
     def warning(cls, title, message, callback=None, disabled=False):
@@ -96,6 +121,7 @@ class NotificationWindow(QListWidget):
         item.setSizeHint(QSize(cls._instance.width() -
                                cls._instance.spacing(), w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)
 
     @classmethod
     def error(cls, title, message, callback=None, disabled=False):
@@ -109,6 +135,7 @@ class NotificationWindow(QListWidget):
         width = cls._instance.width() - cls._instance.spacing()
         item.setSizeHint(QSize(width, w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)
 
     @classmethod
     def detect(cls, title, message, callback=None, disabled=True):
@@ -122,6 +149,7 @@ class NotificationWindow(QListWidget):
         width = cls._instance.width() - cls._instance.spacing()
         item.setSizeHint(QSize(width, w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)
 
     @classmethod
     def threat(cls, title, message, callback=None, disabled=True):
@@ -135,6 +163,7 @@ class NotificationWindow(QListWidget):
         width = cls._instance.width() - cls._instance.spacing()
         item.setSizeHint(QSize(width, w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)
 
     @classmethod
     def suggest(cls, title, message, callback=None, disabled=True):
@@ -148,3 +177,4 @@ class NotificationWindow(QListWidget):
         width = cls._instance.width() - cls._instance.spacing()
         item.setSizeHint(QSize(width, w.height()))
         cls._instance.setItemWidget(item, w)
+        cls.saveLastMessage(message)

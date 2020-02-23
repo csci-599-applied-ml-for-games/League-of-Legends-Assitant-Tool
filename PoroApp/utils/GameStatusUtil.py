@@ -30,6 +30,7 @@ def statusChange(client):
                 for item in thread_pool:
                     item.stop()
         else:
+            # 游戏阶段， BP， 选英雄， 游戏内
             # detect user's position
             if client.getStatusIndex() == ClientStatus.AssignPosition:
                 NotificationWindow.detect('Entering Game Mode...',
@@ -56,11 +57,15 @@ def statusChange(client):
             else:
                 # InGame
                 # TODO
-                NotificationWindow.suggest('Game Mode',
-                                           "Ready to fright! \n"
-                                           "Poro will continue to give you suggestions",
-                                           callback=None)
-                # goCaptureAndAnalysis(client)
+                print("In Game Mode1")
+                if random.randint(0, 1) == 1:
+                    NotificationWindow.suggest('Game Mode',
+                                               "Ready to fright! \n"
+                                               "Poro will continue to give you suggestions",
+                                               callback=None)
+                if len(thread_pool) > 0:
+                    for thread in thread_pool:
+                        thread.stop()
 
 
     else:
@@ -72,54 +77,47 @@ def statusChange(client):
 # initialize an image catcher
 # and use position data to crop imgs in every n sec.
 def goCaptureAndAnalysis(client_info):
-    if client_info.getStatusIndex() == ClientStatus.ChooseChampion:
-        ban_you_catcher = None
-        ban_enemy_catcher = None
-        if len(thread_pool) == 0:
-            ban_you_catcher = ImgCatcherThread("BAN_YOU_IMG_CATCHER", client_info, ImgCropType.BAN_5_CHAMP,
-                                               genRelativePos(client_info.getPosition(), BAN_AREA_YOU,
-                                                              client_info.getEnlargementFactor()))
+    ban_you_catcher = None
+    ban_enemy_catcher = None
+    if len(thread_pool) == 0:
+        ban_you_catcher = ImgCatcherThread("BAN_YOU_IMG_CATCHER", client_info, ImgCropType.BAN_5_CHAMP,
+                                           genRelativePos(client_info.getPosition(), BAN_AREA_YOU,
+                                                          client_info.getEnlargementFactor()))
 
-            ban_enemy_catcher = ImgCatcherThread("BAN_ENEMY_IMG_CATCHER", client_info, ImgCropType.ENEMY_5_CHAMP,
-                                                 genRelativePos(client_info.getPosition(), BAN_AREA_ENEMY,
-                                                                client_info.getEnlargementFactor()))
+        ban_enemy_catcher = ImgCatcherThread("BAN_ENEMY_IMG_CATCHER", client_info, ImgCropType.ENEMY_5_CHAMP,
+                                             genRelativePos(client_info.getPosition(), BAN_AREA_ENEMY,
+                                                            client_info.getEnlargementFactor()))
 
-            thread_pool.append(ban_you_catcher)
-            thread_pool.append(ban_enemy_catcher)
-            ban_you_catcher.setDaemon(True)
-            ban_enemy_catcher.setDaemon(True)
-            ban_you_catcher.start()
-            ban_enemy_catcher.start()
+        thread_pool.append(ban_you_catcher)
+        thread_pool.append(ban_enemy_catcher)
+        ban_you_catcher.setDaemon(True)
+        ban_enemy_catcher.setDaemon(True)
+        ban_you_catcher.start()
+        ban_enemy_catcher.start()
 
-        if UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
-            NotificationWindow.detect('BP Champion Session',
-                                      """You team has banned these following champions:<html>
-                                      <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
-                                      vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
-                                      height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
-                                      margin-left:5px}}</style></head><body>{}</body></html>""".format(
-                                          UserInGameInfo.getInstance().getBannedChampList()),
-                                      callback=None)
+    if UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
+        NotificationWindow.detect('BP Champion Session',
+                                  """You team has banned these following champions:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                      UserInGameInfo.getInstance().getBannedChampList()),
+                                  callback=None)
 
-        if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE:
-            UserInGameInfo.getInstance().setEnemyFlag(True)
-            NotificationWindow.threat('BP Champion Session',
-                                      """Enemy team has banned these following champions:<html>
-                                      <head><style></style></head><body><ul>{}</ul></body></html>""".format(
-                                          UserInGameInfo.getInstance().getEnemyBannedChampList()),
-                                      callback=None)
+    if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE:
+        UserInGameInfo.getInstance().setEnemyFlag(True)
+        NotificationWindow.threat('BP Champion Session',
+                                  """Enemy team has banned these following champions:<html>
+                                  <head><style></style></head><body><ul>{}</ul></body></html>""".format(
+                                      UserInGameInfo.getInstance().getEnemyBannedChampList()),
+                                  callback=None)
 
-        # 在这里可以进行英雄推荐了
-        if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE and \
-                UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
-            print("UserPosition :", UserInGameInfo.getInstance().getPosition())
-            NotificationWindow.suggest('BP Champion Session',
-                                       "Poro highly recommends you to choose champion: \n"
-                                       " <u><b> {} </b></u> to win this game. ".format("Drius"),
-                                       callback=None)
-
-
-    else:
-        # when you got here, it means you are in the game mode
-        print("go_capture -> ", client_info.getStatus())
-        # capturer.receivePosition(client_info.getPosition())
+    # 在这里可以进行英雄推荐了
+    if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE and \
+            UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
+        print("UserPosition :", UserInGameInfo.getInstance().getPosition())
+        NotificationWindow.suggest('BP Champion Session',
+                                   "Poro highly recommends you to choose champion: <br/> <u><b> {} </b></u> to win this game. ".format(
+                                       "Drius"),
+                                   callback=None)

@@ -130,8 +130,5 @@ class Poro(QWidget):
             event.accept()
 
     def mouseReleaseEvent(self, event):
-        NotificationWindow.info('Tips',
-                                '<html><head/><body><p><span style=" font-style:italic; color:teal;"><img src="resources/assets/angry/poro-angry-0.png">这是提示文案这是提示文案这是提示文案这是提示文案这是提示<br>文案这是提示文案这是提示文案这是提示文案</span></p></body></html>',
-                                callback=None)
-
+        NotificationWindow.last()
         self.setCursor(QCursor(Qt.ArrowCursor))

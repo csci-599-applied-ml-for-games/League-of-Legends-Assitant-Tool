@@ -26,6 +26,7 @@ class ChampionBasicInfo(object):
                 }
 
     def toHtml(self, champ_name):
+        # TODO 等数据整合好， 把数据替换掉
         return "<div class=\"info\"><img src=\"{}\">  Name: {}  Win Rate: {}<br/>" \
                "<span><img id=\"class_icon\" src=\"{}\">&nbsp;&nbsp;&nbsp;<img id=\"lane_icon\" src=\"{}\">" \
                "</span></div><br/>" \
