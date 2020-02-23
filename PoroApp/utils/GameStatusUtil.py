@@ -91,18 +91,22 @@ def goCaptureAndAnalysis(client_info):
             ban_you_catcher.start()
             ban_enemy_catcher.start()
 
-        if random.randint(0, 1) == 1 \
-                and UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
+        if UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
             NotificationWindow.detect('BP Champion Session',
-                                      "You team has banned these following champions: \n"
-                                      "{}".format(UserInGameInfo.getInstance().getBannedChampList()),
+                                      """You team has banned these following champions:<html>
+                                      <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                      vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                      height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                      margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                          UserInGameInfo.getInstance().getBannedChampList()),
                                       callback=None)
 
         if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE:
             UserInGameInfo.getInstance().setEnemyFlag(True)
             NotificationWindow.threat('BP Champion Session',
-                                      "Enemy team has banned these following champions: \n"
-                                      "{}".format(UserInGameInfo.getInstance().getEnemyBannedChampList()),
+                                      """Enemy team has banned these following champions:<html>
+                                      <head><style></style></head><body><ul>{}</ul></body></html>""".format(
+                                          UserInGameInfo.getInstance().getEnemyBannedChampList()),
                                       callback=None)
 
         # 在这里可以进行英雄推荐了

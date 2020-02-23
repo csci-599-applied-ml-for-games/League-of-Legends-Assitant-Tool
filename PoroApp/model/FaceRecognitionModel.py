@@ -14,11 +14,11 @@ from conf.Settings import CHECK_POINT_PATH
 class ProfileModel(object):
     _instance_lock = threading.Lock()
 
-    _height = 64
-    _width = 64
+    _height = 32
+    _width = 32
     _channels = 3
     _batch_size = 128
-    _num_classes = 309
+    _num_classes = 151
 
     def __init__(self):
         self._reload_model_schema()

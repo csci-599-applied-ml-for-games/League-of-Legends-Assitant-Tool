@@ -21,7 +21,7 @@ POPUP_COUNTER = 0
 POPUP_THRESHOLD = 3
 
 # champions_profile_area
-STATUS_AREA = (60, 15, 840, 50)
+STATUS_AREA = (60, 15, 840, 53)
 BP_AREA = (500, 5, 870, 40)
 BAN_AREA_YOU = (15, 30, 205, 60)
 BAN_AREA_ENEMY = (1075, 30, 1265, 60)
@@ -35,3 +35,7 @@ BANNED_CHAMP_SIZE = 3
 
 # Champion profile recognition model setting
 CHECK_POINT_PATH = "resources/model/face_recognition_model.h5"
+
+# Champion basic info csv
+CHAMPION_BASIC_CSV_PATH = "resources/data/champ_basic.csv"
+CHAMPION_PROFILE_PATH = "resources/data/profile"

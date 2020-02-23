@@ -5,6 +5,7 @@ __date__ = '2/15/2020 3:33 PM'
 import threading
 
 from view.NotificationWindow import NotificationWindow
+from model.ChampInfo import ChampionBasicInfo
 
 
 class UserInGameInfo(object):
@@ -44,7 +45,12 @@ class UserInGameInfo(object):
         return len(self.your_side_banned_champ_list)
 
     def getBannedChampList(self):
-        return self.your_side_banned_champ_list
+        html_blob = str()
+        for champ in self.your_side_banned_champ_list:
+            html_str = ChampionBasicInfo.getInstance().toHtml(champ)
+            html_blob += html_str
+        print("html_blob -> ", html_blob)
+        return html_blob
 
     def getEnemyBannedChampionsSize(self):
         return len(self.enemy_banned_champ_list)
@@ -70,7 +76,7 @@ class UserInGameInfo(object):
     @classmethod
     def getInstance(cls, *args, **kwargs):
         if not hasattr(UserInGameInfo, "_instance"):
-            with UserInGameInfo._instance_lock:  # 为了保证线程安全在内部加锁
+            with UserInGameInfo._instance_lock:
                 if not hasattr(UserInGameInfo, "_instance"):
                     UserInGameInfo._instance = UserInGameInfo(*args, **kwargs)
         return UserInGameInfo._instance
