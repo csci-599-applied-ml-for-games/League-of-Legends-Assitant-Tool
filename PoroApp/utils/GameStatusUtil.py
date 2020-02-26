@@ -5,14 +5,20 @@ __date__ = '2/15/2020 6:22 PM'
 import time
 import random
 
+import win32gui
+
+from model.KeyBoardListener import KeyBoardCatcher
 from model.LoLClientHeartBeat import ClientStatus
 from model.InGameInfo import UserInGameInfo
-from utils.PositionUtil import genRelativePos
+from utils.CopyPasteUtil import pasteToSearchBox
+from utils.PositionUtil import genRelativePos, getSearchBoxPoint
 from view.NotificationWindow import NotificationWindow
-from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, POPUP_COUNTER
+from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, TAB_PANEL, LOL_CLIENT_NAME, \
+    SEARCH_BOX_POINT
 from model.ImgProcessor import ImgCatcherThread, ImgCropType
 
-thread_pool = []
+bp_session_thread_pool = []
+in_game_thread_pool = []
 ImgCropType.init()
 
 
@@ -27,8 +33,12 @@ def statusChange(client):
                                     callback=None)
             # TODO  暂时防误杀
             if client.getStatus()["name"] != "InRoom":
-                for item in thread_pool:
-                    item.stop()
+                for thread in bp_session_thread_pool:
+                    thread.stop()
+                bp_session_thread_pool.clear()
+                # 重置所有游戏信息
+                ImgCatcherThread.resetLocalList()
+                UserInGameInfo.getInstance().resetAll()
         else:
             # 游戏阶段， BP， 选英雄， 游戏内
             # detect user's position
@@ -51,21 +61,19 @@ def statusChange(client):
                     UserInGameInfo.getInstance() \
                         .setPosition("TOP", msg="Since we join the custom room, so we assigned a TOP position to you")
                 # 这里开启一个线程 去捕捉 图片 预测 不需要跟pyqt挂钩
-                goCaptureAndAnalysis(client)
+                bpSessionAnalysis(client)
 
 
             else:
                 # InGame
-                # TODO
-                print("In Game Mode1")
-                if random.randint(0, 1) == 1:
-                    NotificationWindow.suggest('Game Mode',
-                                               "Ready to fright! \n"
-                                               "Poro will continue to give you suggestions",
-                                               callback=None)
-                if len(thread_pool) > 0:
-                    for thread in thread_pool:
+                # NotificationWindow.suggest('Game Mode',
+                #                            "Ready to fright! \n"
+                #                            "Poro will continue to give you suggestions",
+                #                            callback=None)
+                if len(bp_session_thread_pool) > 0:
+                    for thread in bp_session_thread_pool:
                         thread.stop()
+                inGameAnalysis(client)
 
 
     else:
@@ -74,12 +82,35 @@ def statusChange(client):
                                    callback=None)
 
 
+def inGameAnalysis(client_info):
+    if len(in_game_thread_pool) == 0:
+        tab_catcher = KeyBoardCatcher("TAB_IMG_CATCHER", client_info, TAB_PANEL)
+
+        in_game_thread_pool.append(tab_catcher)
+        tab_catcher.setDaemon(True)
+        tab_catcher.start()
+
+
+def copyAndPaste():
+    # champ_name = UserInGameInfo.getInstance().getRecommendChampAutoCountList()
+    champ_name = "eKKO"
+    enlargement_factor = UserInGameInfo.getInstance().getEnlargementFactor()
+    lobby_client = win32gui.FindWindow(None, LOL_CLIENT_NAME)
+    if lobby_client != 0:
+        rect = win32gui.GetWindowRect(lobby_client)
+        relative_point = getSearchBoxPoint(rect, SEARCH_BOX_POINT, enlargement_factor)
+        if champ_name is not None:
+            pasteToSearchBox(relative_point, champ_name)
+        else:
+            NotificationWindow.suggest('BP Champion Session',
+                                       "It seems like you don't have any one recommend champion..\n Good Luck then",
+                                       callback=None)
+
+
 # initialize an image catcher
 # and use position data to crop imgs in every n sec.
-def goCaptureAndAnalysis(client_info):
-    ban_you_catcher = None
-    ban_enemy_catcher = None
-    if len(thread_pool) == 0:
+def bpSessionAnalysis(client_info):
+    if len(bp_session_thread_pool) == 0:
         ban_you_catcher = ImgCatcherThread("BAN_YOU_IMG_CATCHER", client_info, ImgCropType.BAN_5_CHAMP,
                                            genRelativePos(client_info.getPosition(), BAN_AREA_YOU,
                                                           client_info.getEnlargementFactor()))
@@ -88,8 +119,8 @@ def goCaptureAndAnalysis(client_info):
                                              genRelativePos(client_info.getPosition(), BAN_AREA_ENEMY,
                                                             client_info.getEnlargementFactor()))
 
-        thread_pool.append(ban_you_catcher)
-        thread_pool.append(ban_enemy_catcher)
+        bp_session_thread_pool.append(ban_you_catcher)
+        bp_session_thread_pool.append(ban_enemy_catcher)
         ban_you_catcher.setDaemon(True)
         ban_enemy_catcher.setDaemon(True)
         ban_you_catcher.start()
@@ -102,22 +133,30 @@ def goCaptureAndAnalysis(client_info):
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
-                                      UserInGameInfo.getInstance().getBannedChampList()),
-                                  callback=None)
+                                      UserInGameInfo.getInstance().getBannedChampListHTML()),
+                                  callback=copyAndPaste)
 
     if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE:
         UserInGameInfo.getInstance().setEnemyFlag(True)
         NotificationWindow.threat('BP Champion Session',
                                   """Enemy team has banned these following champions:<html>
-                                  <head><style></style></head><body><ul>{}</ul></body></html>""".format(
-                                      UserInGameInfo.getInstance().getEnemyBannedChampList()),
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                      UserInGameInfo.getInstance().getEnemyBannedChampListHTML()),
                                   callback=None)
 
     # 在这里可以进行英雄推荐了
     if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE and \
             UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
         print("UserPosition :", UserInGameInfo.getInstance().getPosition())
+        UserInGameInfo.getInstance().initRecommendChampList()
         NotificationWindow.suggest('BP Champion Session',
-                                   "Poro highly recommends you to choose champion: <br/> <u><b> {} </b></u> to win this game. ".format(
-                                       "Drius"),
-                                   callback=None)
+                                   """Poro highly recommends you to choose champion:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                       UserInGameInfo.getInstance().getRecommendChampListHTML()),
+                                   callback=copyAndPaste)

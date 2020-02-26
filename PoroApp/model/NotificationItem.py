@@ -44,7 +44,7 @@ class NotificationItem(QWidget):
         self.labelTitle = QLabel(title, self)
         font = self.labelTitle.font()
         font.setBold(True)
-        font.setPixelSize(15)
+        font.setPixelSize(16)
         self.labelTitle.setFont(font)
         self.labelTitle.setStyleSheet('color: {}; padding-left: 3px'.format(msg_color))
         # self.labelTitle.move(50, 30)
@@ -57,7 +57,7 @@ class NotificationItem(QWidget):
         self.labelMessage = QLabel(
             message, self, cursor=Qt.PointingHandCursor, wordWrap=True, alignment=Qt.AlignLeft | Qt.AlignTop)
         font = self.labelMessage.font()
-        font.setPixelSize(15)
+        font.setPixelSize(13)
         self.labelMessage.setFont(font)
         self.labelMessage.setStyleSheet('color: {}; padding-left: 3px'.format(msg_color))
         self.labelMessage.adjustSize()

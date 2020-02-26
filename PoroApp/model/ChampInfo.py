@@ -11,6 +11,15 @@ from conf.Settings import CHAMPION_BASIC_CSV_PATH, CHAMPION_PROFILE_PATH
 FILE_PATH = CHAMPION_BASIC_CSV_PATH
 
 
+def gen_multi_lanes(lanes):
+    imgs_html = ""
+    for lane in lanes:
+        if lane is not None and lane is not "":
+            imgs_html += "<img id=\"lane_icon\" src=\"resources/data/lane/{}.png\">".format(lane)
+
+    return imgs_html
+
+
 class ChampionBasicInfo(object):
     _instance_lock = threading.Lock()
 
@@ -22,19 +31,22 @@ class ChampionBasicInfo(object):
                 self.info[row[3]] = {
                     "en_name": row[3],
                     "en_title": row[4],
-                    "img": CHAMPION_PROFILE_PATH + "/" + row[3] + ".jpg"
+                    "img": CHAMPION_PROFILE_PATH + "/" + row[3] + ".jpg",
+                    "class": row[5],
+                    "POS": gen_multi_lanes(list([row[6], row[7], row[8]]))
                 }
 
-    def toHtml(self, champ_name):
+    def toHtml(self, champ_name, win_rate=None):
         # TODO 等数据整合好， 把数据替换掉
-        return "<div class=\"info\"><img src=\"{}\">  Name: {}  Win Rate: {}<br/>" \
-               "<span><img id=\"class_icon\" src=\"{}\">&nbsp;&nbsp;&nbsp;<img id=\"lane_icon\" src=\"{}\">" \
-               "</span></div><br/>" \
+        return "<div class=\"info\"><img src=\"{}\"> {} {}<br/>" \
+               "<span><img id=\"class_icon\" src=\"{}\">&nbsp;&nbsp;&nbsp;{}" \
+               "</span></div><hr/>" \
             .format(self.info[champ_name]['img'],
                     self.info[champ_name]['en_name'],
-                    "58.9%",
-                    "resources/data/classes/Marksman.png",
-                    "resources/data/lane/Top.png")
+                    "[Win Rate]: " + str(win_rate) if win_rate is not None else "- [" + self.info[champ_name][
+                        'en_title'] + "]",
+                    "resources/data/classes/{}.png".format(self.info[champ_name]['class']),
+                    self.info[champ_name]['POS'])
 
     @classmethod
     def getInstance(cls, *args, **kwargs):

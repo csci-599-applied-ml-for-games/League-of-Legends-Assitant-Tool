@@ -28,10 +28,15 @@ BAN_AREA_ENEMY = (1075, 30, 1265, 60)
 POSITION_AREA = (565, 500, 710, 542)
 # player's position set
 POSITION_SET = ["TOP", "SUPPORT", "BOTTOM", "JUNGLE", "MID"]
+SEARCH_BOX_POINT = (870, 105)
 
 # ImgCatcher Rate
 IMG_CATCHER_RATE = 3
 BANNED_CHAMP_SIZE = 3
+
+# KeyBoard Capture Rate
+KEYBOARD_CATCHER_RATE = 1
+TAB_PANEL = (380, 300, 1540, 670)
 
 # Champion profile recognition model setting
 CHECK_POINT_PATH = "resources/model/face_recognition_model.h5"

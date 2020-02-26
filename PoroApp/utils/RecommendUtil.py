@@ -1,16 +1,19 @@
 __author__ = 'Alvin Zhou'
-__email__ = 'byang971@usc.edu'
+__email__ = 'xihaozho@usc.edu'
 __date__ = '2/21/2020 3:48 PM'
 
+# %%
 import numpy as np
 import pandas as pd
 import csv
 
-
 # filter method
+from view.NotificationWindow import NotificationWindow
+
+
 def selectBestAlternativeChampion(input_champ: str) -> list:
-    input_file1 = pd.read_csv('../resources/data/winRateCorr_spearmanr.csv')
-    input_file2 = pd.read_csv('../resources/data/champStatsCorr.csv')
+    input_file1 = pd.read_csv('resources/data/winRateCorr_spearmanr.csv')
+    input_file2 = pd.read_csv('resources/data/champStatsCorr.csv')
     names1 = []
     names2 = []
     for i in range(len(input_file2)):
@@ -44,18 +47,18 @@ def selectBestAlternativeChampion(input_champ: str) -> list:
             for k in range(0, 30):
                 names2.append(input_file1.columns[rank2[k] + 1])
 
-    names = set(names2).intersection(set(names1))
-    names = list(names)[::-1][:5]
+    names = set(names1).intersection(set(names2))
+    names = list(names)[::-1]
     return names
 
 
 # selection method
-def basedOnBans(bansByThem: list, position: str, bansInAll: list) -> list:
-    input_file = pd.read_csv('../resources/data/champion.csv')
+def gen_recommend_champs(bansByThem: list, position: str, bansInAll: list) -> list:
+    input_file = pd.read_csv('resources/data/champion.csv')
     names = []
     for i in range(len(input_file)):
         champ_name = input_file.iloc[i, 0].replace('\xa0', ' ')
-        names.append((champ_name.strip(), input_file.iloc[i, 1]))
+        names.append((champ_name.strip(), input_file.iloc[i, 1], input_file.iloc[i, 2]))
 
     possiblePick = []
     for ban in bansByThem:
@@ -66,21 +69,18 @@ def basedOnBans(bansByThem: list, position: str, bansInAll: list) -> list:
         if champ in bansInAll:
             possiblePick.remove(champ)
 
-    result = []
+    result = {}
     for champ in possiblePick:
         for name in names:
             if champ == name[0] and position == name[1]:
-                result.append(champ)
-    result = set(result)
-    return result
+                result[champ] = name[2]
+    result = sorted(result.items(), key=lambda item: item[1])
 
-
-# %%
-
-
-test = basedOnBans(bansByThem=["Rengar", "Master Yi", "Nocturne", "Vel'Koz", "Sett"],
-                   position="Top",
-                   bansInAll=["Rengar", "Master Yi", "Nocturne", "Vel'Koz", "Sett",
-                              "Sona", "Sett", "Taric", "Yasuo", "Dr. Mundo"])
-print(test)
-# %%
+    if len(result) < 1:
+        NotificationWindow.detect('BP Champion Session',
+                                  "Their Bans are not aiming on specific champions, \n"
+                                  "pick your favorite one and beat them with your Mamba Mentality!",
+                                  callback=None)
+        return None
+    else:
+        return result[::-1][:3]

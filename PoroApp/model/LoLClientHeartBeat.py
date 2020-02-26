@@ -81,7 +81,7 @@ class ClientStatus:
             "players": 9,
             "choosing": 9
         }
-        return inverted_index.get(status_str, 3)
+        return inverted_index.get(status_str, 2)
 
 
 class ClientInfo:
@@ -151,6 +151,7 @@ class ClientHeartBeat(QObject):
                 # keep the func work properly when user open different size of client,
                 # we create a variable called enlargement factor
                 enlargement_factor = self._getEnlargementFactor(rect)
+                UserInGameInfo.getInstance().setEnlargementFactor(enlargement_factor)
                 current_status = self._getCurrentStatus(rect, enlargement_factor)
                 print("current_status ->", current_status)
                 client_info = ClientInfo(True, current_status)

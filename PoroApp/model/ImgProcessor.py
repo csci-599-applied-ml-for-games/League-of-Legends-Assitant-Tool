@@ -19,18 +19,16 @@ local_enemy_banned_list = set()
 
 class ImgCropType:
     # index 0 to 3
-    BAN_5_CHAMP, ENEMY_5_CHAMP, TAB_PANEL = range(3)
+    BAN_5_CHAMP, ENEMY_5_CHAMP = range(2)
     Types = {
         BAN_5_CHAMP: None,
         ENEMY_5_CHAMP: None,
-        TAB_PANEL: None
     }
 
     @classmethod
     def init(cls):
         cls.Types[cls.BAN_5_CHAMP] = {'index': 0}
         cls.Types[cls.ENEMY_5_CHAMP] = {'index': 1}
-        cls.Types[cls.TAB_PANEL] = {'index': 2}
 
     @classmethod
     def type(cls, ntype):
@@ -51,7 +49,14 @@ class ImgCatcherThread(threading.Thread):
         self.crop_position = crop_position
         self.__running = threading.Event()  # a event using to stop thread
         self.__running.set()  # set() could enable thread to receive event
-        self._heart_beat_rate = IMG_CATCHER_RATE
+        self._capture_rate = IMG_CATCHER_RATE
+
+    @classmethod
+    def resetLocalList(cls):
+        global local_you_banned_list
+        global local_enemy_banned_list
+        local_you_banned_list.clear()
+        local_enemy_banned_list.clear()
 
     def run(self):
         global local_you_banned_list
@@ -96,10 +101,11 @@ class ImgCatcherThread(threading.Thread):
                 pass
 
             else:
+                # only expect choose champion mode and in game mode
                 print("GameMode : ", self.client_info.isGameMode())
                 print("You shouldn't be here. ---from ImgCatcherThread.py")
 
-            time.sleep(self._heart_beat_rate)
+            time.sleep(self._capture_rate)
 
     def stop(self):
         print("name: " + self.name + " has stopped.")
