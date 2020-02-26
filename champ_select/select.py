@@ -29,7 +29,7 @@ def selectBestAlternativeChampion(input_champ: str) -> list:
                 champ_name5k = champ_name4k.replace('4','')
                 champ_namek = champ_name5k.replace('?',' ')               
                 names1.append(champ_namek)
-    
+
     for i in range(len(input_file1)):
         if input_file1.iloc[i,0].strip() == input_champ:
             winRateCorr = input_file1.iloc[i,1:]
@@ -38,9 +38,9 @@ def selectBestAlternativeChampion(input_champ: str) -> list:
             
             for k in range(0,30):
                 names2.append(input_file1.columns[rank2[k]+1])
-    
-    names = set(names2).intersection(set(names1))
-    names = list(names)[::-1][:5]
+
+    names = set(names1).intersection(set(names2))
+    names = list(names)[::-1]
     return names
 
 # selection method
