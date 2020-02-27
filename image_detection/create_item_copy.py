@@ -19,7 +19,7 @@ def traversefile(workdir):
             count += 1
     return count
 
-traverse = traversefile(workdir='lol_data_2/images')
+traverse = traversefile(workdir='images')
 print(traverse)
 
 
@@ -42,7 +42,7 @@ def traversefile1(workdir):
             count += 1
     return count
 
-traverse1 = traversefile1(workdir='lol_data_2/images')
+traverse1 = traversefile1(workdir='images')
 print(traverse1)
 
 # %%
