@@ -1,0 +1,289 @@
+Champion,1st Item,2nd Item,3rd Item,4th Item, Pick Rate, Win Rate
+Alistar, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.1167,0.6571
+Alistar, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0633,0.6842
+Alistar, Knight's Vow, Locket of the Iron Solari, Redemption,NaN,0.04,0.3333
+Alistar, Knight's Vow, Zeke's Convergence, Locket of the Iron Solari,NaN,0.0367,0.7273
+Alistar, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0333,0.7
+Alistar, Zeke's Convergence, Knight's Vow, Gargoyle Stoneplate,NaN,0.0333,0.8
+Alistar, Knight's Vow, Zeke's Convergence, Redemption,NaN,0.03,0.8889
+Alistar, Knight's Vow, Redemption, Locket of the Iron Solari,NaN,0.0267,0.75
+Bard, Athene's Unholy Grail, Redemption, Locket of the Iron Solari,NaN,0.0488,0.6981
+Bard, Twin Shadows, Redemption, Locket of the Iron Solari,NaN,0.0295,0.75
+Bard, Redemption, Locket of the Iron Solari, Knight's Vow,NaN,0.0221,0.7917
+Bard, Twin Shadows, Locket of the Iron Solari, Redemption,NaN,0.0193,0.5238
+Bard, Redemption, Athene's Unholy Grail, Locket of the Iron Solari,NaN,0.0193,0.7619
+Bard, Locket of the Iron Solari, Redemption, Knight's Vow,NaN,0.0184,0.7
+Bard, Athene's Unholy Grail, Redemption, Knight's Vow,NaN,0.0147,0.8125
+Bard, Redemption, Locket of the Iron Solari, Twin Shadows,NaN,0.011,0.9167
+Blitzcrank, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.137,0.6953
+Blitzcrank, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0795,0.5988
+Blitzcrank, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0722,0.6327
+Blitzcrank, Zeke's Convergence, Locket of the Iron Solari, Redemption,NaN,0.0349,0.6761
+Blitzcrank, Zeke's Convergence, Redemption, Knight's Vow,NaN,0.0329,0.6119
+Blitzcrank, Zeke's Convergence, Redemption, Locket of the Iron Solari,NaN,0.0255,0.6731
+Blitzcrank, Knight's Vow, Zeke's Convergence, Locket of the Iron Solari,NaN,0.0221,0.7333
+Blitzcrank, Zeke's Convergence, Knight's Vow, Gargoyle Stoneplate,NaN,0.0167,0.5588
+Brand, Liandry's Torment, Rylai's Crystal Scepter, Zhonya's Hourglass,NaN,0.1011,0.5556
+Brand, Rylai's Crystal Scepter, Liandry's Torment, Zhonya's Hourglass,NaN,0.0843,0.5333
+Brand, Liandry's Torment, Zhonya's Hourglass, Rylai's Crystal Scepter,NaN,0.0618,0.6364
+Brand, Liandry's Torment, Rylai's Crystal Scepter, Morellonomicon,NaN,0.0562,0.5
+Brand, Liandry's Torment, Morellonomicon, Zhonya's Hourglass,NaN,0.0393,0.1429
+Brand, Rylai's Crystal Scepter, Liandry's Torment, Morellonomicon,NaN,0.0393,1
+Brand, Liandry's Torment, Zhonya's Hourglass, Morellonomicon,NaN,0.0337,0.6667
+Brand, Liandry's Torment, Morellonomicon, Rylai's Crystal Scepter,NaN,0.0337,0.5
+Braum, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.1506,0.5902
+Braum, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.1185,0.5625
+Braum, Zeke's Convergence, Knight's Vow, Gargoyle Stoneplate,NaN,0.0691,0.7143
+Braum, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0543,0.7273
+Braum, Knight's Vow, Zeke's Convergence, Locket of the Iron Solari,NaN,0.0519,0.5238
+Braum, Zeke's Convergence, Redemption, Knight's Vow,NaN,0.0444,0.5556
+Braum, Knight's Vow, Locket of the Iron Solari, Redemption,NaN,0.037,0.9333
+Braum, Knight's Vow, Zeke's Convergence, Gargoyle Stoneplate,NaN,0.0346,0.8571
+Fiddlesticks, Zhonya's Hourglass, Banshee's Veil, Morellonomicon,NaN,0.0707,0.6154
+Fiddlesticks, Zhonya's Hourglass, Morellonomicon, Banshee's Veil,NaN,0.0543,0.6
+Fiddlesticks, Zhonya's Hourglass, Banshee's Veil, Twin Shadows,NaN,0.0435,0.625
+Fiddlesticks, Zhonya's Hourglass, Morellonomicon, Void Staff,NaN,0.038,1
+Fiddlesticks, Zhonya's Hourglass, Rylai's Crystal Scepter, Morellonomicon,NaN,0.0326,0.3333
+Fiddlesticks, Zhonya's Hourglass, Rylai's Crystal Scepter, Liandry's Torment,NaN,0.0326,0.6667
+Fiddlesticks, Zhonya's Hourglass, Liandry's Torment, Rylai's Crystal Scepter,NaN,0.0272,0.6
+Fiddlesticks, Zhonya's Hourglass, Morellonomicon, Liandry's Torment,NaN,0.0217,0.25
+Galio, Knight's Vow, Locket of the Iron Solari, Redemption,NaN,0.05,0.25
+Galio, Knight's Vow, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.05,0.75
+Galio, Righteous Glory, Locket of the Iron Solari, Knight's Vow,NaN,0.0375,1
+Galio, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0375,0.6667
+Galio, Locket of the Iron Solari, Knight's Vow, Gargoyle Stoneplate,NaN,0.0375,1
+Galio, Redemption, Gargoyle Stoneplate, Locket of the Iron Solari,NaN,0.0375,1
+Galio, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.025,0.5
+Galio, Gargoyle Stoneplate, Locket of the Iron Solari, Zeke's Convergence,NaN,0.025,0.5
+Janna, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.1093,0.7467
+Janna, Ardent Censer, Redemption, Athene's Unholy Grail,NaN,0.0933,0.6094
+Janna, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.086,0.661
+Janna, Athene's Unholy Grail, Redemption, Ardent Censer,NaN,0.0598,0.7317
+Janna, Athene's Unholy Grail, Redemption, Locket of the Iron Solari,NaN,0.0408,0.5714
+Janna, Ardent Censer, Redemption, Shurelya's Reverie,NaN,0.0364,0.52
+Janna, Ardent Censer, Redemption, Locket of the Iron Solari,NaN,0.0306,0.8095
+Janna, Ardent Censer, Mejai's Soulstealer, Athene's Unholy Grail,NaN,0.019,0.6154
+Karma, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.2277,0.6683
+Karma, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.0834,0.6351
+Karma, Athene's Unholy Grail, Ardent Censer, Locket of the Iron Solari,NaN,0.0631,0.7143
+Karma, Athene's Unholy Grail, Redemption, Ardent Censer,NaN,0.0372,0.7576
+Karma, Athene's Unholy Grail, Ardent Censer, Shurelya's Reverie,NaN,0.0282,0.48
+Karma, Ardent Censer, Redemption, Locket of the Iron Solari,NaN,0.0282,0.6
+Karma, Ardent Censer, Athene's Unholy Grail, Locket of the Iron Solari,NaN,0.0282,0.68
+Karma, Athene's Unholy Grail, Redemption, Locket of the Iron Solari,NaN,0.0282,0.72
+Leona, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.1382,0.6967
+Leona, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0845,0.5969
+Leona, Zeke's Convergence, Knight's Vow, Gargoyle Stoneplate,NaN,0.0786,0.5833
+Leona, Zeke's Convergence, Gargoyle Stoneplate, Knight's Vow,NaN,0.0498,0.5789
+Leona, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0465,0.7465
+Leona, Zeke's Convergence, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.0282,0.6279
+Leona, Zeke's Convergence, Locket of the Iron Solari, Redemption,NaN,0.0275,0.5952
+Leona, Knight's Vow, Zeke's Convergence, Locket of the Iron Solari,NaN,0.0255,0.5641
+Lulu, Ardent Censer, Redemption, Locket of the Iron Solari,NaN,0.1124,0.6932
+Lulu, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.1073,0.5595
+Lulu, Ardent Censer, Redemption, Athene's Unholy Grail,NaN,0.0626,0.7551
+Lulu, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.0485,0.5789
+Lulu, Ardent Censer, Redemption, Mikael's Crucible,NaN,0.046,0.6667
+Lulu, Ardent Censer, Redemption, Shurelya's Reverie,NaN,0.037,0.7586
+Lulu, Ardent Censer, Redemption, Zeke's Convergence,NaN,0.0358,0.6429
+Lulu, Ardent Censer, Locket of the Iron Solari, Redemption,NaN,0.0319,0.64
+Lux, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.1206,0.6129
+Lux, Athene's Unholy Grail, Redemption, Ardent Censer,NaN,0.0428,0.4545
+Lux, Athene's Unholy Grail, Ardent Censer, Zhonya's Hourglass,NaN,0.0428,0.7273
+Lux, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.035,0.6667
+Lux, Athene's Unholy Grail, Ardent Censer, Mejai's Soulstealer,NaN,0.0272,0.7143
+Lux, Luden's Echo, Morellonomicon, Mejai's Soulstealer,NaN,0.0233,0.8333
+Lux, Luden's Echo, Mejai's Soulstealer, Morellonomicon,NaN,0.0233,0.5
+Lux, Luden's Echo, Morellonomicon, Zhonya's Hourglass,NaN,0.0233,0.5
+Maokai, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.055,0.6667
+Maokai, Zeke's Convergence, Gargoyle Stoneplate, Knight's Vow,NaN,0.0367,0.75
+Maokai, Liandry's Torment, Morellonomicon, Mejai's Soulstealer,NaN,0.0275,1
+Maokai, Zeke's Convergence, Redemption, Locket of the Iron Solari,NaN,0.0275,0.3333
+Maokai, Knight's Vow, Zeke's Convergence, Redemption,NaN,0.0275,1
+Maokai, Knight's Vow, Zeke's Convergence, Righteous Glory,NaN,0.0275,1
+Maokai, Knight's Vow, Zeke's Convergence, Spirit Visage,NaN,0.0183,0.5
+Maokai, Knight's Vow, Zeke's Convergence, Locket of the Iron Solari,NaN,0.0183,1
+Morgana, Zhonya's Hourglass, Redemption, Locket of the Iron Solari,NaN,0.1657,0.5886
+Morgana, Zhonya's Hourglass, Locket of the Iron Solari, Redemption,NaN,0.0729,0.5065
+Morgana, Zhonya's Hourglass, Redemption, Zeke's Convergence,NaN,0.0426,0.5556
+Morgana, Zhonya's Hourglass, Redemption, Ardent Censer,NaN,0.0341,0.6944
+Morgana, Zhonya's Hourglass, Zeke's Convergence, Redemption,NaN,0.0303,0.5938
+Morgana, Zhonya's Hourglass, Ardent Censer, Redemption,NaN,0.0265,0.6071
+Morgana, Zhonya's Hourglass, Redemption, Twin Shadows,NaN,0.0237,0.48
+Morgana, Zhonya's Hourglass, Twin Shadows, Redemption,NaN,0.0208,0.5
+Nami, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.1614,0.6683
+Nami, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.1079,0.7293
+Nami, Athene's Unholy Grail, Redemption, Ardent Censer,NaN,0.0754,0.6989
+Nami, Ardent Censer, Redemption, Athene's Unholy Grail,NaN,0.0722,0.6404
+Nami, Ardent Censer, Redemption, Locket of the Iron Solari,NaN,0.0552,0.6471
+Nami, Athene's Unholy Grail, Redemption, Locket of the Iron Solari,NaN,0.0414,0.6471
+Nami, Ardent Censer, Athene's Unholy Grail, Locket of the Iron Solari,NaN,0.0227,0.5357
+Nami, Ardent Censer, Mikael's Crucible, Redemption,NaN,0.0195,0.5
+Nautilus, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.0926,0.6444
+Nautilus, Zeke's Convergence, Knight's Vow, Gargoyle Stoneplate,NaN,0.0912,0.6391
+Nautilus, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0658,0.5833
+Nautilus, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0617,0.5889
+Nautilus, Zeke's Convergence, Gargoyle Stoneplate, Knight's Vow,NaN,0.0528,0.5714
+Nautilus, Zeke's Convergence, Locket of the Iron Solari, Redemption,NaN,0.0336,0.6122
+Nautilus, Zeke's Convergence, Gargoyle Stoneplate, Locket of the Iron Solari,NaN,0.0295,0.6744
+Nautilus, Zeke's Convergence, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.0233,0.6765
+Poppy, Righteous Glory, Zeke's Convergence, Gargoyle Stoneplate,NaN,0.0353,1
+Poppy, Knight's Vow, Zeke's Convergence, Gargoyle Stoneplate,NaN,0.0353,0.3333
+Poppy, Zeke's Convergence, Knight's Vow, Gargoyle Stoneplate,NaN,0.0353,0.6667
+Poppy, Knight's Vow, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.0235,1
+Poppy, Umbral Glaive, Dead Man's Plate, Spirit Visage,NaN,0.0235,1
+Poppy, Zeke's Convergence, Knight's Vow, Righteous Glory,NaN,0.0235,1
+Poppy, Knight's Vow, Adaptive Helm, Locket of the Iron Solari,NaN,0.0235,1
+Poppy, Zeke's Convergence, Sunfire Cape, Adaptive Helm,NaN,0.0235,0.5
+Pyke, Umbral Glaive, Youmuu's Ghostblade, Duskblade of Draktharr,NaN,0.1615,0.5879
+Pyke, Umbral Glaive, Youmuu's Ghostblade, Guardian Angel,NaN,0.1257,0.5996
+Pyke, Umbral Glaive, Youmuu's Ghostblade, Edge of Night,NaN,0.1217,0.5804
+Pyke, Umbral Glaive, Duskblade of Draktharr, Youmuu's Ghostblade,NaN,0.0833,0.5817
+Pyke, Umbral Glaive, Edge of Night, Guardian Angel,NaN,0.0565,0.6287
+Pyke, Umbral Glaive, Duskblade of Draktharr, Edge of Night,NaN,0.041,0.6163
+Pyke, Umbral Glaive, Duskblade of Draktharr, Guardian Angel,NaN,0.0382,0.5938
+Pyke, Umbral Glaive, Edge of Night, Youmuu's Ghostblade,NaN,0.0301,0.5317
+Rakan, Zeke's Convergence, Redemption, Knight's Vow,NaN,0.1045,0.7451
+Rakan, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.084,0.7317
+Rakan, Zeke's Convergence, Redemption, Locket of the Iron Solari,NaN,0.0594,0.7931
+Rakan, Zeke's Convergence, Locket of the Iron Solari, Redemption,NaN,0.0574,0.7143
+Rakan, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.0389,0.5789
+Rakan, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0369,0.6667
+Rakan, Zeke's Convergence, Shurelya's Reverie, Redemption,NaN,0.0307,0.8
+Rakan, Zeke's Convergence, Ardent Censer, Redemption,NaN,0.0287,0.5714
+Rumble, Liandry's Torment, Morellonomicon, Zhonya's Hourglass,NaN,0.2,0.4167
+Rumble, Liandry's Torment, Zhonya's Hourglass, Void Staff,NaN,0.1167,0.7143
+Rumble, Liandry's Torment, Zhonya's Hourglass, Rylai's Crystal Scepter,NaN,0.1167,0.5714
+Rumble, Liandry's Torment, Zhonya's Hourglass, Morellonomicon,NaN,0.1,0.3333
+Rumble, Hextech GLP-800, Liandry's Torment, Morellonomicon,NaN,0.0333,0
+Rumble, Liandry's Torment, Rylai's Crystal Scepter, Zhonya's Hourglass,NaN,0.0333,1
+Rumble, Liandry's Torment, Rylai's Crystal Scepter, Hextech Protobelt-01,NaN,0.0167,0
+Rumble, Morellonomicon, Liandry's Torment, Mejai's Soulstealer,NaN,0.0167,1
+Senna, Umbral Glaive, Athene's Unholy Grail, Ardent Censer,NaN,0.2153,0.6366
+Senna, Umbral Glaive, Athene's Unholy Grail, Redemption,NaN,0.0818,0.5771
+Senna, Umbral Glaive, Athene's Unholy Grail, Edge of Night,NaN,0.063,0.6308
+Senna, Umbral Glaive, Athene's Unholy Grail, Duskblade of Draktharr,NaN,0.0475,0.6667
+Senna, Umbral Glaive, Duskblade of Draktharr, Edge of Night,NaN,0.0446,0.6522
+Senna, Umbral Glaive, Ardent Censer, Athene's Unholy Grail,NaN,0.0249,0.5974
+Senna, Umbral Glaive, Duskblade of Draktharr, Youmuu's Ghostblade,NaN,0.0194,0.6
+Senna, Umbral Glaive, Edge of Night, Duskblade of Draktharr,NaN,0.0194,0.5
+Shaco, Hextech GLP-800, Twin Shadows, Zhonya's Hourglass,NaN,0.0533,0.5
+Shaco, Luden's Echo, Mejai's Soulstealer, Morellonomicon,NaN,0.0444,0.7
+Shaco, Hextech GLP-800, Twin Shadows, Mejai's Soulstealer,NaN,0.04,0.6667
+Shaco, Hextech GLP-800, Twin Shadows, Liandry's Torment,NaN,0.0356,0.75
+Shaco, Hextech GLP-800, Twin Shadows, Morellonomicon,NaN,0.0356,0.625
+Shaco, Hextech GLP-800, Liandry's Torment, Zhonya's Hourglass,NaN,0.0311,0.4286
+Shaco, Luden's Echo, Morellonomicon, Mejai's Soulstealer,NaN,0.0267,1
+Shaco, Hextech GLP-800, Mejai's Soulstealer, Twin Shadows,NaN,0.0267,0.6667
+Shen, Knight's Vow, Locket of the Iron Solari, Redemption,NaN,0.1429,0.6923
+Shen, Knight's Vow, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.0659,0.3333
+Shen, Knight's Vow, Locket of the Iron Solari, Warmog's Armor,NaN,0.044,0.75
+Shen, Knight's Vow, Randuin's Omen, Locket of the Iron Solari,NaN,0.033,0.6667
+Shen, Redemption, Locket of the Iron Solari, Guardian Angel,NaN,0.033,0.6667
+Shen, Redemption, Knight's Vow, Locket of the Iron Solari,NaN,0.033,1
+Shen, Knight's Vow, Locket of the Iron Solari, Randuin's Omen,NaN,0.033,0.6667
+Shen, Knight's Vow, Gargoyle Stoneplate, Locket of the Iron Solari,NaN,0.033,1
+Sona, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.1929,0.7077
+Sona, Athene's Unholy Grail, Ardent Censer, Locket of the Iron Solari,NaN,0.0653,0.5909
+Sona, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.0504,0.7059
+Sona, Athene's Unholy Grail, Redemption, Shurelya's Reverie,NaN,0.0475,0.6875
+Sona, Athene's Unholy Grail, Redemption, Ardent Censer,NaN,0.0475,0.6875
+Sona, Athene's Unholy Grail, Ardent Censer, Mejai's Soulstealer,NaN,0.0356,0.9167
+Sona, Athene's Unholy Grail, Redemption, Locket of the Iron Solari,NaN,0.0326,0.7273
+Sona, Ardent Censer, Athene's Unholy Grail, Shurelya's Reverie,NaN,0.0208,0.5714
+Soraka, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.1075,0.6667
+Soraka, Athene's Unholy Grail, Redemption, Ardent Censer,NaN,0.1042,0.7969
+Soraka, Athene's Unholy Grail, Redemption, Locket of the Iron Solari,NaN,0.0472,0.5862
+Soraka, Ardent Censer, Redemption, Locket of the Iron Solari,NaN,0.0375,0.6957
+Soraka, Athene's Unholy Grail, Redemption, Shurelya's Reverie,NaN,0.0342,0.6667
+Soraka, Athene's Unholy Grail, Redemption, Spirit Visage,NaN,0.0293,0.6667
+Soraka, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.0277,0.7059
+Soraka, Ardent Censer, Redemption, Athene's Unholy Grail,NaN,0.0261,0.9375
+Swain, Liandry's Torment, Zhonya's Hourglass, Morellonomicon,NaN,0.1296,0.7179
+Swain, Liandry's Torment, Zhonya's Hourglass, Rylai's Crystal Scepter,NaN,0.0831,0.56
+Swain, Zhonya's Hourglass, Liandry's Torment, Morellonomicon,NaN,0.0831,0.64
+Swain, Rod of Ages, Zhonya's Hourglass, Liandry's Torment,NaN,0.0797,0.5
+Swain, Rod of Ages, Zhonya's Hourglass, Morellonomicon,NaN,0.0698,0.7143
+Swain, Zhonya's Hourglass, Morellonomicon, Liandry's Torment,NaN,0.0399,0.3333
+Swain, Zhonya's Hourglass, Liandry's Torment, Rylai's Crystal Scepter,NaN,0.0365,0.7273
+Swain, Liandry's Torment, Zhonya's Hourglass, Spirit Visage,NaN,0.0266,0.75
+TahmKench, Knight's Vow, Locket of the Iron Solari, Redemption,NaN,0.1852,0.65
+TahmKench, Knight's Vow, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.1296,0.6429
+TahmKench, Knight's Vow, Gargoyle Stoneplate, Locket of the Iron Solari,NaN,0.0741,0.875
+TahmKench, Knight's Vow, Zeke's Convergence, Gargoyle Stoneplate,NaN,0.0556,0.6667
+TahmKench, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.037,0.5
+TahmKench, Locket of the Iron Solari, Knight's Vow, Redemption,NaN,0.037,1
+TahmKench, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0278,0
+TahmKench, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.0278,0.6667
+Taric, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.1463,0.5952
+Taric, Zeke's Convergence, Knight's Vow, Ardent Censer,NaN,0.0976,0.6071
+Taric, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0767,0.8182
+Taric, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.0453,0.7692
+Taric, Zeke's Convergence, Locket of the Iron Solari, Redemption,NaN,0.0383,0.5455
+Taric, Zeke's Convergence, Redemption, Knight's Vow,NaN,0.0348,0.7
+Taric, Zeke's Convergence, Ardent Censer, Redemption,NaN,0.0348,0.9
+Taric, Zeke's Convergence, Ardent Censer, Locket of the Iron Solari,NaN,0.0314,0.6667
+Thresh, Zeke's Convergence, Knight's Vow, Redemption,NaN,0.0923,0.6462
+Thresh, Zeke's Convergence, Locket of the Iron Solari, Redemption,NaN,0.0664,0.6624
+Thresh, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.0591,0.625
+Thresh, Zeke's Convergence, Redemption, Locket of the Iron Solari,NaN,0.0494,0.6264
+Thresh, Knight's Vow, Locket of the Iron Solari, Redemption,NaN,0.0483,0.6
+Thresh, Zeke's Convergence, Redemption, Knight's Vow,NaN,0.0437,0.6364
+Thresh, Zeke's Convergence, Locket of the Iron Solari, Knight's Vow,NaN,0.04,0.6525
+Thresh, Knight's Vow, Zeke's Convergence, Redemption,NaN,0.0236,0.7229
+VelKoz, Luden's Echo, Zhonya's Hourglass, Morellonomicon,NaN,0.0585,0.3333
+VelKoz, Luden's Echo, Morellonomicon, Liandry's Torment,NaN,0.0439,0.4444
+VelKoz, Hextech GLP-800, Twin Shadows, Morellonomicon,NaN,0.039,0.625
+VelKoz, Luden's Echo, Zhonya's Hourglass, Banshee's Veil,NaN,0.0341,0.2857
+VelKoz, Luden's Echo, Morellonomicon, Zhonya's Hourglass,NaN,0.0293,0.5
+VelKoz, Luden's Echo, Zhonya's Hourglass, Liandry's Torment,NaN,0.0244,0.6
+VelKoz, Luden's Echo, Morellonomicon, Void Staff,NaN,0.0244,0.4
+VelKoz, Hextech GLP-800, Twin Shadows, Banshee's Veil,NaN,0.0195,0.5
+Volibear, Righteous Glory, Gargoyle Stoneplate, Knight's Vow,NaN,0.0769,0.3333
+Volibear, Righteous Glory, Zeke's Convergence, Gargoyle Stoneplate,NaN,0.0385,0
+Volibear, Righteous Glory, Zeke's Convergence, Locket of the Iron Solari,NaN,0.0385,0
+Volibear, Righteous Glory, Gargoyle Stoneplate, Dead Man's Plate,NaN,0.0256,1
+Volibear, Dead Man's Plate, Righteous Glory, Locket of the Iron Solari,NaN,0.0256,0.5
+Volibear, Righteous Glory, Locket of the Iron Solari, Zeke's Convergence,NaN,0.0256,1
+Volibear, Zeke's Convergence, Knight's Vow, Locket of the Iron Solari,NaN,0.0256,1
+Volibear, Righteous Glory, Knight's Vow, Locket of the Iron Solari,NaN,0.0256,0
+Xerath, Luden's Echo, Mejai's Soulstealer, Zhonya's Hourglass,NaN,0.1237,0.5
+Xerath, Luden's Echo, Mejai's Soulstealer, Morellonomicon,NaN,0.0962,0.6071
+Xerath, Luden's Echo, Zhonya's Hourglass, Morellonomicon,NaN,0.0928,0.3704
+Xerath, Luden's Echo, Morellonomicon, Zhonya's Hourglass,NaN,0.0825,0.625
+Xerath, Luden's Echo, Morellonomicon, Mejai's Soulstealer,NaN,0.0584,0.5882
+Xerath, Luden's Echo, Mejai's Soulstealer, Rabadon's Deathcap,NaN,0.0412,1
+Xerath, Luden's Echo, Zhonya's Hourglass, Mejai's Soulstealer,NaN,0.0412,0.75
+Xerath, Luden's Echo, Morellonomicon, Void Staff,NaN,0.0344,0.6
+Yuumi, Athene's Unholy Grail, Ardent Censer, Redemption,NaN,0.2027,0.6385
+Yuumi, Athene's Unholy Grail, Ardent Censer, Mejai's Soulstealer,NaN,0.1446,0.7368
+Yuumi, Athene's Unholy Grail, Mejai's Soulstealer, Ardent Censer,NaN,0.0752,0.6709
+Yuumi, Athene's Unholy Grail, Ardent Censer, Twin Shadows,NaN,0.0362,0.6842
+Yuumi, Athene's Unholy Grail, Ardent Censer, Mikael's Crucible,NaN,0.0352,0.5135
+Yuumi, Athene's Unholy Grail, Ardent Censer, Shurelya's Reverie,NaN,0.0343,0.6389
+Yuumi, Ardent Censer, Athene's Unholy Grail, Redemption,NaN,0.0324,0.4412
+Yuumi, Athene's Unholy Grail, Luden's Echo, Mejai's Soulstealer,NaN,0.0285,0.6333
+Zac, Knight's Vow, Warmog's Armor, Spirit Visage,NaN,0.038,1
+Zac, Knight's Vow, Gargoyle Stoneplate, Thornmail,NaN,0.038,0.3333
+Zac, Warmog's Armor, Spirit Visage, Thornmail,NaN,0.0253,1
+Zac, Redemption, Locket of the Iron Solari, Gargoyle Stoneplate,NaN,0.0253,0.5
+Zac, Spirit Visage, Knight's Vow, Warmog's Armor,NaN,0.0253,0.5
+Zac, Gargoyle Stoneplate, Knight's Vow, Locket of the Iron Solari,NaN,0.0253,1
+Zac, Sunfire Cape, Warmog's Armor, Spirit Visage,NaN,0.0253,1
+Zac, Knight's Vow, Spirit Visage, Gargoyle Stoneplate,NaN,0.0253,1
+Zilean, Hextech GLP-800, Twin Shadows, Mejai's Soulstealer,NaN,0.0472,0.6522
+Zilean, Hextech GLP-800, Twin Shadows, Zhonya's Hourglass,NaN,0.0411,0.55
+Zilean, Hextech GLP-800, Mejai's Soulstealer, Twin Shadows,NaN,0.037,0.4444
+Zilean, Twin Shadows, Shurelya's Reverie, Mejai's Soulstealer,NaN,0.0308,0.7333
+Zilean, Hextech GLP-800, Twin Shadows, Shurelya's Reverie,NaN,0.0205,0.4
+Zilean, Twin Shadows, Mejai's Soulstealer, Zhonya's Hourglass,NaN,0.0185,0.3333
+Zilean, Twin Shadows, Hextech GLP-800, Zhonya's Hourglass,NaN,0.0185,0.6667
+Zilean, Hextech GLP-800, Twin Shadows, Redemption,NaN,0.0185,0.4444
+Zyra, Liandry's Torment, Zhonya's Hourglass, Rylai's Crystal Scepter,NaN,0.1667,0.6818
+Zyra, Liandry's Torment, Rylai's Crystal Scepter, Zhonya's Hourglass,NaN,0.1667,0.4545
+Zyra, Liandry's Torment, Rylai's Crystal Scepter, Void Staff,NaN,0.0606,0.5
+Zyra, Liandry's Torment, Rylai's Crystal Scepter, Morellonomicon,NaN,0.053,0.7143
+Zyra, Liandry's Torment, Zhonya's Hourglass, Morellonomicon,NaN,0.0455,0.3333
+Zyra, Zhonya's Hourglass, Liandry's Torment, Rylai's Crystal Scepter,NaN,0.0455,0.6667
+Zyra, Liandry's Torment, Morellonomicon, Rylai's Crystal Scepter,NaN,0.0379,1
+Zyra, Liandry's Torment, Rylai's Crystal Scepter, Banshee's Veil,NaN,0.0227,0.6667
