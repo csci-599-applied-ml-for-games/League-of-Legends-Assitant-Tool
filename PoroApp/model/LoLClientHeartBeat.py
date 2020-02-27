@@ -159,7 +159,6 @@ class ClientHeartBeat(QObject):
                 self.keeper.emit(client_info)
             elif game_client != 0:
                 # 进入游戏阶段
-                print("game mode detected")
                 client_info = ClientInfo(True, ClientStatus.InGame)
                 rect = win32gui.GetWindowRect(game_client)
                 client_info.setPosition(rect)

@@ -56,7 +56,6 @@ class POINT(Structure):
 
 def mouse_click(x=None, y=None):
     if not x is None and not y is None:
-        print("point -> ({},{})".format(x, y))
         _mouse_move(x, y)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
@@ -72,6 +71,7 @@ def input_a_str(str=''):
     for _ in range(14):
         win32api.keybd_event(VK_CODE["backspace"], 0, 0, 0)
         win32api.keybd_event(VK_CODE["backspace"], 0, win32con.KEYEVENTF_KEYUP, 0)
+
     for c in str:
         win32api.keybd_event(VK_CODE[c], 0, 0, 0)
         win32api.keybd_event(VK_CODE[c], 0, win32con.KEYEVENTF_KEYUP, 0)

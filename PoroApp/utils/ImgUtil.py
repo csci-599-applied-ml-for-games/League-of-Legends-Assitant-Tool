@@ -35,9 +35,10 @@ def loadAllImgFromDirPath(base_path, img_paths):
 
 def cropImgByRect(position, binarize=True, save_file=False, threshold=200):
     img = ImageGrab.grab(bbox=(position))
+    # need to binarize or not
     if binarize:
         img = binarize_processing(img, threshold)
-    # to file
+    # save to file
     if save_file:
         imgName = genRandomStr() + ".png"
         img.save(imgName)
@@ -45,18 +46,27 @@ def cropImgByRect(position, binarize=True, save_file=False, threshold=200):
     return img
 
 
-def cutIntoFivePieces(img, interval=10):
-    length = int((img.size[0] - 4 * interval) / 5)
-    width = img.size[1]
+def cutIntoFivePieces(img, interval=10, horizontal=False):
     rect_list = []
-    five_imags = []
-    for index in range(5):
-        left = (length + interval) * index
-        right = length + left
-        rect_list.append((left, 0, right, width))
+    five_imgs = []
+    if not horizontal:
+        length = int((img.size[0] - 4 * interval) / 5)
+        width = img.size[1]
+        for index in range(5):
+            left = (length + interval) * index
+            right = length + left
+            rect_list.append((left, 0, right, width))
+
+    else:
+        width = img.size[0]
+        height = int((img.size[1] - 4 * interval) / 5)
+        for index in range(5):
+            upper = (height + interval) * index
+            lower = width + upper
+            rect_list.append((0, upper, width, lower))
 
     for rect in rect_list:
         cropped = img.crop(rect)
-        five_imags.append(cropped)
+        five_imgs.append(cropped)
 
-    return five_imags
+    return five_imgs

@@ -14,9 +14,15 @@ class UserInGameInfo(object):
     玩家游戏数据
     """
     _instance_lock = threading.Lock()
+    # banned champs
     enemy_banned_champ_list = set()
     your_side_banned_champ_list = set()
+
+    # recommend champs
     recommend_champ_list = set()
+
+    # in game champs
+    enemy_team_champ_list = list()
 
     clicked_counter = 0
     enlargement_factor = 1.0
@@ -123,6 +129,19 @@ class UserInGameInfo(object):
 
     def resetEnemyBannedChampList(self):
         self.enemy_banned_champ_list.clear()
+
+    def setEnemyTeamList(self, champ_list):
+        self.enemy_team_champ_list = champ_list
+
+    def getEnemyTeamList(self):
+        return self.enemy_team_champ_list
+
+    def getEnemyTeamListHTML(self):
+        html_blob = str()
+        for champ in self.enemy_team_champ_list:
+            html_str = ChampionBasicInfo.getInstance().toHtml(champ)
+            html_blob += html_str
+        return html_blob
 
     @classmethod
     def getInstance(cls, *args, **kwargs):

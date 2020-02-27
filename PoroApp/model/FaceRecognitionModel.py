@@ -18,7 +18,7 @@ class ProfileModel(object):
     _width = 32
     _channels = 3
     _batch_size = 128
-    _num_classes = 151
+    _num_classes = 152
 
     def __init__(self):
         self._reload_model_schema()
