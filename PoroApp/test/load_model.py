@@ -383,8 +383,9 @@
 from PIL import Image
 
 from model.FaceRecognitionModel import ProfileModel
-
-pic_path = "./22222.png"
-img = Image.open(pic_path)
-name = ProfileModel.getInstance().predictSingleImg(img)
-print(name)
+# from model.ItemDetectionModel import ItemModel
+#
+# pic_path = "./eda36C451d.png"
+# img = Image.open(pic_path)
+# name = ItemModel.getInstance().predictImgs(img)
+# print(name)

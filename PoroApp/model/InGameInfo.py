@@ -23,6 +23,10 @@ class UserInGameInfo(object):
 
     # in game champs
     enemy_team_champ_list = list()
+    # enemy team is left or right in tab panel
+    enemy_info_in_table_area = None
+    # has user enter the game
+    in_game_flag = False
 
     clicked_counter = 0
     enlargement_factor = 1.0
@@ -30,6 +34,19 @@ class UserInGameInfo(object):
     def __init__(self):
         self.you_twice_flag = False
         self.enemy_twice_flag = False
+
+    def setInGameFlag(self):
+        self.in_game_flag = True
+
+    def getInGameFlag(self):
+        return self.in_game_flag
+
+    def setEnemyInfoArea(self, area):
+        expanded_area = (area[0], area[1], area[2] + 405, area[3])
+        self.enemy_info_in_table_area = expanded_area
+
+    def getEnemyInfoArea(self):
+        return self.enemy_info_in_table_area
 
     def setPosition(self, position, msg=None):
         self.user_position = position
@@ -49,8 +66,8 @@ class UserInGameInfo(object):
     def hasPositionInfo(self):
         return hasattr(self, "user_position")
 
-    def addBannedChampions(self, champ_name):
-        self.your_side_banned_champ_list.add(champ_name)
+    def addBannedChampions(self, champ_names):
+        self.your_side_banned_champ_list = champ_names
 
     def getBannedChampionsSize(self):
         return len(self.your_side_banned_champ_list)
@@ -65,8 +82,11 @@ class UserInGameInfo(object):
     def getEnemyBannedChampionsSize(self):
         return len(self.enemy_banned_champ_list)
 
-    def addEnemyBannedChampions(self, champ_name):
-        self.enemy_banned_champ_list.add(champ_name)
+    def getEnemyBannedChampionsSet(self):
+        return self.enemy_banned_champ_list
+
+    def addEnemyBannedChampions(self, champ_names):
+        self.enemy_banned_champ_list = champ_names
 
     def getEnemyBannedChampListHTML(self):
         html_blob = str()

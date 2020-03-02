@@ -8,7 +8,7 @@ import numpy as np
 from tensorflow import keras
 
 from conf.ProfileModelLabel import LABEL_NAME
-from conf.Settings import CHECK_POINT_PATH
+from conf.Settings import FACE_RECOGNITION_CHECK_POINT_PATH
 
 
 class ProfileModel(object):
@@ -18,11 +18,11 @@ class ProfileModel(object):
     _width = 32
     _channels = 3
     _batch_size = 128
-    _num_classes = 152
+    _num_classes = 151
 
     def __init__(self):
         self._reload_model_schema()
-        self.model.load_weights(CHECK_POINT_PATH)
+        self.model.load_weights(FACE_RECOGNITION_CHECK_POINT_PATH)
 
     def _reload_model_schema(self):
         self.model = tf.keras.models.Sequential([

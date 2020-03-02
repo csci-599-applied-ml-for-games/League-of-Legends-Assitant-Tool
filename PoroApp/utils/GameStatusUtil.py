@@ -14,16 +14,16 @@ from utils.CopyPasteUtil import pasteToSearchBox
 from utils.PositionUtil import genRelativePos, getSearchBoxPoint
 from view.NotificationWindow import NotificationWindow
 from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, TAB_PANEL, LOL_CLIENT_NAME, \
-    SEARCH_BOX_POINT, YOUR_TEAM_AREA, ENEMY_TEAM_AREA
+    SEARCH_BOX_POINT, YOUR_TEAM_AREA, ENEMY_TEAM_AREA, POPUP_THRESHOLD
 from model.ImgProcessor import ImgCatcherThread, ImgCropType
 
 bp_session_thread_pool = []
 in_game_thread_pool = []
 ImgCropType.init()
+pop_threshold = POPUP_THRESHOLD
 
 
 def statusChange(client):
-    global POPUP_COUNTER
     if client.hasAlive():
         if not client.isGameMode():
             # 非游戏和 房间阶段
@@ -33,11 +33,12 @@ def statusChange(client):
                                     callback=None)
             # TODO  暂时防误杀
             if client.getStatus()["name"] != "InRoom":
-                for thread1 in bp_session_thread_pool:
-                    thread1.stop()
-                for thread2 in in_game_thread_pool:
-                    thread2.stop()
+                if len(bp_session_thread_pool) > 0:
+                    [thread.stop() for thread in bp_session_thread_pool]
+                if len(in_game_thread_pool) > 0:
+                    [thread.stop() for thread in in_game_thread_pool]
                 bp_session_thread_pool.clear()
+                in_game_thread_pool.clear()
                 # 重置所有游戏信息
                 ImgCatcherThread.resetLocalList()
                 UserInGameInfo.getInstance().resetAll()
@@ -65,7 +66,6 @@ def statusChange(client):
                 # 这里开启一个线程 去捕捉 图片 预测 不需要跟pyqt挂钩
                 bpSessionAnalysis(client)
 
-
             else:
                 if len(bp_session_thread_pool) > 0:
                     for thread in bp_session_thread_pool:
@@ -81,6 +81,7 @@ def statusChange(client):
 
 
 def inGameAnalysis(client_info):
+    global pop_threshold
     if len(in_game_thread_pool) == 0:
         NotificationWindow.suggest('Game Mode',
                                    "Ready to fright! \n"
@@ -95,12 +96,12 @@ def inGameAnalysis(client_info):
         enemy_team_catcher.setDaemon(True)
         enemy_team_catcher.start()
 
-        # tab_catcher = KeyBoardCatcher("TAB_IMG_CATCHER", client_info, TAB_PANEL)
-        #
-        # in_game_thread_pool.append(tab_catcher)
-        # tab_catcher.setDaemon(True)
-        # tab_catcher.start()
-    if len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
+        tab_catcher = KeyBoardCatcher("TAB_IMG_CATCHER", client_info, TAB_PANEL)
+        in_game_thread_pool.append(tab_catcher)
+        tab_catcher.setDaemon(True)
+        tab_catcher.start()
+
+    if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
         NotificationWindow.detect('BP Champion Session',
                                   """Enemy team has choose these following champions:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
@@ -109,6 +110,7 @@ def inGameAnalysis(client_info):
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
                                       UserInGameInfo.getInstance().getEnemyTeamListHTML()),
                                   callback=None)
+        pop_threshold -= 1
 
 
 def copyAndPaste():

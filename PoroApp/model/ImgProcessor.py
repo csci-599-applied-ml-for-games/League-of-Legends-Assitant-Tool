@@ -10,7 +10,7 @@ from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE
 from model.FaceRecognitionModel import ProfileModel
 from model.InGameInfo import UserInGameInfo
 from model.LoLClientHeartBeat import ClientStatus
-from utils.ImgUtil import cropImgByRect, cutIntoFivePieces
+from utils.ImgUtil import grabImgByRect, split2NPieces
 
 local_you_banned_list = set()
 local_enemy_banned_list = set()
@@ -50,6 +50,9 @@ class ImgCatcherThread(threading.Thread):
         self.__running = threading.Event()  # a event using to stop thread
         self.__running.set()  # set() could enable thread to receive event
         self._capture_rate = IMG_CATCHER_RATE
+        self.self_ban_check_flag = 0
+        self.enemy_ban_check_flag = 0
+        self.enemy_team_check_flag = 0
 
     @classmethod
     def resetLocalList(cls):
@@ -66,55 +69,56 @@ class ImgCatcherThread(threading.Thread):
             if self.client_info.getStatusIndex() == ClientStatus.ChooseChampion:
                 if self.img_crop_type == ImgCropType.BAN_5_CHAMP:
                     # crop the image
-                    five_profiles = cropImgByRect(self.crop_position, binarize=False)
+                    five_profiles = grabImgByRect(self.crop_position, binarize=False)
                     # 把整张图片切成五份
-                    five_imgs = cutIntoFivePieces(five_profiles)
+                    five_imgs = split2NPieces(five_profiles)
                     # 预测五张图片
                     results = ProfileModel.getInstance().predictImgs(five_imgs)
                     print("you  banned->", results)
-                    new_add = list(set(set(results) - set(NONE_LIST)) - set(local_you_banned_list))
-                    if len(new_add) > 0:
-                        local_you_banned_list.add(new_add[0])
-                        UserInGameInfo.getInstance().addBannedChampions(new_add[0])
+                    UserInGameInfo.getInstance().addBannedChampions(set(set(results) - set(NONE_LIST)))
 
-                    if len(local_you_banned_list) == BANNED_CHAMP_SIZE:
-                        self.stop()
+                    if UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
+                        if self.self_ban_check_flag == 3:
+                            self.stop()
+                        self.self_ban_check_flag += 1
 
                 elif self.img_crop_type == ImgCropType.ENEMY_BAN_5_CHAMP:
-                    five_profiles = cropImgByRect(self.crop_position, binarize=False)
+                    five_profiles = grabImgByRect(self.crop_position, binarize=False)
                     # 把整张图片切成五份
-                    five_imgs = cutIntoFivePieces(five_profiles)
+                    five_imgs = split2NPieces(five_profiles)
                     # 预测五张图片
                     results = ProfileModel.getInstance().predictImgs(five_imgs)
                     print("enemy banned ->", results)
-                    new_add = list(set(set(results) - set(NONE_LIST)) - set(local_enemy_banned_list))
-                    if len(new_add) > 0:
-                        local_enemy_banned_list.add(new_add[0])
-                        UserInGameInfo.getInstance().addEnemyBannedChampions(new_add[0])
+                    UserInGameInfo.getInstance().addEnemyBannedChampions(set(set(results) - set(NONE_LIST)))
 
-                    if len(local_enemy_banned_list) == BANNED_CHAMP_SIZE:
-                        self.stop()
+                    if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE:
+                        if self.enemy_ban_check_flag == 3:
+                            self.stop()
+                        self.enemy_ban_check_flag += 1
 
             elif self.client_info.getStatusIndex() == ClientStatus.InGame:
                 if self.img_crop_type == ImgCropType.YOUR_TEAM_5_CHAMP:
-                    five_profiles = cropImgByRect(self.crop_position, save_file=True, binarize=False)
+                    five_profiles = grabImgByRect(self.crop_position, binarize=False)
                     # 把整张图片切成五份
-                    five_imgs = cutIntoFivePieces(five_profiles, interval=20, horizontal=True)
+                    five_imgs = split2NPieces(five_profiles, interval=20, horizontal=False)
                     # 预测五张图片
                     results = ProfileModel.getInstance().predictImgs(five_imgs)
                     print("your team choose ->", results)
 
                 elif self.img_crop_type == ImgCropType.ENEMY_TEAM_5_CHAMP:
-                    five_profiles = cropImgByRect(self.crop_position, binarize=False)
+                    five_profiles = grabImgByRect(self.crop_position, binarize=False)
                     # 把整张图片切成五份
-                    five_imgs = cutIntoFivePieces(five_profiles, interval=20, horizontal=True)
+                    five_imgs = split2NPieces(five_profiles, interval=20, horizontal=False)
                     # 预测五张图片
                     results = ProfileModel.getInstance().predictImgs(five_imgs)
+                    print("enemy team predict result -> ", results)
                     # TODO 之所以加Urgot 是因为Unselected总是识别失败
-                    if len(list(set(results) - set(NONE_LIST) - set("Urgot"))) == 5:
+                    if len(list(set(set(results) - set(NONE_LIST)))) == 5:
                         UserInGameInfo.getInstance().setEnemyTeamList(results)
                         print("enemy team choose ->", results)
-                        self.stop()
+                        if self.enemy_team_check_flag == 3:
+                            self.stop()
+                        self.enemy_team_check_flag += 1
 
             else:
                 # only expect choose champion mode and in game mode

@@ -10,7 +10,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME, STATUS_AREA, LOL_CLIENT_SIZE, POSITION_AREA, \
     POSITION_SET, BP_AREA
 from model.InGameInfo import UserInGameInfo
-from utils.ImgUtil import cropImgByRect
+from utils.ImgUtil import grabImgByRect
 from utils.OCRUtil import img2Str
 from utils.PositionUtil import genRelativePos
 
@@ -65,6 +65,7 @@ class ClientStatus:
             "TFT": 6,
             "TFT.": 6,
             "TET": 6,
+            "TIT": 6,
             "CLASH": 7,
             "CHAMPION!": 9,
             "InGame": 10,
@@ -174,18 +175,18 @@ class ClientHeartBeat(QObject):
         return enlargement_factor
 
     def _getCurrentStatus(self, position, factor=1.0):
-        client_banner_img = cropImgByRect(
+        client_banner_img = grabImgByRect(
             genRelativePos(position, STATUS_AREA, factor), threshold=200)
         highlight_name = img2Str(client_banner_img)
         print("highlight_name ->", highlight_name)
         # 如果返回的是InRoom 状态， 这时需要额外关注 POSITION_AREA 区域字体的变化
         if highlight_name == "InRoom":
             # 降低阈值 再次判断
-            client_banner_img = cropImgByRect(
+            client_banner_img = grabImgByRect(
                 genRelativePos(position, BP_AREA, factor), threshold=150)
             twice_title = img2Str(client_banner_img)
             print("twice_title ->", twice_title)
-            position_label_img = cropImgByRect(
+            position_label_img = grabImgByRect(
                 genRelativePos(position, POSITION_AREA, factor), threshold=140)
             position = img2Str(position_label_img)
 

@@ -33,7 +33,7 @@ def loadAllImgFromDirPath(base_path, img_paths):
     return img_list
 
 
-def cropImgByRect(position, binarize=True, save_file=False, threshold=200):
+def grabImgByRect(position, binarize=True, save_file=False, threshold=200):
     img = ImageGrab.grab(bbox=(position))
     # need to binarize or not
     if binarize:
@@ -46,27 +46,64 @@ def cropImgByRect(position, binarize=True, save_file=False, threshold=200):
     return img
 
 
-def cutIntoFivePieces(img, interval=10, horizontal=False):
+def cropImgByRect(img, position, save_file=False):
+    cropped = img.crop(position)
+    if save_file:
+        imgName = genRandomStr() + ".png"
+        cropped.save(imgName)
+        print("saved a png file whose name is: ", imgName)
+    return cropped
+
+
+def split2NPieces(img, pieces=5, interval=10, horizontal=True, save_file=False):
     rect_list = []
     five_imgs = []
-    if not horizontal:
-        length = int((img.size[0] - 4 * interval) / 5)
+    if horizontal:
+        length = int((img.size[0] - (pieces - 1) * interval) / pieces)
         width = img.size[1]
-        for index in range(5):
+        for index in range(pieces):
             left = (length + interval) * index
             right = length + left
             rect_list.append((left, 0, right, width))
 
     else:
         width = img.size[0]
-        height = int((img.size[1] - 4 * interval) / 5)
-        for index in range(5):
+        height = int((img.size[1] - (pieces - 1) * interval) / pieces)
+        for index in range(pieces):
             upper = (height + interval) * index
-            lower = width + upper
+            lower = height + upper
             rect_list.append((0, upper, width, lower))
 
     for rect in rect_list:
         cropped = img.crop(rect)
         five_imgs.append(cropped)
+        if save_file:
+            imgName = genRandomStr() + ".png"
+            cropped.save(imgName)
+            print("saved a png file whose name is: ", imgName)
 
     return five_imgs
+
+
+def cut3X2Boxes(img, interval=5, save_file=False):
+    rect_list = []
+    six_imgs = []
+    length = int((img.size[0] - 2 * interval) / 3)
+    width = int((img.size[1] - interval) / 2)
+    for index in range(3):
+        left_upper = (length + interval - 1) * index
+        right_upper = length + left_upper
+        upper_img = (left_upper, 0, right_upper, width)
+        lower_img = (left_upper, width + interval, right_upper, 2 * width + interval)
+        rect_list.append(upper_img)
+        rect_list.append(lower_img)
+
+    for rect in rect_list:
+        cropped = img.crop(rect)
+        six_imgs.append(cropped)
+        if save_file:
+            imgName = genRandomStr() + ".png"
+            cropped.save(imgName)
+            print("saved a png file whose name is: ", imgName)
+
+    return six_imgs

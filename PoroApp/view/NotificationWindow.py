@@ -22,7 +22,7 @@ class NotificationWindow(QListWidget):
 
     def __init__(self, *args, **kwargs):
         super(NotificationWindow, self).__init__(*args, **kwargs)
-        self.setSpacing(3)
+        self.setSpacing(4)
         self.setMinimumWidth(412)
         self.setMaximumWidth(412)
         QApplication.instance().setQuitOnLastWindowClosed(True)
@@ -138,21 +138,23 @@ class NotificationWindow(QListWidget):
         cls.saveLastMessage(message)
 
     @classmethod
-    def detect(cls, title, message, callback=None, disabled=True):
-        cls._createInstance()
-        item = QListWidgetItem(cls._instance)
-        w = NotificationItem(title, message, item,
-                             ntype=NotificationIcon.Detect, callback=callback,
-                             bg_color=QColor(7, 73, 83),
-                             msg_color=rgb2hex(244, 244, 244))
-        w.closed.connect(cls._instance.removeItem)
-        width = cls._instance.width() - cls._instance.spacing()
-        item.setSizeHint(QSize(width, w.height()))
-        cls._instance.setItemWidget(item, w)
-        cls.saveLastMessage(message)
+    def detect(cls, title, message, callback=None, disabled=False):
+
+        if not disabled:
+            cls._createInstance()
+            item = QListWidgetItem(cls._instance)
+            w = NotificationItem(title, message, item,
+                                 ntype=NotificationIcon.Detect, callback=callback,
+                                 bg_color=QColor(7, 73, 83),
+                                 msg_color=rgb2hex(244, 244, 244))
+            w.closed.connect(cls._instance.removeItem)
+            width = cls._instance.width() - cls._instance.spacing()
+            item.setSizeHint(QSize(width, w.height()))
+            cls._instance.setItemWidget(item, w)
+            cls.saveLastMessage(message)
 
     @classmethod
-    def threat(cls, title, message, callback=None, disabled=True):
+    def threat(cls, title, message, callback=None, disabled=False):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item,
@@ -166,7 +168,7 @@ class NotificationWindow(QListWidget):
         cls.saveLastMessage(message)
 
     @classmethod
-    def suggest(cls, title, message, callback=None, disabled=True):
+    def suggest(cls, title, message, callback=None, disabled=False):
         cls._createInstance()
         item = QListWidgetItem(cls._instance)
         w = NotificationItem(title, message, item,

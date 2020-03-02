@@ -155,4 +155,4 @@ LABEL_NAME = ['Aatrox',
               'Zoe',
               'Zyra']
 
-NONE_LIST = ['Nothing', 'None', 'None2']
+NONE_LIST = ['Nothing', 'None', 'None2', 'Unselected', 'Lucian', 'Udyr']
