@@ -63,7 +63,7 @@ class ItemModel(object):
     def predictSingleImg(self, image):
         # convert PIL image to Tensor
         result = list()
-        imgs = split2NPieces(image, pieces=6, interval=1, horizontal=True, save_file=True)
+        imgs = split2NPieces(image, pieces=6, interval=1, horizontal=True)
         for img in imgs:
             img_arr = np.array(img.convert('RGB'))
             image = tf.convert_to_tensor(img_arr)

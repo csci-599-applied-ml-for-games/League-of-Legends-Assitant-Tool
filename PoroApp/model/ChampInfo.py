@@ -47,6 +47,13 @@ class ChampionBasicInfo(object):
                     "resources/data/classes/{}.png".format(self.info[champ_name]['class']),
                     self.info[champ_name]['POS'])
 
+    def toSimpleHtml(self, champ_name):
+        return "<div class=\"info\"><img src=\"{}\"> {} - [{}] <span><img id=\"class_icon\" src=\"{}\"></div>" \
+            .format(self.info[champ_name]['img'],
+                    self.info[champ_name]['en_name'],
+                    self.info[champ_name]['en_title'],
+                    "resources/data/classes/{}.png".format(self.info[champ_name]['class']))
+
     @classmethod
     def getInstance(cls, *args, **kwargs):
         if not hasattr(ChampionBasicInfo, "_instance"):

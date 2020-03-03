@@ -112,6 +112,17 @@ def inGameAnalysis(client_info):
                                   callback=None)
         pop_threshold -= 1
 
+    if pop_threshold == -1 and UserInGameInfo.getInstance().getEnemyInfoArea() is not None:
+        NotificationWindow.detect('Game Mode',
+                                  """Enemy team have been detected on your tab panel <br/> There are:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                      UserInGameInfo.getInstance().getEnemyTeamListSimpleHTML()),
+                                  callback=None)
+        pop_threshold -= 1
+
 
 def copyAndPaste():
     champ_name = UserInGameInfo.getInstance().getRecommendChampAutoCountList()

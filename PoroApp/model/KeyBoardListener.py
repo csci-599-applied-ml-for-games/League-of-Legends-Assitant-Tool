@@ -27,12 +27,12 @@ def decodeImgs(enemy_info_img):
     """
     result = collections.defaultdict(dict)
     profiles_img = cropImgByRect(enemy_info_img, TEAM_PROFILES)
-    gears_img = cropImgByRect(enemy_info_img, TEAM_GEARS, save_file=True)
+    gears_img = cropImgByRect(enemy_info_img, TEAM_GEARS)
 
     five_profiles = split2NPieces(profiles_img, interval=21, horizontal=False)
     five_champ_name = ProfileModel.getInstance().predictImgs(five_profiles)
 
-    five_gears = split2NPieces(gears_img, interval=42, horizontal=False, save_file=True)
+    five_gears = split2NPieces(gears_img, interval=42, horizontal=False)
     five_gear_list = ItemModel.getInstance().predictImgs(five_gears)
 
     for name, gears in zip(five_champ_name, five_gear_list):
@@ -44,6 +44,8 @@ def decodeImgs(enemy_info_img):
 
 
 class KeyBoardCatcher(threading.Thread):
+    _instance_lock = threading.Lock()
+
     def __init__(self, name, client_info, crop_position):
         threading.Thread.__init__(self)
         self.name = name
@@ -63,16 +65,17 @@ class KeyBoardCatcher(threading.Thread):
                         and win32api.GetAsyncKeyState(win32con.VK_TAB):
                     print("tab was pressed")
                     if UserInGameInfo.getInstance().getEnemyInfoArea() is None:
+                        self._instance_lock.acquire()
                         # crop the whole image, since we dont know where is the enemy
                         tab_panel = grabImgByRect(self.crop_position, binarize=False, save_file=True)
                         # 把整张图片切成五份, 但是我们不知道左边是敌人还是右边是敌人，所以需要比较一次
-                        teamLeft = cropImgByRect(tab_panel, TEAM_LEFT_IN_TAB, save_file=True)
-                        teamRight = cropImgByRect(tab_panel, TEAM_RIGHT_IN_TAB, save_file=True)
+                        teamLeft = cropImgByRect(tab_panel, TEAM_LEFT_IN_TAB)
+                        teamRight = cropImgByRect(tab_panel, TEAM_RIGHT_IN_TAB)
 
-                        left_five_imgs = split2NPieces(teamLeft, interval=21, horizontal=False, save_file=True)
+                        left_five_imgs = split2NPieces(teamLeft, interval=21, horizontal=False)
                         left_results = ProfileModel.getInstance().predictImgs(left_five_imgs)
                         #
-                        right_five_imgs = split2NPieces(teamRight, interval=21, horizontal=False, save_file=True)
+                        right_five_imgs = split2NPieces(teamRight, interval=21, horizontal=False)
                         right_results = ProfileModel.getInstance().predictImgs(right_five_imgs)
 
                         print("left_results->", left_results)
@@ -88,8 +91,10 @@ class KeyBoardCatcher(threading.Thread):
                                 set(left_results))) <= 3:
                             if self.left_twice_flag:
                                 UserInGameInfo.getInstance().setEnemyInfoArea(TEAM_LEFT_IN_TAB)
-                                print("set right")
+                                print("set left")
                             self.left_twice_flag = True
+
+                        self._instance_lock.release()
 
                     else:
                         # once we got to know which is enemy, we can only crop small part of pics
@@ -97,11 +102,12 @@ class KeyBoardCatcher(threading.Thread):
                         tab_panel = grabImgByRect(self.crop_position, binarize=False)
                         # 把整张图片切成五份, 但是我们不知道左边是敌人还是右边是敌人，所以需要比较一次
                         enemy_info_img = cropImgByRect(tab_panel, enemy_panel_area)
-                        # enemy_info = decodeImgs(enemy_info_img)
-                        # TODO haven't test yet
+                        enemy_info = decodeImgs(enemy_info_img)
+                        print(enemy_info)
                         pass
 
-                time.sleep(self._capture_rate)
+            time.sleep(self._capture_rate)
+            # self._instance_lock.release()
 
     def stop(self):
         print("name: " + self.name + " has stopped.")

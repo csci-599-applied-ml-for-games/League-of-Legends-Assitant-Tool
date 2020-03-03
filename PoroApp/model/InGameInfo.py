@@ -163,6 +163,13 @@ class UserInGameInfo(object):
             html_blob += html_str
         return html_blob
 
+    def getEnemyTeamListSimpleHTML(self):
+        html_blob = str()
+        for champ in self.enemy_team_champ_list:
+            html_str = ChampionBasicInfo.getInstance().toSimpleHtml(champ)
+            html_blob += html_str
+        return html_blob
+
     @classmethod
     def getInstance(cls, *args, **kwargs):
         if not hasattr(UserInGameInfo, "_instance"):
