@@ -8,11 +8,11 @@ import win32gui
 from PyQt5.QtCore import pyqtSignal, QObject
 
 from conf.Settings import LOL_CLIENT_NAME, LOL_IN_GAME_CLIENT_NAME, STATUS_AREA, LOL_CLIENT_SIZE, POSITION_AREA, \
-    POSITION_SET, BP_AREA
+    POSITION_SET, BP_AREA, IN_GAME_CLIENT_SIZE
 from model.InGameInfo import UserInGameInfo
 from utils.ImgUtil import grabImgByRect
 from utils.OCRUtil import img2Str
-from utils.PositionUtil import genRelativePos
+from utils.PositionUtil import genRelativePos, getEnlargementFactor
 
 
 class ClientStatus:
@@ -68,6 +68,7 @@ class ClientStatus:
             "TIT": 6,
             "CLASH": 7,
             "CHAMPION!": 9,
+            "champion!": 9,
             "InGame": 10,
             "PLAY": 2,
             "LOADOUT!": 10,
@@ -80,7 +81,8 @@ class ClientStatus:
             "banning": 9,
             "picking": 9,
             "players": 9,
-            "choosing": 9
+            "choosing": 9,
+            "ry": 9
         }
         return inverted_index.get(status_str, 2)
 
@@ -97,12 +99,20 @@ class ClientInfo:
     def hasAlive(self):
         return self.isAlive
 
-    def setPosition(self, position):
+    def setPosition(self, position, status="BP"):
         assert position is not None, "LoL Client Position cannot be None"
-        actual_client_size = (position[2] - position[0], position[3] - position[1])
-        self.enlargement_factor = \
-            (list(float(actual / default) for default, actual in zip(LOL_CLIENT_SIZE, actual_client_size)))[0]
+        self._getEnlargementFactor(position, status)
         self.position = position
+
+    def _getEnlargementFactor(self, position, status="BP"):
+        actual_client_size = (position[2] - position[0], position[3] - position[1])
+        if status == "BP":
+            self.enlargement_factor = \
+                (list(float(actual / default) for default, actual in zip(LOL_CLIENT_SIZE, actual_client_size)))[0]
+        else:
+            self.enlargement_factor = \
+                (list(float(actual / default) for default, actual in zip(IN_GAME_CLIENT_SIZE, actual_client_size)))[0]
+        return self.enlargement_factor
 
     def getEnlargementFactor(self):
         return self.enlargement_factor
@@ -151,7 +161,7 @@ class ClientHeartBeat(QObject):
                 rect = win32gui.GetWindowRect(lobby_client)
                 # keep the func work properly when user open different size of client,
                 # we create a variable called enlargement factor
-                enlargement_factor = self._getEnlargementFactor(rect)
+                enlargement_factor = getEnlargementFactor(rect)
                 UserInGameInfo.getInstance().setEnlargementFactor(enlargement_factor)
                 current_status = self._getCurrentStatus(rect, enlargement_factor)
                 print("current_status ->", current_status)
@@ -163,16 +173,22 @@ class ClientHeartBeat(QObject):
                 client_info = ClientInfo(True, ClientStatus.InGame)
                 rect = win32gui.GetWindowRect(game_client)
                 client_info.setPosition(rect)
+                # TODO
+                enlargement_factor = getEnlargementFactor(rect)
                 self.keeper.emit(client_info)
             else:
                 self.keeper.emit(ClientInfo(False))  # lol client haven't start yet
             time.sleep(self._heart_beat_rate)
 
-    def _getEnlargementFactor(self, position):
+    def _getEnlargementFactor(self, position, status="BP"):
         actual_client_size = (position[2] - position[0], position[3] - position[1])
-        enlargement_factor = \
-            (list(float(actual / default) for default, actual in zip(LOL_CLIENT_SIZE, actual_client_size)))[0]
-        return enlargement_factor
+        if status == "BP":
+            self.enlargement_factor = \
+                (list(float(actual / default) for default, actual in zip(LOL_CLIENT_SIZE, actual_client_size)))[0]
+        else:
+            self.enlargement_factor = \
+                (list(float(actual / default) for default, actual in zip(IN_GAME_CLIENT_SIZE, actual_client_size)))[0]
+        return self.enlargement_factor
 
     def _getCurrentStatus(self, position, factor=1.0):
         client_banner_img = grabImgByRect(

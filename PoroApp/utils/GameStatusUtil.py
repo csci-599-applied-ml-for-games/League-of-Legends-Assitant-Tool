@@ -14,7 +14,7 @@ from utils.CopyPasteUtil import pasteToSearchBox
 from utils.PositionUtil import genRelativePos, getSearchBoxPoint
 from view.NotificationWindow import NotificationWindow
 from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, TAB_PANEL, LOL_CLIENT_NAME, \
-    SEARCH_BOX_POINT, YOUR_TEAM_AREA, ENEMY_TEAM_AREA, POPUP_THRESHOLD
+    SEARCH_BOX_POINT, YOUR_TEAM_AREA, ENEMY_TEAM_AREA, POPUP_THRESHOLD, USER_S_CHAMP_AREA
 from model.ImgProcessor import ImgCatcherThread, ImgCropType
 
 bp_session_thread_pool = []
@@ -46,10 +46,11 @@ def statusChange(client):
             # 游戏阶段， BP， 选英雄， 游戏内
             # detect user's position
             if client.getStatusIndex() == ClientStatus.AssignPosition:
-                NotificationWindow.detect('Entering Game Mode...',
-                                          "You are assigned in <u><b>{}</b></u> position.".format(
-                                              UserInGameInfo.getInstance().getPosition()),
-                                          callback=None)
+                if UserInGameInfo.getInstance().hasPositionInfo():
+                    NotificationWindow.detect('Entering Game Mode...',
+                                              "You are assigned in <u><b>{}</b></u> position.".format(
+                                                  UserInGameInfo.getInstance().getPosition()),
+                                              callback=None)
 
             # picking champions
             elif client.getStatusIndex() == ClientStatus.ChooseChampion:
@@ -61,8 +62,11 @@ def statusChange(client):
                 # TODO 都是为了测试， 正式时候可以删除
                 if not UserInGameInfo.getInstance().hasPositionInfo():
                     print("Since we join the custom room, so we assigned a TOP position to you")
-                    UserInGameInfo.getInstance() \
-                        .setPosition("TOP", msg="Since we join the custom room, so we assigned a TOP position to you")
+                    UserInGameInfo.getInstance().setPosition("TOP")
+                    NotificationWindow.detect('BP Champion Session',
+                                              "You has been assigned in <u><b>TOP</b></u> position. <br/> Tips: "
+                                              "Since we join the custom room, so we assigned a TOP position to you",
+                                              callback=None)
                 # 这里开启一个线程 去捕捉 图片 预测 不需要跟pyqt挂钩
                 bpSessionAnalysis(client)
 
@@ -101,6 +105,10 @@ def inGameAnalysis(client_info):
         tab_catcher.setDaemon(True)
         tab_catcher.start()
 
+        # enemy_team_catcher = ImgCatcherThread("USER_CHAMP_CATCHER", client_info, ImgCropType.USER_S_CHAMP_AREA,
+        #                                       genRelativePos(client_info.getPosition(), USER_S_CHAMP_AREA,
+        #                                                      client_info.getEnlargementFactor()))
+
     if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
         NotificationWindow.detect('BP Champion Session',
                                   """Enemy team has choose these following champions:<html>
@@ -113,6 +121,7 @@ def inGameAnalysis(client_info):
         pop_threshold -= 1
 
     if pop_threshold == -1 and UserInGameInfo.getInstance().getEnemyInfoArea() is not None:
+        #  得到在左还是在右的信息
         NotificationWindow.detect('Game Mode',
                                   """Enemy team have been detected on your tab panel <br/> There are:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
@@ -122,6 +131,8 @@ def inGameAnalysis(client_info):
                                       UserInGameInfo.getInstance().getEnemyTeamListSimpleHTML()),
                                   callback=None)
         pop_threshold -= 1
+
+    # start to detect user's info, user's champ and gears
 
 
 def copyAndPaste():

@@ -103,6 +103,7 @@ class KeyBoardCatcher(threading.Thread):
                         # 把整张图片切成五份, 但是我们不知道左边是敌人还是右边是敌人，所以需要比较一次
                         enemy_info_img = cropImgByRect(tab_panel, enemy_panel_area)
                         enemy_info = decodeImgs(enemy_info_img)
+                        UserInGameInfo.getInstance().setEnemyInfo(enemy_info)
                         print(enemy_info)
                         pass
 

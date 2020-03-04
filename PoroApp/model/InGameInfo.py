@@ -25,6 +25,8 @@ class UserInGameInfo(object):
     enemy_team_champ_list = list()
     # enemy team is left or right in tab panel
     enemy_info_in_table_area = None
+
+    enemy_info = None
     # has user enter the game
     in_game_flag = False
 
@@ -48,17 +50,11 @@ class UserInGameInfo(object):
     def getEnemyInfoArea(self):
         return self.enemy_info_in_table_area
 
+    def setEnemyInfo(self, result):
+        self.enemy_info = result
+
     def setPosition(self, position, msg=None):
         self.user_position = position
-        if msg is not None:
-            NotificationWindow.detect('BP Champion Session',
-                                      "You has been assigned in <u><b>TOP</b></u> position. <br/> Tips: {}".format(
-                                          msg),
-                                      callback=None)
-        else:
-            NotificationWindow.detect('BP Champion Session',
-                                      "You has been assigned in <u><b>TOP</b></u> position",
-                                      callback=None)
 
     def getPosition(self):
         return self.user_position

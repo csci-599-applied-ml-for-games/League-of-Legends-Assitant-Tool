@@ -25,7 +25,7 @@ POPUP_THRESHOLD = 3
 STATUS_AREA = (60, 15, 840, 53)
 BP_AREA = (500, 5, 870, 40)
 BAN_AREA_YOU = (15, 30, 205, 60)
-BAN_AREA_ENEMY = (1075, 30, 1265, 60)
+BAN_AREA_ENEMY = (1076, 30, 1266, 60)
 POSITION_AREA = (565, 500, 710, 542)
 YOUR_TEAM_AREA = (18, 105, 78, 485)  # Test
 # YOUR_TEAM_AREA = (56, 105, 116, 485) # Rank
@@ -40,7 +40,7 @@ IMG_CATCHER_RATE = 2
 BANNED_CHAMP_SIZE = 3
 
 # KeyBoard Capture Rate
-KEYBOARD_CATCHER_RATE = 3
+KEYBOARD_CATCHER_RATE = 0.5
 TAB_PANEL = (380, 300, 1540, 690)
 USER_GEAR_BOXES = (1130, 945, 1273, 1037)
 TEAM_LEFT_IN_TAB = (105, 23, 156, 378)
@@ -49,10 +49,14 @@ TEAM_RIGHT_IN_TAB = (679, 23, 730, 378)
 TEAM_PROFILES = (0, 0, 51, 355)
 TEAM_GEARS = (220, 17, 425, 355)
 
-# Champion profile recognition model setting
-FACE_RECOGNITION_CHECK_POINT_PATH = "resources/model/face_recognition_model.h5"
-ITEM_DETECTION_CHECK_POINT_PATH = "resources/model/item_detection_model.h5"
+# user's champ and gears
+USER_S_CHAMP_AREA = ()
+USER_S_GEAR = ()
 
+# Champion profile recognition model setting
+IN_GAME_PROFILE_RECOGNITION_CHECK_POINT_PATH = "resources/model/in_game_profile_model.h5"
+ITEM_DETECTION_CHECK_POINT_PATH = "resources/model/item_detection_model.h5"
+BANNED_CHAMP_RECOGNITION_CHECK_POINT_PATH = "resources/model/ban_face_recognition_model.h5"
 
 # Champion basic info csv
 CHAMPION_BASIC_CSV_PATH = "resources/data/champ_basic.csv"
