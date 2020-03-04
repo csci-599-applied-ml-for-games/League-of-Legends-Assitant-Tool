@@ -173,8 +173,8 @@ class ClientHeartBeat(QObject):
                 client_info = ClientInfo(True, ClientStatus.InGame)
                 rect = win32gui.GetWindowRect(game_client)
                 client_info.setPosition(rect)
-                # TODO
-                enlargement_factor = getEnlargementFactor(rect)
+                enlargement_factor = getEnlargementFactor(rect, "in_game")
+                UserInGameInfo.getInstance().setEnlargementFactor(enlargement_factor)
                 self.keeper.emit(client_info)
             else:
                 self.keeper.emit(ClientInfo(False))  # lol client haven't start yet

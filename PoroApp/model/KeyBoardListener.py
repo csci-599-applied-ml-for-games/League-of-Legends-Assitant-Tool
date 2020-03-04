@@ -85,13 +85,11 @@ class KeyBoardCatcher(threading.Thread):
                                 set(right_results))) <= 3:
                             if self.right_twice_flag:
                                 UserInGameInfo.getInstance().setEnemyInfoArea(TEAM_RIGHT_IN_TAB)
-                                print("set right")
                             self.right_twice_flag = True
                         elif len(set(UserInGameInfo.getInstance().getEnemyTeamList()).difference(
                                 set(left_results))) <= 3:
                             if self.left_twice_flag:
                                 UserInGameInfo.getInstance().setEnemyInfoArea(TEAM_LEFT_IN_TAB)
-                                print("set left")
                             self.left_twice_flag = True
 
                         self._instance_lock.release()
@@ -101,11 +99,10 @@ class KeyBoardCatcher(threading.Thread):
                         enemy_panel_area = UserInGameInfo.getInstance().getEnemyInfoArea()
                         tab_panel = grabImgByRect(self.crop_position, binarize=False)
                         # 把整张图片切成五份, 但是我们不知道左边是敌人还是右边是敌人，所以需要比较一次
-                        enemy_info_img = cropImgByRect(tab_panel, enemy_panel_area)
+                        enemy_info_img = cropImgByRect(tab_panel, enemy_panel_area, save_file=True)
                         enemy_info = decodeImgs(enemy_info_img)
-                        UserInGameInfo.getInstance().setEnemyInfo(enemy_info)
-                        print(enemy_info)
-                        pass
+                        if set(enemy_info.keys()) == (set(UserInGameInfo.getInstance().getEnemyTeamList())):
+                            UserInGameInfo.getInstance().appendEnemyInfo(enemy_info)
 
             time.sleep(self._capture_rate)
             # self._instance_lock.release()

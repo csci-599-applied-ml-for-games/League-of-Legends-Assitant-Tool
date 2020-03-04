@@ -5,15 +5,19 @@ __date__ = '2/5/2020 10:11 PM'
 import threading
 import time
 
+import win32gui
+
 from conf.ProfileModelLabel import NONE_LIST
-from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE
+from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE, LOL_IN_GAME_CLIENT_NAME
 from model.FaceRecognitionModel import ProfileModel, BanedChampRecognitionModel
 from model.InGameInfo import UserInGameInfo
 from model.LoLClientHeartBeat import ClientStatus
 from utils.ImgUtil import grabImgByRect, split2NPieces
+from utils.PositionUtil import getEnlargementFactor, genRelativePos
 
 local_you_banned_list = set()
 local_enemy_banned_list = set()
+local_yourself_champ_list = set()
 
 
 class ImgCropType:
@@ -57,17 +61,15 @@ class ImgCatcherThread(threading.Thread):
         self.self_ban_check_flag = 0
         self.enemy_ban_check_flag = 0
         self.enemy_team_check_flag = 0
+        self.self_champ_check_flag = 0
 
     @classmethod
     def resetLocalList(cls):
-        global local_you_banned_list
-        global local_enemy_banned_list
-        local_you_banned_list.clear()
-        local_enemy_banned_list.clear()
+        global local_yourself_champ_list
+        local_yourself_champ_list.clear()
 
     def run(self):
-        global local_you_banned_list
-        global local_enemy_banned_list
+        global local_yourself_champ_list
         print(self.name + " has started.")
         while self.__running.isSet():
             if self.client_info.getStatusIndex() == ClientStatus.ChooseChampion:
@@ -123,6 +125,23 @@ class ImgCatcherThread(threading.Thread):
                         if self.enemy_team_check_flag == 3:
                             self.stop()
                         self.enemy_team_check_flag += 1
+
+                elif self.img_crop_type == ImgCropType.USER_S_CHAMP_AREA:
+                    if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
+                            and UserInGameInfo.getInstance().hasEnemyInfoArea():
+                        rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
+                        factor = getEnlargementFactor(rect, "in_game")
+                        new_area = genRelativePos(rect, self.crop_position, factor)
+                        user_profiles = grabImgByRect(new_area, binarize=False, save_file=True)
+                        champ_name = ProfileModel.getInstance().predictSingleImg(user_profiles)
+                        local_yourself_champ_list.add(champ_name)
+                        if len(local_yourself_champ_list) == 1 and self.self_champ_check_flag == 2:
+                            UserInGameInfo.getInstance().setYourselfChamp(champ_name)
+                            print("your champ is -> ", champ_name)
+                            self.stop()
+                        self.self_champ_check_flag += 1
+
+
 
             else:
                 # only expect choose champion mode and in game mode

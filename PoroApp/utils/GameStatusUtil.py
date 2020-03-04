@@ -24,6 +24,7 @@ pop_threshold = POPUP_THRESHOLD
 
 
 def statusChange(client):
+    global pop_threshold
     if client.hasAlive():
         if not client.isGameMode():
             # 非游戏和 房间阶段
@@ -39,6 +40,7 @@ def statusChange(client):
                     [thread.stop() for thread in in_game_thread_pool]
                 bp_session_thread_pool.clear()
                 in_game_thread_pool.clear()
+                pop_threshold = POPUP_THRESHOLD
                 # 重置所有游戏信息
                 ImgCatcherThread.resetLocalList()
                 UserInGameInfo.getInstance().resetAll()
@@ -105,9 +107,11 @@ def inGameAnalysis(client_info):
         tab_catcher.setDaemon(True)
         tab_catcher.start()
 
-        # enemy_team_catcher = ImgCatcherThread("USER_CHAMP_CATCHER", client_info, ImgCropType.USER_S_CHAMP_AREA,
-        #                                       genRelativePos(client_info.getPosition(), USER_S_CHAMP_AREA,
-        #                                                      client_info.getEnlargementFactor()))
+        user_champ_catcher = ImgCatcherThread("USER_CHAMP_CATCHER", client_info, ImgCropType.USER_S_CHAMP_AREA,
+                                              USER_S_CHAMP_AREA)
+        in_game_thread_pool.append(user_champ_catcher)
+        user_champ_catcher.setDaemon(True)
+        user_champ_catcher.start()
 
     if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
         NotificationWindow.detect('BP Champion Session',
@@ -122,8 +126,8 @@ def inGameAnalysis(client_info):
 
     if pop_threshold == -1 and UserInGameInfo.getInstance().getEnemyInfoArea() is not None:
         #  得到在左还是在右的信息
-        NotificationWindow.detect('Game Mode',
-                                  """Enemy team have been detected on your tab panel <br/> There are:<html>
+        NotificationWindow.detect('In Game Detection',
+                                  """Poro has recognized your enemy team on your tab panel <br/> There are:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
@@ -132,7 +136,16 @@ def inGameAnalysis(client_info):
                                   callback=None)
         pop_threshold -= 1
 
-    # start to detect user's info, user's champ and gears
+    if pop_threshold == -2 and UserInGameInfo.getInstance().getYourselfChamp() is not None:
+        NotificationWindow.detect('In Game Detection',
+                                  """Poro has recognized your champion is:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                      UserInGameInfo.getInstance().getYourselfChampHTML()),
+                                  callback=None)
+        pop_threshold -= 1
 
 
 def copyAndPaste():

@@ -26,16 +26,27 @@ class UserInGameInfo(object):
     # enemy team is left or right in tab panel
     enemy_info_in_table_area = None
 
-    enemy_info = None
+    enemy_info = list()
     # has user enter the game
     in_game_flag = False
 
     clicked_counter = 0
     enlargement_factor = 1.0
 
+    yourself_champ = None
+
     def __init__(self):
         self.you_twice_flag = False
         self.enemy_twice_flag = False
+
+    def setYourselfChamp(self, champ):
+        self.yourself_champ = champ
+
+    def getYourselfChamp(self):
+        return self.yourself_champ
+
+    def getYourselfChampHTML(self):
+        return ChampionBasicInfo.getInstance().toHtml(self.yourself_champ)
 
     def setInGameFlag(self):
         self.in_game_flag = True
@@ -50,10 +61,13 @@ class UserInGameInfo(object):
     def getEnemyInfoArea(self):
         return self.enemy_info_in_table_area
 
-    def setEnemyInfo(self, result):
-        self.enemy_info = result
+    def hasEnemyInfoArea(self):
+        return self.enemy_info_in_table_area is not None
 
-    def setPosition(self, position, msg=None):
+    def appendEnemyInfo(self, result):
+        self.enemy_info.append(result)
+
+    def setPosition(self, position):
         self.user_position = position
 
     def getPosition(self):
@@ -139,6 +153,11 @@ class UserInGameInfo(object):
         self.enemy_banned_champ_list.clear()
         self.recommend_champ_list.clear()
         self.clicked_counter = 0
+        self.enemy_info_in_table_area = None
+        self.enemy_team_champ_list.clear()
+        self.enemy_info.clear()
+        self.in_game_flag = False
+        self.yourself_champ = None
 
     def resetBannedChampList(self):
         self.your_side_banned_champ_list.clear()
