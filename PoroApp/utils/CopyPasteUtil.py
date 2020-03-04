@@ -10,6 +10,7 @@ import win32con
 
 VK_CODE = {
     'backspace': 0x08,
+    ' ': 0x20,
     'a': 0x41,
     'b': 0x42,
     'c': 0x43,

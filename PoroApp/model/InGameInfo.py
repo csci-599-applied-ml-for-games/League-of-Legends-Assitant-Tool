@@ -5,7 +5,6 @@ __date__ = '2/15/2020 3:33 PM'
 import threading
 
 from utils.RecommendUtil import gen_recommend_champs
-from view.NotificationWindow import NotificationWindow
 from model.ChampInfo import ChampionBasicInfo
 
 
@@ -34,6 +33,8 @@ class UserInGameInfo(object):
     enlargement_factor = 1.0
 
     yourself_champ = None
+    yourself_gears = None
+    your_gears_msg_flag = False
 
     def __init__(self):
         self.you_twice_flag = False
@@ -47,6 +48,14 @@ class UserInGameInfo(object):
 
     def getYourselfChampHTML(self):
         return ChampionBasicInfo.getInstance().toHtml(self.yourself_champ)
+
+    def setYourselfGears(self, is_new=False, gears_info=None):
+        self.your_gears_msg_flag = is_new
+        self.yourself_gears = gears_info
+
+    def getYourselfGears(self):
+        if self.your_gears_msg_flag:
+            return None
 
     def setInGameFlag(self):
         self.in_game_flag = True

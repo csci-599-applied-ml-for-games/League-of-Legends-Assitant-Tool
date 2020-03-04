@@ -11,24 +11,30 @@ from conf.ProfileModelLabel import NONE_LIST
 from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE, LOL_IN_GAME_CLIENT_NAME
 from model.FaceRecognitionModel import ProfileModel, BanedChampRecognitionModel
 from model.InGameInfo import UserInGameInfo
+from model.ItemDetectionModel import ItemModel
 from model.LoLClientHeartBeat import ClientStatus
 from utils.ImgUtil import grabImgByRect, split2NPieces
 from utils.PositionUtil import getEnlargementFactor, genRelativePos
 
 local_you_banned_list = set()
 local_enemy_banned_list = set()
+
 local_yourself_champ_list = set()
+local_yourself_gears_list = set()
 
 
 class ImgCropType:
     # index 0 to 3
-    BAN_5_CHAMP, ENEMY_BAN_5_CHAMP, YOUR_TEAM_5_CHAMP, ENEMY_TEAM_5_CHAMP, USER_S_CHAMP_AREA = range(5)
+    BAN_5_CHAMP, ENEMY_BAN_5_CHAMP, YOUR_TEAM_5_CHAMP, \
+    ENEMY_TEAM_5_CHAMP, USER_S_CHAMP_AREA, USER_S_GEAR_AREA = range(6)
+
     Types = {
         BAN_5_CHAMP: None,
         ENEMY_BAN_5_CHAMP: None,
         YOUR_TEAM_5_CHAMP: None,
         ENEMY_TEAM_5_CHAMP: None,
-        USER_S_CHAMP_AREA: None
+        USER_S_CHAMP_AREA: None,
+        USER_S_GEAR_AREA: None
     }
 
     @classmethod
@@ -38,6 +44,7 @@ class ImgCropType:
         cls.Types[cls.YOUR_TEAM_5_CHAMP] = {'index': 2}
         cls.Types[cls.ENEMY_TEAM_5_CHAMP] = {'index': 3}
         cls.Types[cls.USER_S_CHAMP_AREA] = {'index': 4}
+        cls.Types[cls.USER_S_GEAR_AREA] = {'index': 5}
 
     @classmethod
     def type(cls, ntype):
@@ -66,10 +73,13 @@ class ImgCatcherThread(threading.Thread):
     @classmethod
     def resetLocalList(cls):
         global local_yourself_champ_list
+        global local_yourself_gears_list
         local_yourself_champ_list.clear()
+        local_yourself_gears_list.clear()
 
     def run(self):
         global local_yourself_champ_list
+        global local_yourself_gears_list
         print(self.name + " has started.")
         while self.__running.isSet():
             if self.client_info.getStatusIndex() == ClientStatus.ChooseChampion:
@@ -140,6 +150,25 @@ class ImgCatcherThread(threading.Thread):
                             print("your champ is -> ", champ_name)
                             self.stop()
                         self.self_champ_check_flag += 1
+
+                elif self.img_crop_type == ImgCropType.USER_S_GEAR_AREA:
+                    if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
+                            and UserInGameInfo.getInstance().hasEnemyInfoArea():
+                        rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
+                        factor = getEnlargementFactor(rect, "in_game")
+                        new_area = genRelativePos(rect, self.crop_position, factor)
+                        user_s_gears_img = grabImgByRect(new_area, binarize=False)
+                        user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img, save_file=True))
+                        if local_yourself_champ_list != user_s_gears:
+                            print("user_s_gears -> ", user_s_gears)
+                            UserInGameInfo.getInstance().setYourselfGears(True, user_s_gears - set(NONE_LIST))
+                            time.sleep(10)
+                        # local_yourself_champ_list.add(champ_name)
+                        # if len(local_yourself_champ_list) == 1 and self.self_champ_check_flag == 2:
+                        #     UserInGameInfo.getInstance().setYourselfChamp(champ_name)
+                        #     print("your champ is -> ", champ_name)
+                        #     self.stop()
+                        # self.self_champ_check_flag += 1
 
 
 

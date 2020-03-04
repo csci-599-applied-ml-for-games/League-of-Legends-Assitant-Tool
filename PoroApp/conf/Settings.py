@@ -51,7 +51,7 @@ TEAM_GEARS = (220, 17, 425, 355)  # relative
 
 # user's champ and gears
 USER_S_CHAMP_AREA = (545, 950, 650, 1055)
-USER_S_GEAR_BOXES = (1130, 945, 1273, 1037)
+USER_S_GEAR_AREA = (1130, 945, 1273, 1037)
 
 # Champion profile recognition model setting
 IN_GAME_PROFILE_RECOGNITION_CHECK_POINT_PATH = "resources/model/in_game_profile_model.h5"
@@ -61,3 +61,7 @@ BANNED_CHAMP_RECOGNITION_CHECK_POINT_PATH = "resources/model/ban_face_recognitio
 # Champion basic info csv
 CHAMPION_BASIC_CSV_PATH = "resources/data/champ_basic.csv"
 CHAMPION_PROFILE_PATH = "resources/data/profile"
+
+# Gear basic info csv
+GEAR_BASIC_CSV_PATH = "resources/data/gear_basic.csv"
+GEAR_PROFILE_PATH = "resources/data/gears"

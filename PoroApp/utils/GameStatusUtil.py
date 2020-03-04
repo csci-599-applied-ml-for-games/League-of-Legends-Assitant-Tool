@@ -14,7 +14,7 @@ from utils.CopyPasteUtil import pasteToSearchBox
 from utils.PositionUtil import genRelativePos, getSearchBoxPoint
 from view.NotificationWindow import NotificationWindow
 from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, TAB_PANEL, LOL_CLIENT_NAME, \
-    SEARCH_BOX_POINT, YOUR_TEAM_AREA, ENEMY_TEAM_AREA, POPUP_THRESHOLD, USER_S_CHAMP_AREA
+    SEARCH_BOX_POINT, ENEMY_TEAM_AREA, POPUP_THRESHOLD, USER_S_CHAMP_AREA, USER_S_GEAR_AREA
 from model.ImgProcessor import ImgCatcherThread, ImgCropType
 
 bp_session_thread_pool = []
@@ -86,6 +86,7 @@ def statusChange(client):
                                    callback=None)
 
 
+
 def inGameAnalysis(client_info):
     global pop_threshold
     if len(in_game_thread_pool) == 0:
@@ -94,8 +95,10 @@ def inGameAnalysis(client_info):
                                    "Poro will continue to give you suggestions. \n help you to win this game",
                                    callback=None)
 
-        enemy_team_catcher = ImgCatcherThread("ENEMY_TEAM_PROFILE_CATCHER", client_info, ImgCropType.ENEMY_TEAM_5_CHAMP,
-                                              genRelativePos(client_info.getPosition(), ENEMY_TEAM_AREA,
+        enemy_team_catcher = ImgCatcherThread("ENEMY_TEAM_PROFILE_CATCHER", client_info,
+                                              ImgCropType.ENEMY_TEAM_5_CHAMP,
+                                              genRelativePos(client_info.getPosition(),
+                                                             ENEMY_TEAM_AREA,
                                                              client_info.getEnlargementFactor()))
 
         in_game_thread_pool.append(enemy_team_catcher)
@@ -107,11 +110,19 @@ def inGameAnalysis(client_info):
         tab_catcher.setDaemon(True)
         tab_catcher.start()
 
-        user_champ_catcher = ImgCatcherThread("USER_CHAMP_CATCHER", client_info, ImgCropType.USER_S_CHAMP_AREA,
+        user_champ_catcher = ImgCatcherThread("USER_S_CHAMP_CATCHER", client_info,
+                                              ImgCropType.USER_S_CHAMP_AREA,
                                               USER_S_CHAMP_AREA)
         in_game_thread_pool.append(user_champ_catcher)
         user_champ_catcher.setDaemon(True)
         user_champ_catcher.start()
+
+        user_gear_catcher = ImgCatcherThread("USER_S_GEARS_CATCHER", client_info,
+                                             ImgCropType.USER_S_GEAR_AREA,
+                                             USER_S_GEAR_AREA)
+        in_game_thread_pool.append(user_gear_catcher)
+        user_gear_catcher.setDaemon(True)
+        user_gear_catcher.start()
 
     if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
         NotificationWindow.detect('BP Champion Session',

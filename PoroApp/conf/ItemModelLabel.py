@@ -51,7 +51,7 @@ LABEL_NAME = [
     'Elixir_of_Wrath_item',
     'Essence_Reaver_item',
     "Executioner's_Calling_item",
-    'Eye_of_the_Herald_buff',
+    'Eye_of_the_Herald_buff_item',
     'Faerie_Charm_item',
     'Farsight_Alteration_item',
     'Fiendish_Codex_item',
@@ -70,7 +70,7 @@ LABEL_NAME = [
     'Hexdrinker_item',
     'Hextech_GLP-800_item',
     'Hextech_Gunblade_item',
-    'Hextech_Protobelt-0_item',
+    'Hextech_Protobelt-01_item',
     'Hextech_Revolver_item',
     "Hunter's_Machete_item",
     "Hunter's_Talisman_item",
@@ -152,7 +152,7 @@ LABEL_NAME = [
     'Tear_of_the_Goddess_item',
     'The_Black_Spear_item',
     'The_Hex_Core_mk-2_item',
-    'The_Hex_Core_mk-_item',
+    'The_Hex_Core_mk-1_item',
     'Thornmail_item',
     'Tiamat_item',
     'Titanic_Hydra_item',
@@ -172,5 +172,5 @@ LABEL_NAME = [
     "Zeke's_Convergence_item",
     "Zhonya's_Hourglass_item",
     'none',
-    'oblivion_orb_item'
+    'Oblivion_Orb_item'
 ]
