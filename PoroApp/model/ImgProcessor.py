@@ -165,7 +165,7 @@ class ImgCatcherThread(threading.Thread):
                         user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img))
                         if len(user_s_gears) != 0:
                             print("user_s_gears -> ", user_s_gears)
-                            UserInGameInfo.getInstance().setYourselfGears(True, user_s_gears - set(NONE_LIST))
+                            UserInGameInfo.getInstance().setYourselfGears(user_s_gears - set(NONE_LIST))
                             time.sleep(5)
 
             else:

@@ -131,10 +131,16 @@ class ShopPKeyListener(threading.Thread):
                 if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
                         and win32api.GetAsyncKeyState(VK_CODE['p']):
                     print("key p was pressed")
-                    if UserInGameInfo.getInstance().getEnemyInfoArea() is not None:
+                    if UserInGameInfo.getInstance().getEnemyInfoArea() is not None \
+                            and UserInGameInfo.getInstance().getYourselfChamp() is not None:
                         self._instance_lock.acquire()
-                        # TODO
-                        print("==========kasdasdasdasdadadas=============")
+                        enemyInfo = UserInGameInfo.getInstance().getEnemyInfo()
+                        self_champion = UserInGameInfo.getInstance().getYourselfChamp()
+                        self_gear = UserInGameInfo.getInstance().getYourselfGears()
+                        UserInGameInfo.getInstance().setGearRecommendFlag()
+                        print("enemyInfo ->", enemyInfo)
+                        print("self_champion ->", self_champion)
+                        print("self_gear ->", self_gear)
                         self._instance_lock.release()
 
             time.sleep(1)

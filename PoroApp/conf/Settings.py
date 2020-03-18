@@ -19,7 +19,7 @@ IN_GAME_CLIENT_SIZE = (1920, 1080)
 # Notification_Item Setting
 LAST_TIME = 4000
 POPUP_COUNTER = 0
-POPUP_THRESHOLD = 3
+POPUP_THRESHOLD = 5
 
 # champions_profile_area
 STATUS_AREA = (60, 15, 840, 53)

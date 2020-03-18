@@ -128,8 +128,37 @@ def inGameAnalysis(client_info):
         shop_key_catcher.setDaemon(True)
         shop_key_catcher.start()
 
+    if UserInGameInfo.getInstance().getGearRecommendFlag():
+        # show enemy champion info and gears
+        NotificationWindow.threat('In Game Detection',
+                                  """Enemy team has purchased these following gears:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                      UserInGameInfo.getInstance().getEnemyTeamListHTML()),
+                                  callback=None)
+        # show your self champion and gear
+        NotificationWindow.detect('In Game Detection',
+                                  """For Now, you have these gears:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                      UserInGameInfo.getInstance().getYourselfChampHTML()),
+                                  callback=None)
+        # show item suggestion (remember to modify the callback func)
+        NotificationWindow.suggest('Item Suggestion',
+                                   """Poro highly recommends you to choose gears:<html>
+                                  <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
+                                  vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
+                                  height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
+                                  margin-left:5px}}</style></head><body>{}</body></html>""".format(
+                                       UserInGameInfo.getInstance().getRecommendChampListHTML()),
+                                   callback=None)
+        UserInGameInfo.getInstance().setGearRecommendFlag(False)
 
-    if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 10:
+    if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
         NotificationWindow.detect('BP Champion Session',
                                   """Enemy team has choose these following champions:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;

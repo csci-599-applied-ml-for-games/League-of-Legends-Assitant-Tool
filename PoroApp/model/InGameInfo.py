@@ -34,11 +34,17 @@ class UserInGameInfo(object):
 
     yourself_champ = None
     yourself_gears = None
-    your_gears_msg_flag = False
+    gear_recommend_flag = False
 
     def __init__(self):
         self.you_twice_flag = False
         self.enemy_twice_flag = False
+
+    def setGearRecommendFlag(self, flag=True):
+        self.gear_recommend_flag = flag
+
+    def getGearRecommendFlag(self):
+        return self.gear_recommend_flag
 
     def setYourselfChamp(self, champ):
         self.yourself_champ = champ
@@ -49,8 +55,7 @@ class UserInGameInfo(object):
     def getYourselfChampHTML(self):
         return ChampionBasicInfo.getInstance().toHtml(self.yourself_champ)
 
-    def setYourselfGears(self, is_new=False, gears_info=None):
-        self.your_gears_msg_flag = is_new
+    def setYourselfGears(self, gears_info=None):
         self.yourself_gears = gears_info
 
     def getYourselfGears(self):
@@ -74,6 +79,17 @@ class UserInGameInfo(object):
 
     def appendEnemyInfo(self, result):
         self.enemy_info.append(result)
+
+    def getEnemyInfo(self):
+        return self.enemy_info
+
+    def getEnemyInfoHTML(self):
+        html_blob = str()
+        # TODO
+        # for champ in self.enemy_info:
+        #     html_str = ChampionBasicInfo.getInstance().toHtml(champ)
+        #     html_blob += html_str
+        return html_blob
 
     def setPosition(self, position):
         self.user_position = position
