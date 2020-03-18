@@ -13,7 +13,11 @@ input_basic
 def winRatePred(champion_name:str, myBuild:list, enemy_build:list) -> float:
     CD, health, mr, mana, health_regen, ap, ms, attack_speed, ad, life_steal, ar, crit, ar_penetration, mr_penetration, heal_resist = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     res = 0
-    enemy_build = enemy_build.replace('1','').replace("'",'')
+    for enemy_item in enemy_build:
+        enemy_item = enemy_item.replace('1','').replace("'",'')
+    model= joblib.load('reg_model.pkl')
+    X_columns = pd.read_csv('columns.txt').columns
+
     for item in enemy_build:
         for i in range(len(input_basic)):
             if input_basic.iloc[i,0].replace(' ','').strip()==item.replace(' ','').strip():
@@ -39,9 +43,15 @@ def winRatePred(champion_name:str, myBuild:list, enemy_build:list) -> float:
         X.append(item)
         for item in numerical_enemy_build:
             X.append(item)
-        
-        res_temp = model.predict(np.array(X))
+        x_sample=X[2:]
+        for column in X_columns[15:]:
+            if X[0]==column.replace('Name_','') or X[1]==column.replace('Item_',''):
+                x_sample.append(1)
+            else:
+                x_sample.append(0)
+        res_temp = model.predict(np.array(x_sample).reshape(1, -1))
     res += res_temp
+    
     return res
 
 #%%
@@ -72,11 +82,10 @@ def itemSuggestion(position:str, champion_name:str, enemy_build:list) -> list:
     return res_list
 
 # %%
-test = itemSuggestion('top', 'Riven', [])
-print(test)
+test2 = winRatePred('Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance"], ['Black Cleaver',"Death's Dance","Boots of speed"])
+print(test2)
 
 # %%
-test2 = winRatePred('Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance"], ['Black Cleaver',"Death's Dance","boots of speed"])
-print(test2)
+
 
 # %%
