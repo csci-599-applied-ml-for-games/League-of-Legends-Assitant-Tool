@@ -38,19 +38,20 @@ def winRatePred(champion_name:str, myBuild:list, enemy_build:list) -> float:
                 heal_resist += input_basic.iloc[i,15]
     numerical_enemy_build = [CD, health, mr, mana, health_regen, ap, ms, attack_speed, ad, life_steal, ar, crit, ar_penetration, mr_penetration, heal_resist]
     
+    
     for item in myBuild:
-        X = [champion_name]
-        X.append(item)
-        for item in numerical_enemy_build:
-            X.append(item)
-        x_sample=X[2:]
+        x_sample=numerical_enemy_build[:15]
         for column in X_columns[15:]:
-            if X[0]==column.replace('Name_','') or X[1]==column.replace('Item_',''):
+            if champion_name==column.replace('Name_',''):
+                x_sample.append(1)
+            elif item.replace(' ','').replace("'",'')==column.replace(' ','').replace('Item_',''):
                 x_sample.append(1)
             else:
                 x_sample.append(0)
-        res_temp = model.predict(np.array(x_sample).reshape(1, -1))
-    res += res_temp
+
+        x_input=np.array(x_sample).reshape(1, -1)
+        res_temp = model.predict(x_input)
+        res += res_temp
     
     return res
 
@@ -67,9 +68,9 @@ def itemSuggestion(position:str, champion_name:str, enemy_build:list) -> list:
     temp=0
     for i in range(len(input_file)):
         if champion_name.strip() == input_file.iloc[i,0].strip():
-            X = input_file.iloc[i,0:4]
+            X = input_file.iloc[i,1:4]
             winRate = winRatePred(champion_name, list(X), enemy_build)
-            # winRate = float(input_file.iloc[i,6])
+            
             if winRate > temp:
                 temp = winRate
                 del res_list[:]
@@ -85,14 +86,13 @@ def itemSuggestion(position:str, champion_name:str, enemy_build:list) -> list:
         new_item=item.replace("'",'').lower().replace('1','')
         suggestion.append(new_item)
     return suggestion
+# %%
+test = itemSuggestion('Top', 'Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance","Amplifying Tome","Athenes Unholy Grail","Bramble Vest"])
+print(test)
 
 # %%
 test2 = winRatePred('Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance"], ['Black Cleaver',"Death's Dance","Boots of speed"])
 print(test2)
-
-# %%
-test = itemSuggestion('Top', 'Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance","Amplifying Tome","Athenes Unholy Grail","Bramble Vest"])
-print(test)
 
 # %%
 # To match with image_name, suppose image_name == file
