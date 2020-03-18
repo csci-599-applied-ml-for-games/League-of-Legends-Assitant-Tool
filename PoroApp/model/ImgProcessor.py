@@ -132,7 +132,7 @@ class ImgCatcherThread(threading.Thread):
                     if len(list(set(set(results) - set(NONE_LIST)))) == 5:
                         UserInGameInfo.getInstance().setEnemyTeamList(results)
                         print("enemy team choose ->", results)
-                        if self.enemy_team_check_flag == 3:
+                        if self.enemy_team_check_flag == 12:
                             self.stop()
                         self.enemy_team_check_flag += 1
 
@@ -157,20 +157,16 @@ class ImgCatcherThread(threading.Thread):
                         rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
                         factor = getEnlargementFactor(rect, "in_game")
                         new_area = genRelativePos(rect, self.crop_position, factor)
-                        user_s_gears_img = grabImgByRect(new_area, binarize=False)
-                        user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img, save_file=True))
-                        if local_yourself_champ_list != user_s_gears:
+                        user_s_gears_img = None
+                        try:
+                            user_s_gears_img = grabImgByRect(new_area, binarize=False, save_file=True)
+                        except:
+                            print("something error happened when capturing user's gear.")
+                        user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img))
+                        if len(user_s_gears) != 0:
                             print("user_s_gears -> ", user_s_gears)
                             UserInGameInfo.getInstance().setYourselfGears(True, user_s_gears - set(NONE_LIST))
-                            time.sleep(10)
-                        # local_yourself_champ_list.add(champ_name)
-                        # if len(local_yourself_champ_list) == 1 and self.self_champ_check_flag == 2:
-                        #     UserInGameInfo.getInstance().setYourselfChamp(champ_name)
-                        #     print("your champ is -> ", champ_name)
-                        #     self.stop()
-                        # self.self_champ_check_flag += 1
-
-
+                            time.sleep(5)
 
             else:
                 # only expect choose champion mode and in game mode

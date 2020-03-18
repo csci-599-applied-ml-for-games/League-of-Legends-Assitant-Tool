@@ -82,15 +82,16 @@ class ItemModel(object):
 
     def predict3X2Img(self, image, interval=5, save_file=False):
         result = list()
-        imgs = cut3X2Boxes(image, interval=interval, save_file=save_file)
-        for img in imgs:
-            img_arr = np.array(img.convert('RGB'))
-            image = tf.convert_to_tensor(img_arr)
-            image = tf.image.resize(image, [self._width, self._height])
-            image = tf.cast(image, tf.float32) / 255.0  # 归一化到[0,1]范围
-            image = np.expand_dims(image, axis=0)
-            predict_result = self.model.predict(image)
-            result.append(LABEL_NAME[np.argmax(predict_result, axis=1)[0]])
+        if image is not None:
+            imgs = cut3X2Boxes(image, interval=interval, save_file=save_file)
+            for img in imgs:
+                img_arr = np.array(img.convert('RGB'))
+                image = tf.convert_to_tensor(img_arr)
+                image = tf.image.resize(image, [self._width, self._height])
+                image = tf.cast(image, tf.float32) / 255.0  # 归一化到[0,1]范围
+                image = np.expand_dims(image, axis=0)
+                predict_result = self.model.predict(image)
+                result.append(LABEL_NAME[np.argmax(predict_result, axis=1)[0]])
         return result
 
     @classmethod

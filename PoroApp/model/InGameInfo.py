@@ -54,8 +54,7 @@ class UserInGameInfo(object):
         self.yourself_gears = gears_info
 
     def getYourselfGears(self):
-        if self.your_gears_msg_flag:
-            return None
+        return self.yourself_gears
 
     def setInGameFlag(self):
         self.in_game_flag = True
@@ -122,6 +121,8 @@ class UserInGameInfo(object):
                 list(self.enemy_banned_champ_list.union(
                     self.your_side_banned_champ_list)))
 
+            return self.recommend_champ_list
+
     def getRecommendChampList(self):
         return self.recommend_champ_list
 
@@ -134,10 +135,11 @@ class UserInGameInfo(object):
 
     def getRecommendChampListHTML(self):
         html_blob = str()
-        for champ in self.recommend_champ_list:
-            html_str = ChampionBasicInfo.getInstance().toHtml(champ[0], champ[1])
-            html_blob += html_str
-        return html_blob
+        if self.recommend_champ_list is not None:
+            for champ in self.recommend_champ_list:
+                html_str = ChampionBasicInfo.getInstance().toHtml(champ[0], champ[1])
+                html_blob += html_str
+            return html_blob
 
     def setEnlargementFactor(self, value):
         self.enlargement_factor = value

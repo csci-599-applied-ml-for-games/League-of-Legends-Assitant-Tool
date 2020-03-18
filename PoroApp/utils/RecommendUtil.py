@@ -84,3 +84,4 @@ def gen_recommend_champs(bansByThem: list, position: str, bansInAll: list) -> li
         return None
     else:
         return result[::-1][:3]
+

@@ -7,7 +7,7 @@ import random
 
 import win32gui
 
-from model.KeyBoardListener import KeyBoardCatcher
+from model.KeyBoardListener import TabKeyListener, ShopPKeyListener
 from model.LoLClientHeartBeat import ClientStatus
 from model.InGameInfo import UserInGameInfo
 from utils.CopyPasteUtil import pasteToSearchBox
@@ -86,7 +86,6 @@ def statusChange(client):
                                    callback=None)
 
 
-
 def inGameAnalysis(client_info):
     global pop_threshold
     if len(in_game_thread_pool) == 0:
@@ -105,7 +104,7 @@ def inGameAnalysis(client_info):
         enemy_team_catcher.setDaemon(True)
         enemy_team_catcher.start()
 
-        tab_catcher = KeyBoardCatcher("TAB_IMG_CATCHER", client_info, TAB_PANEL)
+        tab_catcher = TabKeyListener("TAB_IMG_CATCHER", client_info, TAB_PANEL)
         in_game_thread_pool.append(tab_catcher)
         tab_catcher.setDaemon(True)
         tab_catcher.start()
@@ -124,7 +123,13 @@ def inGameAnalysis(client_info):
         user_gear_catcher.setDaemon(True)
         user_gear_catcher.start()
 
-    if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
+        shop_key_catcher = ShopPKeyListener("SHOP_P_CATCHER", client_info)
+        in_game_thread_pool.append(shop_key_catcher)
+        shop_key_catcher.setDaemon(True)
+        shop_key_catcher.start()
+
+
+    if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 10:
         NotificationWindow.detect('BP Champion Session',
                                   """Enemy team has choose these following champions:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;

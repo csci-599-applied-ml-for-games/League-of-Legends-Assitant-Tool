@@ -16,6 +16,7 @@ from model.FaceRecognitionModel import ProfileModel
 from model.InGameInfo import UserInGameInfo
 from model.ItemDetectionModel import ItemModel
 from model.LoLClientHeartBeat import ClientStatus
+from utils.CopyPasteUtil import VK_CODE
 from utils.ImgUtil import grabImgByRect, split2NPieces, cropImgByRect
 
 
@@ -40,10 +41,11 @@ def decodeImgs(enemy_info_img):
             "name": name,
             "gears": gears
         }
+    print("decodeImgs -> ", result)
     return result
 
 
-class KeyBoardCatcher(threading.Thread):
+class TabKeyListener(threading.Thread):
     _instance_lock = threading.Lock()
 
     def __init__(self, name, client_info, crop_position):
@@ -105,6 +107,37 @@ class KeyBoardCatcher(threading.Thread):
                             UserInGameInfo.getInstance().appendEnemyInfo(enemy_info)
 
             time.sleep(self._capture_rate)
+            # self._instance_lock.release()
+
+    def stop(self):
+        print("name: " + self.name + " has stopped.")
+        self.__running.clear()  # stop this thread
+
+
+class ShopPKeyListener(threading.Thread):
+    _instance_lock = threading.Lock()
+
+    def __init__(self, name, client_info):
+        threading.Thread.__init__(self)
+        self.name = name
+        self.client_info = client_info
+        self.__running = threading.Event()  # a event using to stop thread
+        self.__running.set()  # set() could enable thread to receive event
+
+    def run(self):
+        print(self.name + " has started.")
+        while self.__running.isSet():
+            if self.client_info.getStatusIndex() == ClientStatus.InGame:
+                if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
+                        and win32api.GetAsyncKeyState(VK_CODE['p']):
+                    print("key p was pressed")
+                    if UserInGameInfo.getInstance().getEnemyInfoArea() is not None:
+                        self._instance_lock.acquire()
+                        # TODO
+                        print("==========kasdasdasdasdadadas=============")
+                        self._instance_lock.release()
+
+            time.sleep(1)
             # self._instance_lock.release()
 
     def stop(self):
