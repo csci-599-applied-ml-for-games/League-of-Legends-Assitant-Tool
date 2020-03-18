@@ -2,12 +2,12 @@
 import pandas as pd
 import numpy as np
 import math
+from sklearn.externals import joblib
 # %%
 input_opgg = pd.read_csv('Core Build data - OPGG/General.csv')
 input_opgg_jg = pd.read_csv('Core Build data - OPGG/Jungle.csv')
 input_opgg_sup = pd.read_csv('Core Build data - OPGG/Support.csv')
 input_basic = pd.read_csv('basic_stat.csv')
-input_basic
 
 #%%
 def winRatePred(champion_name:str, myBuild:list, enemy_build:list) -> float:
@@ -68,8 +68,8 @@ def itemSuggestion(position:str, champion_name:str, enemy_build:list) -> list:
     for i in range(len(input_file)):
         if champion_name.strip() == input_file.iloc[i,0].strip():
             X = input_file.iloc[i,0:4]
-            # winRate = winRatePred(champion_name, list(X), enemy_build)
-            winRate = float(input_file.iloc[i,6])
+            winRate = winRatePred(champion_name, list(X), enemy_build)
+            # winRate = float(input_file.iloc[i,6])
             if winRate > temp:
                 temp = winRate
                 del res_list[:]
@@ -77,15 +77,24 @@ def itemSuggestion(position:str, champion_name:str, enemy_build:list) -> list:
                     res_list.append(input_file.iloc[i,k])
     
     if math.isnan(res_list[3]):
-        del res_list[3]       
-    
-    return res_list
+        del res_list[3] 
+    suggestion=[]      
+    for item in res_list:
+        if item[0]==' ':
+            item = item[1:]
+        new_item=item.replace("'",'').lower().replace('1','')
+        suggestion.append(new_item)
+    return suggestion
 
 # %%
 test2 = winRatePred('Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance"], ['Black Cleaver',"Death's Dance","Boots of speed"])
 print(test2)
 
 # %%
-
+test = itemSuggestion('Top', 'Riven', ['Black Cleaver', "Youmuu's Ghostblade", "Death's Dance","Amplifying Tome","Athenes Unholy Grail","Bramble Vest"])
+print(test)
 
 # %%
+# To match with image_name, suppose image_name == file
+# Then we have to modify file as:
+# file = file.replace('_item.png','').replace('_item1.png','').replace('.png','').replace('_',' ').replace("'",'').lower()
