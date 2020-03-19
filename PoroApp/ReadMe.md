@@ -1,3 +1,8 @@
+两个分支
+
+parade 用于展示
+master 用于作业
+
 python 版本3.6
 
 需要安装的package
