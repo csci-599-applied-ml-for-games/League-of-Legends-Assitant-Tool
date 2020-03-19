@@ -2,10 +2,27 @@ __author__ = 'Aaron Yang'
 __email__ = 'byang971@usc.edu'
 __date__ = '2/15/2020 3:33 PM'
 
+import collections
 import threading
 
+from conf.ProfileModelLabel import NONE_LIST
+from model.GearsInfo import GearsBasicInfo
 from utils.RecommendUtil import gen_recommend_champs
 from model.ChampInfo import ChampionBasicInfo
+
+
+# LEFT_BRACKETS = "<img src=\"resources/data/support/22222.png\">"
+# # RIGHT_BRACKETS = "<img src=\"resources/data/support/bracket_right.png\">"
+
+
+def mixedWraper(champ_name, gears_set):
+    champ_img_html = ChampionBasicInfo.getInstance().toImgHtml(champ_name)
+    actual_gears = list()
+    if gears_set is not None:
+        actual_gears = list(set(gears_set) - set(NONE_LIST))
+    if len(actual_gears) == 0: actual_gears.append("Nothing")
+    gear_img_html = GearsBasicInfo.getInstance().toImgHtml(actual_gears)
+    return "<div class=\"mixed\">" + champ_img_html + gear_img_html + "</div><hr/>"
 
 
 class UserInGameInfo(object):
@@ -25,7 +42,7 @@ class UserInGameInfo(object):
     # enemy team is left or right in tab panel
     enemy_info_in_table_area = None
 
-    enemy_info = list()
+    enemy_info = collections.defaultdict(dict)
     # has user enter the game
     in_game_flag = False
 
@@ -61,6 +78,28 @@ class UserInGameInfo(object):
     def getYourselfGears(self):
         return self.yourself_gears
 
+    def setRecommendGears(self, gears):
+        self.gear_recommend_flag = True
+        self.recommend_gear_list = gears
+
+    def getRecommendGears(self):
+        html_blob = str()
+        for gear in self.recommend_gear_list:
+            html_str = GearsBasicInfo.getInstance().toHtml(gear)
+            html_blob += html_str
+
+        return html_blob
+
+    def getEnemyTeamDetailHTML(self):
+        html_blob = str()
+        for champ, val in self.enemy_info.items():
+            html_str = mixedWraper(champ, val["gears"])
+            html_blob += html_str
+        return html_blob
+
+    def getSelfChampAndGearHTML(self):
+        return mixedWraper(self.yourself_champ, self.yourself_gears)
+
     def setInGameFlag(self):
         self.in_game_flag = True
 
@@ -77,24 +116,23 @@ class UserInGameInfo(object):
     def hasEnemyInfoArea(self):
         return self.enemy_info_in_table_area is not None
 
-    def appendEnemyInfo(self, result):
-        self.enemy_info.append(result)
+    def setEnemyInfo(self, result):
+        self.enemy_info = result
 
     def getEnemyInfo(self):
         return self.enemy_info
 
     def getEnemyInfoHTML(self):
         html_blob = str()
-        # TODO
-        # for champ in self.enemy_info:
-        #     html_str = ChampionBasicInfo.getInstance().toHtml(champ)
-        #     html_blob += html_str
+        for champ in self.enemy_info:
+            html_str = ChampionBasicInfo.getInstance().toHtml(champ)
+            html_blob += html_str
         return html_blob
 
-    def setPosition(self, position):
+    def setUserPosition(self, position):
         self.user_position = position
 
-    def getPosition(self):
+    def getUserPosition(self):
         return self.user_position
 
     def hasPositionInfo(self):

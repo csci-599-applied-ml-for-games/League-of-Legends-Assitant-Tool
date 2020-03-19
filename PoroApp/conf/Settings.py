@@ -47,7 +47,7 @@ TEAM_LEFT_IN_TAB = (105, 23, 156, 378)
 TEAM_RIGHT_IN_TAB = (679, 23, 730, 378)
 
 TEAM_PROFILES = (0, 0, 51, 355)  # relative
-TEAM_GEARS = (220, 17, 425, 355)  # relative
+TEAM_GEARS = (230, 8, 435, 346)  # relative
 
 # user's champ and gears
 USER_S_CHAMP_AREA = (545, 950, 650, 1055)
@@ -61,6 +61,7 @@ BANNED_CHAMP_RECOGNITION_CHECK_POINT_PATH = "resources/model/ban_face_recognitio
 # Champion basic info csv
 CHAMPION_BASIC_CSV_PATH = "resources/data/champ_basic.csv"
 CHAMPION_PROFILE_PATH = "resources/data/profile"
+CHAMPION_BIG_PROFILE_PATH = "resources/data/profile_big"
 
 # Gear basic info csv
 GEAR_BASIC_CSV_PATH = "resources/data/gear_basic.csv"

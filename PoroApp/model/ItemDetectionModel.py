@@ -19,7 +19,7 @@ class ItemModel(object):
     _width = 64
     _channels = 3
     _batch_size = 128
-    _num_classes = 170
+    _num_classes = 172
 
     def __init__(self):
         self._reload_model_schema()

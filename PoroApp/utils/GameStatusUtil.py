@@ -32,6 +32,7 @@ def statusChange(client):
                                     "LOL Client Status: Your are in <u><b>{}</b></u> Panel".format(
                                         client.getStatus()["name"]),
                                     callback=None)
+
             # TODO  暂时防误杀
             if client.getStatus()["name"] != "InRoom":
                 if len(bp_session_thread_pool) > 0:
@@ -51,7 +52,7 @@ def statusChange(client):
                 if UserInGameInfo.getInstance().hasPositionInfo():
                     NotificationWindow.detect('Entering Game Mode...',
                                               "You are assigned in <u><b>{}</b></u> position.".format(
-                                                  UserInGameInfo.getInstance().getPosition()),
+                                                  UserInGameInfo.getInstance().getUserPosition()),
                                               callback=None)
 
             # picking champions
@@ -64,7 +65,7 @@ def statusChange(client):
                 # TODO 都是为了测试， 正式时候可以删除
                 if not UserInGameInfo.getInstance().hasPositionInfo():
                     print("Since we join the custom room, so we assigned a TOP position to you")
-                    UserInGameInfo.getInstance().setPosition("TOP")
+                    UserInGameInfo.getInstance().setUserPosition("TOP")
                     NotificationWindow.detect('BP Champion Session',
                                               "You has been assigned in <u><b>TOP</b></u> position. <br/> Tips: "
                                               "Since we join the custom room, so we assigned a TOP position to you",
@@ -116,13 +117,6 @@ def inGameAnalysis(client_info):
         user_champ_catcher.setDaemon(True)
         user_champ_catcher.start()
 
-        user_gear_catcher = ImgCatcherThread("USER_S_GEARS_CATCHER", client_info,
-                                             ImgCropType.USER_S_GEAR_AREA,
-                                             USER_S_GEAR_AREA)
-        in_game_thread_pool.append(user_gear_catcher)
-        user_gear_catcher.setDaemon(True)
-        user_gear_catcher.start()
-
         shop_key_catcher = ShopPKeyListener("SHOP_P_CATCHER", client_info)
         in_game_thread_pool.append(shop_key_catcher)
         shop_key_catcher.setDaemon(True)
@@ -136,7 +130,7 @@ def inGameAnalysis(client_info):
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
-                                      UserInGameInfo.getInstance().getEnemyTeamListHTML()),
+                                      UserInGameInfo.getInstance().getEnemyTeamDetailHTML()),
                                   callback=None)
         # show your self champion and gear
         NotificationWindow.detect('In Game Detection',
@@ -145,7 +139,7 @@ def inGameAnalysis(client_info):
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
-                                      UserInGameInfo.getInstance().getYourselfChampHTML()),
+                                      UserInGameInfo.getInstance().getSelfChampAndGearHTML()),
                                   callback=None)
         # show item suggestion (remember to modify the callback func)
         NotificationWindow.suggest('Item Suggestion',
@@ -154,7 +148,7 @@ def inGameAnalysis(client_info):
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
-                                       UserInGameInfo.getInstance().getRecommendChampListHTML()),
+                                       UserInGameInfo.getInstance().getRecommendGears()),
                                    callback=None)
         UserInGameInfo.getInstance().setGearRecommendFlag(False)
 
@@ -251,7 +245,7 @@ def bpSessionAnalysis(client_info):
     # 在这里可以进行英雄推荐了
     if UserInGameInfo.getInstance().getEnemyBannedChampionsSize() >= BANNED_CHAMP_SIZE and \
             UserInGameInfo.getInstance().getBannedChampionsSize() >= BANNED_CHAMP_SIZE:
-        print("UserPosition :", UserInGameInfo.getInstance().getPosition())
+        print("UserPosition :", UserInGameInfo.getInstance().getUserPosition())
         UserInGameInfo.getInstance().initRecommendChampList()
         NotificationWindow.suggest('BP Champion Session',
                                    """Poro highly recommends you to choose champion:<html>

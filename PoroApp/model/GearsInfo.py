@@ -30,13 +30,19 @@ class GearsBasicInfo(object):
             for row in data:
                 self.info[row[0]] = {
                     "en_name": row[0],
-                    "img": GEAR_PROFILE_PATH + "/" + row[0] + ".png",
+                    "img": GEAR_PROFILE_PATH + "/" + row[0] + "_item.png",
                 }
 
     def toHtml(self, gear_name):
-        return "<div class=\"info\"><img src=\"{}\"> {} <br/></div><hr/>".format(
-            self.info[gear_name]['img'],
-            self.info[gear_name]['en_name'])
+        return "<div class=\"gears\"><img src=\"{}\"> {} </div>" \
+            .format(self.info[gear_name]['img'],
+                    self.info[gear_name]['en_name'])
+
+    def toImgHtml(self, gear_name_list):
+        gears_str = ""
+        for gear in gear_name_list:
+            gears_str += "<img src=\"resources/data/gears/{}.png\">&nbsp;&nbsp;".format(gear)
+        return gears_str
 
     @classmethod
     def getInstance(cls, *args, **kwargs):

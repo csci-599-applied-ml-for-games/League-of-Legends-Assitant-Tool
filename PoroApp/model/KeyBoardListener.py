@@ -10,6 +10,7 @@ import win32api
 import win32con
 import win32gui
 
+from conf.ProfileModelLabel import NONE_LIST
 from conf.Settings import KEYBOARD_CATCHER_RATE, LOL_IN_GAME_CLIENT_NAME, TEAM_LEFT_IN_TAB, TEAM_RIGHT_IN_TAB, \
     TEAM_PROFILES, TEAM_GEARS
 from model.FaceRecognitionModel import ProfileModel
@@ -18,6 +19,19 @@ from model.ItemDetectionModel import ItemModel
 from model.LoLClientHeartBeat import ClientStatus
 from utils.CopyPasteUtil import VK_CODE
 from utils.ImgUtil import grabImgByRect, split2NPieces, cropImgByRect
+from utils.RecommendUtil import itemSuggestion
+
+
+def expandCropArea(area):
+    return (area[0], area[1], area[2] + 405, area[3])
+
+
+def extractDictValue(data):
+    result = list()
+    for val in data.values():
+        result.extend(list(set(val.get("gears", None)) - set(NONE_LIST)))
+
+    return result
 
 
 def decodeImgs(enemy_info_img):
@@ -31,17 +45,16 @@ def decodeImgs(enemy_info_img):
     gears_img = cropImgByRect(enemy_info_img, TEAM_GEARS)
 
     five_profiles = split2NPieces(profiles_img, interval=21, horizontal=False)
-    five_champ_name = ProfileModel.getInstance().predictImgs(five_profiles)
-
     five_gears = split2NPieces(gears_img, interval=42, horizontal=False)
+    five_champ_name = ProfileModel.getInstance().predictImgs(five_profiles)
     five_gear_list = ItemModel.getInstance().predictImgs(five_gears)
 
-    for name, gears in zip(five_champ_name, five_gear_list):
-        result[name] = {
-            "name": name,
-            "gears": gears
-        }
-    print("decodeImgs -> ", result)
+    if five_champ_name is not None and five_gear_list is not None:
+        for name, gears in zip(five_champ_name, five_gear_list):
+            result[name] = {
+                "name": name,
+                "gears": gears
+            }
     return result
 
 
@@ -69,7 +82,7 @@ class TabKeyListener(threading.Thread):
                     if UserInGameInfo.getInstance().getEnemyInfoArea() is None:
                         self._instance_lock.acquire()
                         # crop the whole image, since we dont know where is the enemy
-                        tab_panel = grabImgByRect(self.crop_position, binarize=False, save_file=True)
+                        tab_panel = grabImgByRect(self.crop_position, binarize=False)
                         # 把整张图片切成五份, 但是我们不知道左边是敌人还是右边是敌人，所以需要比较一次
                         teamLeft = cropImgByRect(tab_panel, TEAM_LEFT_IN_TAB)
                         teamRight = cropImgByRect(tab_panel, TEAM_RIGHT_IN_TAB)
@@ -88,8 +101,8 @@ class TabKeyListener(threading.Thread):
                             if self.right_twice_flag:
                                 UserInGameInfo.getInstance().setEnemyInfoArea(TEAM_RIGHT_IN_TAB)
                             self.right_twice_flag = True
-                        elif len(set(UserInGameInfo.getInstance().getEnemyTeamList()).difference(
-                                set(left_results))) <= 3:
+                        elif len(set(UserInGameInfo.getInstance().getEnemyTeamList()).intersection(
+                                set(left_results))) >= 3:
                             if self.left_twice_flag:
                                 UserInGameInfo.getInstance().setEnemyInfoArea(TEAM_LEFT_IN_TAB)
                             self.left_twice_flag = True
@@ -100,11 +113,35 @@ class TabKeyListener(threading.Thread):
                         # once we got to know which is enemy, we can only crop small part of pics
                         enemy_panel_area = UserInGameInfo.getInstance().getEnemyInfoArea()
                         tab_panel = grabImgByRect(self.crop_position, binarize=False)
-                        # 把整张图片切成五份, 但是我们不知道左边是敌人还是右边是敌人，所以需要比较一次
-                        enemy_info_img = cropImgByRect(tab_panel, enemy_panel_area, save_file=True)
+                        # 从整张图片提取出来敌人的部分
+                        enemy_info_img = cropImgByRect(tab_panel, enemy_panel_area)
+                        # 在这里还需要截自己的装备
+                        self_info_img = None
+                        if enemy_panel_area == expandCropArea(TEAM_LEFT_IN_TAB):
+                            self_info_img = cropImgByRect(tab_panel, expandCropArea(TEAM_RIGHT_IN_TAB))
+                        else:
+                            self_info_img = cropImgByRect(tab_panel, expandCropArea(TEAM_LEFT_IN_TAB))
+
                         enemy_info = decodeImgs(enemy_info_img)
-                        if set(enemy_info.keys()) == (set(UserInGameInfo.getInstance().getEnemyTeamList())):
-                            UserInGameInfo.getInstance().appendEnemyInfo(enemy_info)
+                        if len(set(enemy_info.keys()).intersection(
+                                set(UserInGameInfo.getInstance().getEnemyTeamList()))) >= 3:
+                            print("enemy_info ->", enemy_info)
+                            UserInGameInfo.getInstance().setEnemyInfo(enemy_info)
+
+                        if UserInGameInfo.getInstance().getYourselfChamp() is not None:
+                            self_team_info = decodeImgs(self_info_img)
+                            print("self_team_info ->", self_team_info)
+                            self_champ = UserInGameInfo.getInstance().getYourselfChamp()
+                            self_gear = self_team_info.get(self_champ, None)
+                            if self_gear is not None:
+                                print("self_gear[\"gears\"] ->", self_gear["gears"])
+                                UserInGameInfo.getInstance().setYourselfGears(
+                                    set(self_gear.get("gears", set())) - set(NONE_LIST))
+                                print("output gear = ", UserInGameInfo.getInstance().getYourselfGears())
+                            else:
+                                # 1. self_champ is wrong
+                                # 2. 截取到了地面
+                                pass
 
             time.sleep(self._capture_rate)
             # self._instance_lock.release()
@@ -132,15 +169,20 @@ class ShopPKeyListener(threading.Thread):
                         and win32api.GetAsyncKeyState(VK_CODE['p']):
                     print("key p was pressed")
                     if UserInGameInfo.getInstance().getEnemyInfoArea() is not None \
-                            and UserInGameInfo.getInstance().getYourselfChamp() is not None:
+                            and UserInGameInfo.getInstance().getYourselfChamp() is not None \
+                            and len(UserInGameInfo.getInstance().getEnemyInfo().keys()) > 1:
                         self._instance_lock.acquire()
-                        enemyInfo = UserInGameInfo.getInstance().getEnemyInfo()
+                        print("you are in there ===================")
+                        enemy_info = UserInGameInfo.getInstance().getEnemyInfo()
                         self_champion = UserInGameInfo.getInstance().getYourselfChamp()
-                        self_gear = UserInGameInfo.getInstance().getYourselfGears()
-                        UserInGameInfo.getInstance().setGearRecommendFlag()
-                        print("enemyInfo ->", enemyInfo)
-                        print("self_champion ->", self_champion)
-                        print("self_gear ->", self_gear)
+                        self_position = UserInGameInfo.getInstance().getUserPosition()
+                        enemy_gears = extractDictValue(enemy_info)
+                        print("key p enemy_gears ->", enemy_gears)
+                        print("key p self_champion ->", self_champion)
+                        print("key p self_position ->", self_position)
+                        recommend_gears = itemSuggestion(self_position, self_champion, enemy_gears)
+                        UserInGameInfo.getInstance().setRecommendGears(recommend_gears)
+
                         self._instance_lock.release()
 
             time.sleep(1)

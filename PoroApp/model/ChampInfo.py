@@ -6,7 +6,7 @@ import collections
 import csv
 import threading
 
-from conf.Settings import CHAMPION_BASIC_CSV_PATH, CHAMPION_PROFILE_PATH
+from conf.Settings import CHAMPION_BASIC_CSV_PATH, CHAMPION_PROFILE_PATH, CHAMPION_BIG_PROFILE_PATH
 
 FILE_PATH = CHAMPION_BASIC_CSV_PATH
 
@@ -32,6 +32,7 @@ class ChampionBasicInfo(object):
                     "en_name": row[3],
                     "en_title": row[4],
                     "img": CHAMPION_PROFILE_PATH + "/" + row[3] + ".jpg",
+                    "img_big": CHAMPION_BIG_PROFILE_PATH + "/" + row[3] + ".jpg",
                     "class": row[5],
                     "POS": gen_multi_lanes(list([row[6], row[7], row[8]]))
                 }
@@ -53,6 +54,9 @@ class ChampionBasicInfo(object):
                     self.info[champ_name]['en_name'],
                     self.info[champ_name]['en_title'],
                     "resources/data/classes/{}.png".format(self.info[champ_name]['class']))
+
+    def toImgHtml(self, champ_name):
+        return "<img src=\"{}\">&nbsp;".format(self.info[champ_name]['img_big'])
 
     @classmethod
     def getInstance(cls, *args, **kwargs):

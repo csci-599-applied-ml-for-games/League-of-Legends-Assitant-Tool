@@ -142,7 +142,7 @@ class ImgCatcherThread(threading.Thread):
                         rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
                         factor = getEnlargementFactor(rect, "in_game")
                         new_area = genRelativePos(rect, self.crop_position, factor)
-                        user_profiles = grabImgByRect(new_area, binarize=False, save_file=True)
+                        user_profiles = grabImgByRect(new_area, binarize=False)
                         champ_name = ProfileModel.getInstance().predictSingleImg(user_profiles)
                         local_yourself_champ_list.add(champ_name)
                         if len(local_yourself_champ_list) == 1 and self.self_champ_check_flag == 2:
@@ -151,22 +151,22 @@ class ImgCatcherThread(threading.Thread):
                             self.stop()
                         self.self_champ_check_flag += 1
 
-                elif self.img_crop_type == ImgCropType.USER_S_GEAR_AREA:
-                    if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
-                            and UserInGameInfo.getInstance().hasEnemyInfoArea():
-                        rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
-                        factor = getEnlargementFactor(rect, "in_game")
-                        new_area = genRelativePos(rect, self.crop_position, factor)
-                        user_s_gears_img = None
-                        try:
-                            user_s_gears_img = grabImgByRect(new_area, binarize=False, save_file=True)
-                        except:
-                            print("something error happened when capturing user's gear.")
-                        user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img))
-                        if len(user_s_gears) != 0:
-                            print("user_s_gears -> ", user_s_gears)
-                            UserInGameInfo.getInstance().setYourselfGears(user_s_gears - set(NONE_LIST))
-                            time.sleep(5)
+                # elif self.img_crop_type == ImgCropType.USER_S_GEAR_AREA:
+                #     if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
+                #             and UserInGameInfo.getInstance().hasEnemyInfoArea():
+                #         rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
+                #         factor = getEnlargementFactor(rect, "in_game")
+                #         new_area = genRelativePos(rect, self.crop_position, factor)
+                #         user_s_gears_img = None
+                #         try:
+                #             user_s_gears_img = grabImgByRect(new_area, binarize=False)
+                #         except:
+                #             print("something error happened when capturing user's gear.")
+                #         user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img, save_file=True))
+                #         if len(user_s_gears) != 0:
+                #             print("user_s_gears -> ", user_s_gears)
+                #             UserInGameInfo.getInstance().setYourselfGears(user_s_gears - set(NONE_LIST))
+                #             time.sleep(5)
 
             else:
                 # only expect choose champion mode and in game mode

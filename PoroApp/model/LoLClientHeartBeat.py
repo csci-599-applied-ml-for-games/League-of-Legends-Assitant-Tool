@@ -210,7 +210,7 @@ class ClientHeartBeat(QObject):
                     (position in POSITION_SET):
                 # 有位置信息
                 print("Assigned user position in ", position)
-                UserInGameInfo.getInstance().setPosition(position)
+                UserInGameInfo.getInstance().setUserPosition(position)
                 return ClientStatus.str2Status(position)
             else:
                 # 如果没有位置信息

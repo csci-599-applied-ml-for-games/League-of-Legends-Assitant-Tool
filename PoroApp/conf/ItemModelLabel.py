@@ -70,7 +70,7 @@ LABEL_NAME = [
     'Hexdrinker_item',
     'Hextech_GLP-800_item',
     'Hextech_Gunblade_item',
-    'Hextech_Protobelt-01_item',
+    'Hextech_Protobelt-0_item',
     'Hextech_Revolver_item',
     "Hunter's_Machete_item",
     "Hunter's_Talisman_item",
@@ -104,6 +104,7 @@ LABEL_NAME = [
     'Null-Magic_Mantle_item',
     'Oracle_Lens_item',
     'Pauldrons_of_Whiterock_item',
+    'Perfect_Hex_Core_item',
     'Phage_item',
     'Phantom_Dancer_item',
     'Pickaxe_item',
@@ -130,6 +131,7 @@ LABEL_NAME = [
     "Seeker's_Armguard_item",
     "Seraph's_Embrace_item",
     'Serrated_Dirk_item',
+    'Shard_of_True_Ice_item',
     'Sheen_item',
     "Shurelya's_Reverie_item",
     "Skirmisher's_Sabre_item",
@@ -152,7 +154,7 @@ LABEL_NAME = [
     'Tear_of_the_Goddess_item',
     'The_Black_Spear_item',
     'The_Hex_Core_mk-2_item',
-    'The_Hex_Core_mk-1_item',
+    'The_Hex_Core_mk-_item',
     'Thornmail_item',
     'Tiamat_item',
     'Titanic_Hydra_item',
@@ -172,5 +174,5 @@ LABEL_NAME = [
     "Zeke's_Convergence_item",
     "Zhonya's_Hourglass_item",
     'none',
-    'Oblivion_Orb_item'
+    'oblivion_orb_item'
 ]
