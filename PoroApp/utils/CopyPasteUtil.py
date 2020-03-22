@@ -62,6 +62,8 @@ def mouse_click(x=None, y=None):
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
 
 
 def _mouse_move(x, y):
@@ -78,6 +80,13 @@ def input_a_str(str=''):
         win32api.keybd_event(VK_CODE[c], 0, win32con.KEYEVENTF_KEYUP, 0)
 
 
-def pasteToSearchBox(point, value):
-    mouse_click(int(point[0]), int(point[1]))
-    input_a_str(value.lower())
+
+
+def pasteToSearchBox(point=None, value=None, paste_type=1):
+    if paste_type == 1:
+        mouse_click(int(point[0]), int(point[1]))
+        input_a_str(value.lower())
+    else:
+        # do not use ctrl +l. it will destroy you mouse
+        mouse_click(int(point[0]), int(point[1]))
+        input_a_str(value.lower())

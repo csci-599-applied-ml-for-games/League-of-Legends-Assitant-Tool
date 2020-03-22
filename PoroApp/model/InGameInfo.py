@@ -46,16 +46,27 @@ class UserInGameInfo(object):
     # has user enter the game
     in_game_flag = False
 
-    clicked_counter = 0
+    champ_clicked_counter = 0
+    gear_clicked_counter = 0
     enlargement_factor = 1.0
 
     yourself_champ = None
     yourself_gears = None
+    gear_detected_flag = False
     gear_recommend_flag = False
 
     def __init__(self):
         self.you_twice_flag = False
         self.enemy_twice_flag = False
+
+    def resetGearCounter(self):
+        self.gear_clicked_counter = 0
+
+    def setGearDetectedFlag(self, flag=True):
+        self.gear_detected_flag = flag
+
+    def getGearDetectedFlag(self):
+        return self.gear_detected_flag
 
     def setGearRecommendFlag(self, flag=True):
         self.gear_recommend_flag = flag
@@ -89,6 +100,13 @@ class UserInGameInfo(object):
             html_blob += html_str
 
         return html_blob
+
+    def getRecommendGearAutoCountList(self):
+        result = None
+        if self.gear_clicked_counter < len(self.recommend_gear_list):
+            result = self.recommend_gear_list[self.gear_clicked_counter]
+            self.gear_clicked_counter += 1
+        return result
 
     def getEnemyTeamDetailHTML(self):
         html_blob = str()
@@ -182,9 +200,9 @@ class UserInGameInfo(object):
 
     def getRecommendChampAutoCountList(self):
         result = None
-        if self.clicked_counter < len(self.recommend_champ_list):
-            result = self.recommend_champ_list[self.clicked_counter][0]
-            self.clicked_counter += 1
+        if self.champ_clicked_counter < len(self.recommend_champ_list):
+            result = self.recommend_champ_list[self.champ_clicked_counter][0]
+            self.champ_clicked_counter += 1
         return result
 
     def getRecommendChampListHTML(self):
@@ -217,7 +235,8 @@ class UserInGameInfo(object):
         self.your_side_banned_champ_list.clear()
         self.enemy_banned_champ_list.clear()
         self.recommend_champ_list.clear()
-        self.clicked_counter = 0
+        self.champ_clicked_counter = 0
+        self.gear_clicked_counter = 0
         self.enemy_info_in_table_area = None
         self.enemy_team_champ_list.clear()
         self.enemy_info.clear()

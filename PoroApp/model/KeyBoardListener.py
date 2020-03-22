@@ -138,6 +138,7 @@ class TabKeyListener(threading.Thread):
                                 UserInGameInfo.getInstance().setYourselfGears(
                                     set(self_gear.get("gears", set())) - set(NONE_LIST))
                                 print("output gear = ", UserInGameInfo.getInstance().getYourselfGears())
+                                UserInGameInfo.getInstance().setGearDetectedFlag(True)
                             else:
                                 # 1. self_champ is wrong
                                 # 2. 截取到了地面
@@ -172,7 +173,6 @@ class ShopPKeyListener(threading.Thread):
                             and UserInGameInfo.getInstance().getYourselfChamp() is not None \
                             and len(UserInGameInfo.getInstance().getEnemyInfo().keys()) > 1:
                         self._instance_lock.acquire()
-                        print("you are in there ===================")
                         enemy_info = UserInGameInfo.getInstance().getEnemyInfo()
                         self_champion = UserInGameInfo.getInstance().getYourselfChamp()
                         self_position = UserInGameInfo.getInstance().getUserPosition()

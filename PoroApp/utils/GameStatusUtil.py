@@ -11,10 +11,11 @@ from model.KeyBoardListener import TabKeyListener, ShopPKeyListener
 from model.LoLClientHeartBeat import ClientStatus
 from model.InGameInfo import UserInGameInfo
 from utils.CopyPasteUtil import pasteToSearchBox
-from utils.PositionUtil import genRelativePos, getSearchBoxPoint
+from utils.PositionUtil import genRelativePos, getChampSearchBoxPoint, getGearSearchBoxPoint
 from view.NotificationWindow import NotificationWindow
 from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, TAB_PANEL, LOL_CLIENT_NAME, \
-    SEARCH_BOX_POINT, ENEMY_TEAM_AREA, POPUP_THRESHOLD, USER_S_CHAMP_AREA, USER_S_GEAR_AREA
+    ENEMY_TEAM_AREA, POPUP_THRESHOLD, USER_S_CHAMP_AREA, LOL_IN_GAME_CLIENT_NAME, \
+    CHAMP_SEARCH_BOX_POINT, GEAR_SEARCH_BOX_POINT
 from model.ImgProcessor import ImgCatcherThread, ImgCropType
 
 bp_session_thread_pool = []
@@ -122,9 +123,9 @@ def inGameAnalysis(client_info):
         shop_key_catcher.setDaemon(True)
         shop_key_catcher.start()
 
-    if UserInGameInfo.getInstance().getGearRecommendFlag():
+    if UserInGameInfo.getInstance().getGearDetectedFlag():
         # show enemy champion info and gears
-        NotificationWindow.threat('In Game Detection',
+        NotificationWindow.threat('In Game Detection Session',
                                   """Enemy team has purchased these following gears:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
@@ -133,7 +134,7 @@ def inGameAnalysis(client_info):
                                       UserInGameInfo.getInstance().getEnemyTeamDetailHTML()),
                                   callback=None)
         # show your self champion and gear
-        NotificationWindow.detect('In Game Detection',
+        NotificationWindow.detect('In Game Detection Session',
                                   """For Now, you have these gears:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
@@ -141,15 +142,18 @@ def inGameAnalysis(client_info):
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
                                       UserInGameInfo.getInstance().getSelfChampAndGearHTML()),
                                   callback=None)
+        UserInGameInfo.getInstance().setGearDetectedFlag(False)
+
+    if UserInGameInfo.getInstance().getGearRecommendFlag():
         # show item suggestion (remember to modify the callback func)
-        NotificationWindow.suggest('Item Suggestion',
+        NotificationWindow.suggest('Item Suggestion Session',
                                    """Poro highly recommends you to choose gears:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
                                        UserInGameInfo.getInstance().getRecommendGears()),
-                                   callback=None)
+                                   callback=copyAndPasteGearName)
         UserInGameInfo.getInstance().setGearRecommendFlag(False)
 
     if pop_threshold >= 0 and len(UserInGameInfo.getInstance().getEnemyTeamList()) == 5:
@@ -165,7 +169,7 @@ def inGameAnalysis(client_info):
 
     if pop_threshold == -1 and UserInGameInfo.getInstance().getEnemyInfoArea() is not None:
         #  得到在左还是在右的信息
-        NotificationWindow.detect('In Game Detection',
+        NotificationWindow.detect('In Game Detection Session',
                                   """Poro has recognized your enemy team on your tab panel <br/> There are:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
@@ -176,7 +180,7 @@ def inGameAnalysis(client_info):
         pop_threshold -= 1
 
     if pop_threshold == -2 and UserInGameInfo.getInstance().getYourselfChamp() is not None:
-        NotificationWindow.detect('In Game Detection',
+        NotificationWindow.detect('In Game Detection Session',
                                   """Poro has recognized your champion is:<html>
                                   <head><style>.info{{text-align:left;height:40px}}.info span{{display:inline-block;
                                   vertical-align:middle;padding:20px 0;}}.info img{{width:32px;
@@ -187,14 +191,38 @@ def inGameAnalysis(client_info):
         pop_threshold -= 1
 
 
-def copyAndPaste():
+def copyAndPasteGearName():
+    gear_name = UserInGameInfo.getInstance().getRecommendGearAutoCountList()
+    enlargement_factor = UserInGameInfo.getInstance().getEnlargementFactor()
+    game_client = win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME)
+    if game_client != 0:
+        rect = win32gui.GetWindowRect(game_client)
+        print("1 rect ->", rect)
+        relative_point = getGearSearchBoxPoint(rect, GEAR_SEARCH_BOX_POINT, enlargement_factor)
+        if gear_name is not None:
+            print("1 GEAR_SEARCH_BOX_POINT ->", GEAR_SEARCH_BOX_POINT)
+            print("1 relative_point ->", relative_point)
+            print("1 gear_names ->", gear_name.replace("_", " "))
+            pasteToSearchBox(relative_point, gear_name.replace("_", " "))
+        else:
+            UserInGameInfo.getInstance().resetGearCounter()
+            NotificationWindow.warning('Item Suggestion Session',
+                                       "Poro wil rerun the item recommendation list..\n Good Luck then",
+                                       callback=None)
+
+
+def copyAndPasteChampName():
     champ_name = UserInGameInfo.getInstance().getRecommendChampAutoCountList()
     enlargement_factor = UserInGameInfo.getInstance().getEnlargementFactor()
     lobby_client = win32gui.FindWindow(None, LOL_CLIENT_NAME)
     if lobby_client != 0:
         rect = win32gui.GetWindowRect(lobby_client)
-        relative_point = getSearchBoxPoint(rect, SEARCH_BOX_POINT, enlargement_factor)
+        print("2 rect ->", rect)
+        relative_point = getChampSearchBoxPoint(rect, CHAMP_SEARCH_BOX_POINT, enlargement_factor)
         if champ_name is not None:
+            print("2 CHAMP_SEARCH_BOX_POINT ->", CHAMP_SEARCH_BOX_POINT)
+            print("2 relative_point ->", relative_point)
+            print("2 gear_names ->", champ_name)
             pasteToSearchBox(relative_point, champ_name)
         else:
             NotificationWindow.warning('BP Champion Session',
@@ -254,4 +282,4 @@ def bpSessionAnalysis(client_info):
                                   height:auto;vertical-align:middle}}#class_icon{{width:15px}}#lane_icon{{width:15px;
                                   margin-left:5px}}</style></head><body>{}</body></html>""".format(
                                        UserInGameInfo.getInstance().getRecommendChampListHTML()),
-                                   callback=copyAndPaste)
+                                   callback=copyAndPasteChampName)
