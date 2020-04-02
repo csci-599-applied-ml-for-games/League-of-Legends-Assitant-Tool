@@ -2,9 +2,10 @@ __author__ = 'Aaron Yang'
 __email__ = 'byang971@usc.edu'
 __date__ = '2/1/2020 5:01 PM'
 
+import cv2
 from PIL import ImageGrab, ImageEnhance, ImageOps
 from PyQt5.QtGui import QImage
-
+import numpy as np
 from utils.StringUtil import genRandomStr
 
 
@@ -107,3 +108,18 @@ def cut3X2Boxes(img, interval=5, save_file=False):
             print("saved a png file whose name is: ", imgName)
 
     return six_imgs
+
+
+def find_circles(mini_map_img):
+    r, g, b = cv2.split(np.array(mini_map_img))  # 提取 RGB 通道
+
+    red_channel = cv2.inRange(r, 120, 255)
+    green_channel = cv2.inRange(g, 120, 255)
+    blue_channel = cv2.inRange(b, 120, 255)
+
+    induction = red_channel - green_channel - blue_channel
+
+    circles_position = cv2.HoughCircles(induction, cv2.HOUGH_GRADIENT, dp=1, minDist=10,
+                                        param1=30, param2=15, minRadius=5, maxRadius=30)
+
+    return circles_position if circles_position is not None else []

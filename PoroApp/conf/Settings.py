@@ -3,11 +3,12 @@ __email__ = 'byang971@usc.edu'
 __date__ = '2/2/2020 8:33 PM'
 
 # Pet's Opacity
-DEFAULT_OPACITY = 90
+DEFAULT_OPACITY = 100
 DEFAULT_DRAGGABLE = True
 ASSETS_DIR = "resources/assets/"
 # the interval(ms) between every frame of pet's emoji
-TIME_INTERVAL = 800
+TIME_INTERVAL = 200
+PET_POSITION = (420, 150)
 
 # LOL client name in Task Manager
 LOL_CLIENT_NAME = 'League of Legends'
@@ -67,3 +68,6 @@ CHAMPION_BIG_PROFILE_PATH = "resources/data/profile_big"
 # Gear basic info csv
 GEAR_BASIC_CSV_PATH = "resources/data/gear_basic.csv"
 GEAR_PROFILE_PATH = "resources/data/gears"
+
+# mini-map
+MINI_MAP_BOX = (1654, 813, 1909, 1068)

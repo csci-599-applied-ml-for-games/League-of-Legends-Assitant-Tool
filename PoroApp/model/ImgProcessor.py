@@ -11,9 +11,8 @@ from conf.ProfileModelLabel import NONE_LIST
 from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE, LOL_IN_GAME_CLIENT_NAME
 from model.FaceRecognitionModel import ProfileModel, BanedChampRecognitionModel
 from model.InGameInfo import UserInGameInfo
-from model.ItemDetectionModel import ItemModel
 from model.LoLClientHeartBeat import ClientStatus
-from utils.ImgUtil import grabImgByRect, split2NPieces
+from utils.ImgUtil import grabImgByRect, split2NPieces, find_circles
 from utils.PositionUtil import getEnlargementFactor, genRelativePos
 
 local_you_banned_list = set()
@@ -24,9 +23,9 @@ local_yourself_gears_list = set()
 
 
 class ImgCropType:
-    # index 0 to 3
+    # index 0 to 7
     BAN_5_CHAMP, ENEMY_BAN_5_CHAMP, YOUR_TEAM_5_CHAMP, \
-    ENEMY_TEAM_5_CHAMP, USER_S_CHAMP_AREA, USER_S_GEAR_AREA = range(6)
+    ENEMY_TEAM_5_CHAMP, USER_S_CHAMP_AREA, USER_S_GEAR_AREA, MINI_MAP = range(7)
 
     Types = {
         BAN_5_CHAMP: None,
@@ -34,7 +33,8 @@ class ImgCropType:
         YOUR_TEAM_5_CHAMP: None,
         ENEMY_TEAM_5_CHAMP: None,
         USER_S_CHAMP_AREA: None,
-        USER_S_GEAR_AREA: None
+        USER_S_GEAR_AREA: None,
+        MINI_MAP: None
     }
 
     @classmethod
@@ -45,6 +45,7 @@ class ImgCropType:
         cls.Types[cls.ENEMY_TEAM_5_CHAMP] = {'index': 3}
         cls.Types[cls.USER_S_CHAMP_AREA] = {'index': 4}
         cls.Types[cls.USER_S_GEAR_AREA] = {'index': 5}
+        cls.Types[cls.MINI_MAP] = {'index': 6}
 
     @classmethod
     def type(cls, ntype):
@@ -151,22 +152,19 @@ class ImgCatcherThread(threading.Thread):
                             self.stop()
                         self.self_champ_check_flag += 1
 
-                # elif self.img_crop_type == ImgCropType.USER_S_GEAR_AREA:
-                #     if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
-                #             and UserInGameInfo.getInstance().hasEnemyInfoArea():
-                #         rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
-                #         factor = getEnlargementFactor(rect, "in_game")
-                #         new_area = genRelativePos(rect, self.crop_position, factor)
-                #         user_s_gears_img = None
-                #         try:
-                #             user_s_gears_img = grabImgByRect(new_area, binarize=False)
-                #         except:
-                #             print("something error happened when capturing user's gear.")
-                #         user_s_gears = set(ItemModel.getInstance().predict3X2Img(user_s_gears_img, save_file=True))
-                #         if len(user_s_gears) != 0:
-                #             print("user_s_gears -> ", user_s_gears)
-                #             UserInGameInfo.getInstance().setYourselfGears(user_s_gears - set(NONE_LIST))
-                #             time.sleep(5)
+                elif self.img_crop_type == ImgCropType.MINI_MAP:
+                    if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0:
+                        # and UserInGameInfo.getInstance().getYourselfChamp() is not None:
+                        rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
+                        factor = getEnlargementFactor(rect, "in_game")
+                        map_area = genRelativePos(rect, self.crop_position, factor)
+                        captured_map = None
+                        try:
+                            captured_map = grabImgByRect(map_area, binarize=False)
+                        except:
+                            print("something error happened when capturing mini map.")
+
+                        enemy_profiles = find_circles(captured_map)
 
             else:
                 # only expect choose champion mode and in game mode

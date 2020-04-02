@@ -15,7 +15,7 @@ from utils.PositionUtil import genRelativePos, getChampSearchBoxPoint, getGearSe
 from view.NotificationWindow import NotificationWindow
 from conf.Settings import BAN_AREA_YOU, BAN_AREA_ENEMY, BANNED_CHAMP_SIZE, TAB_PANEL, LOL_CLIENT_NAME, \
     ENEMY_TEAM_AREA, POPUP_THRESHOLD, USER_S_CHAMP_AREA, LOL_IN_GAME_CLIENT_NAME, \
-    CHAMP_SEARCH_BOX_POINT, GEAR_SEARCH_BOX_POINT
+    CHAMP_SEARCH_BOX_POINT, GEAR_SEARCH_BOX_POINT, MINI_MAP_BOX
 from model.ImgProcessor import ImgCatcherThread, ImgCropType
 
 bp_session_thread_pool = []
@@ -122,6 +122,13 @@ def inGameAnalysis(client_info):
         in_game_thread_pool.append(shop_key_catcher)
         shop_key_catcher.setDaemon(True)
         shop_key_catcher.start()
+
+        mini_map_catcher = ImgCatcherThread("MINI_MAP_CATCHER", client_info,
+                                              ImgCropType.MINI_MAP,
+                                              MINI_MAP_BOX)
+        in_game_thread_pool.append(mini_map_catcher)
+        mini_map_catcher.setDaemon(True)
+        mini_map_catcher.start()
 
     if UserInGameInfo.getInstance().getGearDetectedFlag():
         # show enemy champion info and gears
