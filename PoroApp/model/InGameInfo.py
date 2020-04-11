@@ -3,6 +3,7 @@ __email__ = 'byang971@usc.edu'
 __date__ = '2/15/2020 3:33 PM'
 
 import collections
+import copy
 import threading
 
 from conf.ProfileModelLabel import NONE_LIST
@@ -55,9 +56,30 @@ class UserInGameInfo(object):
     gear_detected_flag = False
     gear_recommend_flag = False
 
+    enemy_position_deque = None
+
     def __init__(self):
         self.you_twice_flag = False
         self.enemy_twice_flag = False
+
+    def getEnemyPositionDetail(self):
+        if self.enemy_position_deque is None:
+            self.enemy_position_deque = dict()
+            for enemy in self.enemy_team_champ_list:
+                self.enemy_position_deque[enemy] = collections.deque(maxlen=5)
+
+        return self.enemy_position_deque
+
+    def updateEnemyDeque(self, data_dict: dict):
+        if self.enemy_position_deque is None:
+            self.enemy_position_deque = dict()
+            for enemy in self.enemy_team_champ_list:
+                self.enemy_position_deque[enemy] = collections.deque(maxlen=5)
+
+        temp_dict = copy.deepcopy(self.enemy_position_deque)
+        for data_key in data_dict.keys():
+            if data_key in temp_dict.keys():
+                self.enemy_position_deque.get(data_key).append(data_dict.get(data_key))
 
     def resetGearCounter(self):
         self.gear_clicked_counter = 0

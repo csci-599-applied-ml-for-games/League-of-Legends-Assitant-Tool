@@ -9,10 +9,10 @@ import win32gui
 
 from conf.ProfileModelLabel import NONE_LIST
 from conf.Settings import IMG_CATCHER_RATE, BANNED_CHAMP_SIZE, LOL_IN_GAME_CLIENT_NAME
-from model.FaceRecognitionModel import ProfileModel, BanedChampRecognitionModel
+from model.FaceRecognitionModel import ProfileModel, BanedChampRecognitionModel, MiniMapChampionModel
 from model.InGameInfo import UserInGameInfo
 from model.LoLClientHeartBeat import ClientStatus
-from utils.ImgUtil import grabImgByRect, split2NPieces, find_circles
+from utils.ImgUtil import grabImgByRect, split2NPieces, find_circles, cropImgsByRects
 from utils.PositionUtil import getEnlargementFactor, genRelativePos
 
 local_you_banned_list = set()
@@ -153,8 +153,9 @@ class ImgCatcherThread(threading.Thread):
                         self.self_champ_check_flag += 1
 
                 elif self.img_crop_type == ImgCropType.MINI_MAP:
-                    if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0:
-                        # and UserInGameInfo.getInstance().getYourselfChamp() is not None:
+                    if win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME) != 0 \
+                            and UserInGameInfo.getInstance().getYourselfChamp() is not None \
+                            and UserInGameInfo.getInstance().getEnemyTeamList() is not None:
                         rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
                         factor = getEnlargementFactor(rect, "in_game")
                         map_area = genRelativePos(rect, self.crop_position, factor)
@@ -164,7 +165,16 @@ class ImgCatcherThread(threading.Thread):
                         except:
                             print("something error happened when capturing mini map.")
 
-                        enemy_profiles = find_circles(captured_map)
+                        enemy_profile_rect, enemy_positions = find_circles(captured_map)
+                        if len(enemy_profile_rect) > 0:
+                            enemy_profiles = cropImgsByRects(captured_map,
+                                                             enemy_profile_rect)
+
+                            enemy_names = MiniMapChampionModel.getInstance().predictImgs(enemy_profiles)
+                            enemy_info = dict(zip(enemy_names, enemy_positions))
+                            print(enemy_info)
+                            UserInGameInfo.getInstance().updateEnemyDeque(enemy_info)
+                            print(UserInGameInfo.getInstance().getEnemyPositionDetail())
 
             else:
                 # only expect choose champion mode and in game mode

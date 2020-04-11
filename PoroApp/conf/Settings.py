@@ -59,6 +59,7 @@ USER_S_GEAR_AREA = (1130, 945, 1273, 1037)
 IN_GAME_PROFILE_RECOGNITION_CHECK_POINT_PATH = "resources/model/in_game_profile_model.h5"
 ITEM_DETECTION_CHECK_POINT_PATH = "resources/model/item_detection_model.h5"
 BANNED_CHAMP_RECOGNITION_CHECK_POINT_PATH = "resources/model/ban_face_recognition_model.h5"
+MINI_MAP_CHAMP_RECOGNITION_CHECK_POINT_PATH = "resources/model/mini_map_face_recognition.h5"
 
 # Champion basic info csv
 CHAMPION_BASIC_CSV_PATH = "resources/data/champ_basic.csv"

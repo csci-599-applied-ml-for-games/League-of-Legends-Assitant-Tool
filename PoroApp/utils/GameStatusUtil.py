@@ -124,8 +124,8 @@ def inGameAnalysis(client_info):
         shop_key_catcher.start()
 
         mini_map_catcher = ImgCatcherThread("MINI_MAP_CATCHER", client_info,
-                                              ImgCropType.MINI_MAP,
-                                              MINI_MAP_BOX)
+                                            ImgCropType.MINI_MAP,
+                                            MINI_MAP_BOX)
         in_game_thread_pool.append(mini_map_catcher)
         mini_map_catcher.setDaemon(True)
         mini_map_catcher.start()
@@ -204,12 +204,8 @@ def copyAndPasteGearName():
     game_client = win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME)
     if game_client != 0:
         rect = win32gui.GetWindowRect(game_client)
-        print("1 rect ->", rect)
         relative_point = getGearSearchBoxPoint(rect, GEAR_SEARCH_BOX_POINT, enlargement_factor)
         if gear_name is not None:
-            print("1 GEAR_SEARCH_BOX_POINT ->", GEAR_SEARCH_BOX_POINT)
-            print("1 relative_point ->", relative_point)
-            print("1 gear_names ->", gear_name.replace("_", " "))
             pasteToSearchBox(relative_point, gear_name.replace("_", " "))
         else:
             UserInGameInfo.getInstance().resetGearCounter()

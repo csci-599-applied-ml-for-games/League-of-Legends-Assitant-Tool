@@ -177,9 +177,6 @@ class ShopPKeyListener(threading.Thread):
                         self_champion = UserInGameInfo.getInstance().getYourselfChamp()
                         self_position = UserInGameInfo.getInstance().getUserPosition()
                         enemy_gears = extractDictValue(enemy_info)
-                        print("key p enemy_gears ->", enemy_gears)
-                        print("key p self_champion ->", self_champion)
-                        print("key p self_position ->", self_position)
                         recommend_gears = itemSuggestion(self_position, self_champion, enemy_gears)
                         UserInGameInfo.getInstance().setRecommendGears(recommend_gears)
 
