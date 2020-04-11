@@ -130,7 +130,6 @@ class TabKeyListener(threading.Thread):
 
                         if UserInGameInfo.getInstance().getYourselfChamp() is not None:
                             self_team_info = decodeImgs(self_info_img)
-                            print("self_team_info ->", self_team_info)
                             self_champ = UserInGameInfo.getInstance().getYourselfChamp()
                             self_gear = self_team_info.get(self_champ, None)
                             if self_gear is not None:

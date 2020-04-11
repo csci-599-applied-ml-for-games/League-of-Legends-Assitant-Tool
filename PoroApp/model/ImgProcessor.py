@@ -172,9 +172,10 @@ class ImgCatcherThread(threading.Thread):
 
                             enemy_names = MiniMapChampionModel.getInstance().predictImgs(enemy_profiles)
                             enemy_info = dict(zip(enemy_names, enemy_positions))
-                            print(enemy_info)
-                            UserInGameInfo.getInstance().updateEnemyDeque(enemy_info)
-                            print(UserInGameInfo.getInstance().getEnemyPositionDetail())
+                            if len(enemy_info.keys()) > 0:
+                                UserInGameInfo.getInstance().updateEnemyDeque(enemy_info)
+                                # mock the data,
+                                UserInGameInfo.getInstance().mockWarningInfo(enemy_info)
 
             else:
                 # only expect choose champion mode and in game mode

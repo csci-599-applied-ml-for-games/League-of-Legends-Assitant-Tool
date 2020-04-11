@@ -4,10 +4,12 @@ __date__ = '2/15/2020 3:33 PM'
 
 import collections
 import copy
+import random
 import threading
 from queue import PriorityQueue
 
 from conf.ProfileModelLabel import NONE_LIST
+from conf.Settings import WARNING_THRESHOLD
 from model.GearsInfo import GearsBasicInfo
 from utils.RecommendUtil import gen_recommend_champs
 from model.ChampInfo import ChampionBasicInfo
@@ -116,8 +118,23 @@ class UserInGameInfo(object):
         #   (3, 'sleep')
         pass
 
+    def mockWarningInfo(self, data_dict):
+        for enemy_name in data_dict.keys():
+            level = random.randint(1, 10)
+            warning_msg = random.choice(['is heading to you', 'is missing', 'is idle', 'might stealing dragon'])
+            warning_html = ChampionBasicInfo.getInstance() \
+                .toCustomizeHtml(enemy_name, warning_msg)
+            self.warning_priority_queue.put((level, warning_html))
+
     def getWarningInfo(self):
-        return self.warning_priority_queue
+        warning_content = list()
+
+        while not self.warning_priority_queue.empty():
+            level, warning_html = self.warning_priority_queue.get()
+            if level <= WARNING_THRESHOLD:
+                warning_content.append(warning_html)
+
+        return warning_content
 
     def resetGearCounter(self):
         self.gear_clicked_counter = 0

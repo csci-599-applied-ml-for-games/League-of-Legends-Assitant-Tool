@@ -58,6 +58,16 @@ class ChampionBasicInfo(object):
     def toImgHtml(self, champ_name):
         return "<img src=\"{}\">&nbsp;".format(self.info[champ_name]['img_big'])
 
+    def toCustomizeHtml(self, champ_name, msg=None):
+        return "<div class=\"info\"><img src=\"{}\"> {} {}<br/>" \
+               "<span><img id=\"class_icon\" src=\"{}\">&nbsp;&nbsp;&nbsp;{}" \
+               "</span></div><hr/>" \
+            .format(self.info[champ_name]['img'],
+                    self.info[champ_name]['en_name'],
+                    msg,
+                    "resources/data/classes/{}.png".format(self.info[champ_name]['class']),
+                    self.info[champ_name]['POS'])
+
     @classmethod
     def getInstance(cls, *args, **kwargs):
         if not hasattr(ChampionBasicInfo, "_instance"):
