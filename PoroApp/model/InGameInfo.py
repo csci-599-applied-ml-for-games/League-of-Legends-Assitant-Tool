@@ -5,6 +5,7 @@ __date__ = '2/15/2020 3:33 PM'
 import collections
 import copy
 import threading
+from queue import PriorityQueue
 
 from conf.ProfileModelLabel import NONE_LIST
 from model.GearsInfo import GearsBasicInfo
@@ -16,7 +17,7 @@ from model.ChampInfo import ChampionBasicInfo
 # # RIGHT_BRACKETS = "<img src=\"resources/data/support/bracket_right.png\">"
 
 
-def mixedWraper(champ_name, gears_set):
+def mixedWrapper(champ_name, gears_set):
     champ_img_html = ChampionBasicInfo.getInstance().toImgHtml(champ_name)
     actual_gears = list()
     if gears_set is not None:
@@ -57,12 +58,17 @@ class UserInGameInfo(object):
     gear_recommend_flag = False
 
     enemy_position_deque = None
+    warning_priority_queue = PriorityQueue()
 
     def __init__(self):
         self.you_twice_flag = False
         self.enemy_twice_flag = False
 
     def getEnemyPositionDetail(self):
+        """
+        get or init a deque which saved enemy position info in last 5 sec
+        :return: self.enemy_position_deque
+        """
         if self.enemy_position_deque is None:
             self.enemy_position_deque = dict()
             for enemy in self.enemy_team_champ_list:
@@ -71,15 +77,47 @@ class UserInGameInfo(object):
         return self.enemy_position_deque
 
     def updateEnemyDeque(self, data_dict: dict):
-        if self.enemy_position_deque is None:
-            self.enemy_position_deque = dict()
-            for enemy in self.enemy_team_champ_list:
-                self.enemy_position_deque[enemy] = collections.deque(maxlen=5)
+        """
+        update self.enemy_position_deque every sec
+        self.user_position "TOP" ,
+        :param data_dict: {'Wukong': (38.5, 35.5), 'Cassiopeia': (122.5, 125.5), 'Leona': (229.5, 184.5)}
+        :return: {
+            'Vayne': deque([], maxlen=5),
+            'Leona': deque([(224.5, 179.5), (225.5, 167.5), (227.5, 173.5), (225.5, 177.5), (229.5, 184.5)], maxlen=5),
+            'Wukong': deque([(75.5, 27.5), (27.5, 45.5), (30.5, 41.5), (38.5, 35.5)], maxlen=5),
+            'Cassiopeia': deque([(131.5, 116.5), (128.5, 120.5), (128.5, 119.5), (127.5, 119.5), (122.5, 125.5)], maxlen=5),
+            'Udyr': deque([(23.5, 51.5), (21.5, 56.5), (22.5, 53.5), (28.5, 44.5), (43.5, 31.5)], maxlen=5)
+        }
+        """
+        self.enemy_position_deque = self.getEnemyPositionDetail()
 
         temp_dict = copy.deepcopy(self.enemy_position_deque)
         for data_key in data_dict.keys():
             if data_key in temp_dict.keys():
                 self.enemy_position_deque.get(data_key).append(data_dict.get(data_key))
+
+    def analysisEnemyPosition(self):
+        # self.warning_priority_queue
+        # from queue import PriorityQueue
+        #
+        # q = PriorityQueue()
+        #
+        # q.put((1, 'A','head to you'))
+        # q.put((1, 'B','missing'))
+        # q.put((3, 'C','idle'))
+        #
+        # while not q.empty():
+        #     next_item = q.get()
+        #     print(next_item)
+
+        # 结果：
+        #   (1, 'eat')
+        #   (2, 'code')
+        #   (3, 'sleep')
+        pass
+
+    def getWarningInfo(self):
+        return self.warning_priority_queue
 
     def resetGearCounter(self):
         self.gear_clicked_counter = 0
@@ -133,12 +171,12 @@ class UserInGameInfo(object):
     def getEnemyTeamDetailHTML(self):
         html_blob = str()
         for champ, val in self.enemy_info.items():
-            html_str = mixedWraper(champ, val["gears"])
+            html_str = mixedWrapper(champ, val["gears"])
             html_blob += html_str
         return html_blob
 
     def getSelfChampAndGearHTML(self):
-        return mixedWraper(self.yourself_champ, self.yourself_gears)
+        return mixedWrapper(self.yourself_champ, self.yourself_gears)
 
     def setInGameFlag(self):
         self.in_game_flag = True
@@ -254,16 +292,23 @@ class UserInGameInfo(object):
         self.enemy_twice_flag = bool_val
 
     def resetAll(self):
+        self.yourself_gears = None
         self.your_side_banned_champ_list.clear()
-        self.enemy_banned_champ_list.clear()
+        self.yourself_champ = None
         self.recommend_champ_list.clear()
-        self.champ_clicked_counter = 0
-        self.gear_clicked_counter = 0
+
+        self.enemy_banned_champ_list.clear()
         self.enemy_info_in_table_area = None
         self.enemy_team_champ_list.clear()
         self.enemy_info.clear()
+        self.enemy_position_deque = None
+
+        self.enlargement_factor = 1.0
+        self.champ_clicked_counter = 0
+        self.gear_clicked_counter = 0
         self.in_game_flag = False
-        self.yourself_champ = None
+        self.gear_detected_flag = False
+        self.gear_recommend_flag = False
 
     def resetBannedChampList(self):
         self.your_side_banned_champ_list.clear()
