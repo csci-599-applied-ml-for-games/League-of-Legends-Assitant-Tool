@@ -114,7 +114,7 @@ class UserInGameInfo(object):
                 moving_vectors = []
                 enemyPosition = list(self.enemy_position_deque[name])            
                 if len(enemyPosition)<2:
-                    self.warning_priority_queue.put('2, {} is missing.'.format(name))
+                    self.warning_priority_queue.put('2, {}, is missing.'.format(name))
                 elif len(enemyPosition)>3:
                     for i in range(len(enemyPosition)):
                         distance.append(np.square(position[0]-enemyPosition[i][0])+np.square(position[1]-enemyPosition[i][1]))
@@ -124,9 +124,9 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors.append(1)
                     if not any(moving_vectors):
-                        self.warning_priority_queue.put('3, {} is moving towards you.'.format(name))
+                        self.warning_priority_queue.put('3, {}, is moving towards you.'.format(name))
                     else:
-                        self.warning_priority_queue.put('5, {} has no interest to you.'.format(name))
+                        self.warning_priority_queue.put('5, {}, has no interest to you.'.format(name))
                 else:
                     for i in range(len(enemyPosition)):
                         distance.append(np.square(position[0]-enemyPosition[i][0])+np.square(position[1]-enemyPosition[i][1]))
@@ -136,9 +136,9 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors.append(1)
                     if not any(moving_vectors):
-                        self.warning_priority_queue.put('1, {} is heading to you!'.format(name))
+                        self.warning_priority_queue.put('1, {}, is heading to you!'.format(name))
                     else:
-                        self.warning_priority_queue.put('4, {} focuses on your teammates.'.format(name))
+                        self.warning_priority_queue.put('4, {}, focuses on your teammates.'.format(name))
         else:
             for name in names:               
                 distance1 = []
@@ -147,7 +147,7 @@ class UserInGameInfo(object):
                 moving_vectors2 = []
                 enemyPosition = list(self.enemy_position_deque[name])            
                 if len(enemyPosition)<2:
-                    self.warning_priority_queue.put('2, {} is missing.'.format(name))
+                    self.warning_priority_queue.put('2, {}, is missing.'.format(name))
                 elif len(enemyPosition)>3:
                     for i in range(len(enemyPosition)):
                         distance1.append(np.square(position[0][0]-enemyPosition[i][0])+np.square(position[0][1]-enemyPosition[i][1]))
@@ -163,11 +163,11 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors2.append(1)
                     if not any(moving_vectors1):
-                        self.warning_priority_queue.put('3, {} is moving towards Baron/Herald.'.format(name))
+                        self.warning_priority_queue.put('3, {}, is moving towards Baron/Herald.'.format(name))
                     elif not any(moving_vectors2):
-                        self.warning_priority_queue.put('3, {} is moving towards Dragon.'.format(name))
+                        self.warning_priority_queue.put('3, {}, is moving towards Dragon.'.format(name))
                     else:
-                        self.warning_priority_queue.put('4, {} focuses on your teammates.'.format(name))
+                        self.warning_priority_queue.put('4, {}, focuses on your teammates.'.format(name))
                 else:
                     for i in range(len(enemyPosition)):
                         distance1.append(np.square(position[0][0]-enemyPosition[i][0])+np.square(position[0][1]-enemyPosition[i][1]))
@@ -183,11 +183,11 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors2.append(1)
                     if not any(moving_vectors1):
-                        self.warning_priority_queue.put('1, {} is heading to Baron/Herald!'.format(name))
+                        self.warning_priority_queue.put('1, {}, is heading to Baron/Herald!'.format(name))
                     elif not any(moving_vectors2):
-                        self.warning_priority_queue.put('1, {} is heading to Dragon!'.format(name))
+                        self.warning_priority_queue.put('1, {}, is heading to Dragon!'.format(name))
                     else:
-                        self.warning_priority_queue.put('5, {} has no interest to Baron/Herald or Dragon.'.format(name))
+                        self.warning_priority_queue.put('5, {}, has no interest to Baron/Herald or Dragon.'.format(name))
         
         # while not self.warning_priority_queue.empty():
         #     next_item = self.warning_priority_queue.get()
