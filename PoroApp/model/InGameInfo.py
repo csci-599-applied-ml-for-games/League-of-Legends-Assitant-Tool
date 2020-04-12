@@ -115,10 +115,19 @@ class UserInGameInfo(object):
                 distance = []
                 moving_vectors = []
                 enemyPosition = list(self.enemy_position_deque[name])
+                # 删除最后消失的时间
+                for i in range(5):
+                    if enemyPosition[-1] == (-1, -1):
+                        del enemyPosition[-1]
                 if len(enemyPosition) < 2:
                     warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is missing")
                     self.warning_priority_queue.put((2, warning_html))
-                elif len(enemyPosition) > 3:
+                    continue
+                # 删除之前消失的时间
+                for item in enemyPosition:
+                    if item == (-1, -1):
+                        enemyPosition.remove(item)
+                if len(enemyPosition) > 3:
                     for i in range(len(enemyPosition)):
                         distance.append(
                             np.square(position[0] - enemyPosition[i][0]) + np.square(position[1] - enemyPosition[i][1]))
@@ -131,9 +140,10 @@ class UserInGameInfo(object):
                         warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is moving towards you")
                         self.warning_priority_queue.put((3, warning_html))
                     else:
-                        warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "has no interest to you")
-                        self.warning_priority_queue.put((5, warning_html))
-                else:
+                        warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
+                                                                                       "focuses on your teammates.")
+                        self.warning_priority_queue.put((4, warning_html))
+                elif len(enemyPosition) > 1 and len(enemyPosition) <= 3:
                     for i in range(len(enemyPosition)):
                         distance.append(
                             np.square(position[0] - enemyPosition[i][0]) + np.square(position[1] - enemyPosition[i][1]))
@@ -143,12 +153,20 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors.append(1)
                     if not any(moving_vectors):
-                        warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is heading to you!")
-                        self.warning_priority_queue.put((1, warning_html))
+                        if distance[0] > 2000:
+                            warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is heading to you!")
+                            self.warning_priority_queue.put((1, warning_html))
+                        else:
+                            warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
+                                                                                           "is moving towards you")
+                            self.warning_priority_queue.put((3, warning_html))
                     else:
                         warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
-                                                                                       "focuses on your teammates.")
-                        self.warning_priority_queue.put((4, warning_html))
+                                                                                       "has no interest to you.")
+                        self.warning_priority_queue.put((5, warning_html))
+                else:
+                    warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is missing")
+                    self.warning_priority_queue.put((2, warning_html))
         else:
             for name in names:
                 distance1 = []
@@ -156,10 +174,17 @@ class UserInGameInfo(object):
                 distance2 = []
                 moving_vectors2 = []
                 enemyPosition = list(self.enemy_position_deque[name])
+                for i in range(5):
+                    if enemyPosition[-1] == (-1, -1):
+                        del enemyPosition[-1]
                 if len(enemyPosition) < 2:
                     warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is missing.")
                     self.warning_priority_queue.put((2, warning_html))
-                elif len(enemyPosition) > 3:
+                    continue
+                for item in enemyPosition:
+                    if item == (-1, -1):
+                        enemyPosition.remove(item)
+                if len(enemyPosition) > 3:
                     for i in range(len(enemyPosition)):
                         distance1.append(np.square(position[0][0] - enemyPosition[i][0]) + np.square(
                             position[0][1] - enemyPosition[i][1]))
@@ -187,7 +212,7 @@ class UserInGameInfo(object):
                         warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
                                                                                        "focuses on your teammates.")
                         self.warning_priority_queue.put((4, warning_html))
-                else:
+                elif 1 < len(enemyPosition) <= 3:
                     for i in range(len(enemyPosition)):
                         distance1.append(np.square(position[0][0] - enemyPosition[i][0]) + np.square(
                             position[0][1] - enemyPosition[i][1]))
@@ -204,21 +229,35 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors2.append(1)
                     if not any(moving_vectors1):
-                        warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
-                                                                                       "is heading to Baron/Herald!")
-                        self.warning_priority_queue.put((1, warning_html))
+                        if distance1[0] > 2000:
+                            warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
+                                                                                           "is heading to Baron/Herald!")
+                            self.warning_priority_queue.put((1, warning_html))
+                        else:
+                            warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
+                                                                                           "is moving towards Baron/Herald.")
+                            self.warning_priority_queue.put((3, warning_html))
                     elif not any(moving_vectors2):
-                        warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
-                                                                                       "is heading to Dragon!")
-                        self.warning_priority_queue.put((1, warning_html))
+                        if distance2[0] > 2000:
+                            warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
+                                                                                           "is heading to Dragon!")
+                            self.warning_priority_queue.put((1, warning_html))
+                        else:
+                            warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
+                                                                                           "is moving towards Dragon.")
+                            self.warning_priority_queue.put((3, warning_html))
                     else:
                         warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
                                                                                        "has no interest to Baron/Herald or Dragon.")
                         self.warning_priority_queue.put((5, warning_html))
+                else:
+                    warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is missing.")
+                    self.warning_priority_queue.put((2, warning_html))
 
     def getWarningInfo(self):
         warning_content = list()
-        if self.enemy_position_deque is not None:
+        if self.enemy_position_deque is not None \
+                and len(list(self.enemy_position_deque.values())[0]) == 5:
             self.analysisEnemyPosition()
             while not self.warning_priority_queue.empty():
                 level, warning_html = self.warning_priority_queue.get()
