@@ -197,8 +197,8 @@ def inGameAnalysis(client_info):
                                   callback=None)
         pop_threshold -= 1
 
-    warning_info = UserInGameInfo.getInstance().getWarningInfo()
-    if pop_threshold < -2 and len(warning_info) >= 1:
+    if pop_threshold < -2:
+        warning_info = UserInGameInfo.getInstance().getWarningInfo()
         for content in warning_info:
             NotificationWindow.threat('In Game Warning Session',
                                       """Poro has recognized there might have some dangerous:<html>

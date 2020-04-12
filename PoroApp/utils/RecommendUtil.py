@@ -174,12 +174,3 @@ def itemSuggestion(position: str, champion_name: str, enemy_build: list) -> list
         suggestion.append(new_item)
     return suggestion
 
-
-# if __name__ == '__main__':
-    # test2 = winRatePred('Riven', ['Black_Cleaver_item', "Youmuu's_Ghostblade_item", "Death's_Dance_item"],
-    #                     ['Black_Cleaver_item', "Death's_Dance_item", "Boots_of_speed_item"])
-    # print(test2)
-
-    # test = itemSuggestion('TOP', 'Riven', [])
-    # print(test)
-    # ['Black_Cleaver_item', "Death's_Dance_item", 'Guardian_Angel_item']

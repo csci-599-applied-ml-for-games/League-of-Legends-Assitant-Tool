@@ -74,4 +74,4 @@ GEAR_PROFILE_PATH = "resources/data/gears"
 MINI_MAP_BOX = (1654, 813, 1909, 1068)
 
 # warning threshold
-WARNING_THRESHOLD = 1
+WARNING_THRESHOLD = 2
