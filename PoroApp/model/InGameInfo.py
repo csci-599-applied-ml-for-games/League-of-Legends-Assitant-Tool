@@ -102,13 +102,13 @@ class UserInGameInfo(object):
     def analysisEnemyPosition(self):
         names = list(self.enemy_position_deque.keys())
         if self.user_position == 'TOP':
-            position = (26, 59)
+            position = (36, 36)
         elif self.user_position == 'JUNGLE':
             position = [(84, 75), (171, 180)]
         elif self.user_position == 'MID':
-            position = (114, 141)
+            position = (125, 125)
         else:
-            position = (196, 228)
+            position = (219, 219)
 
         if self.user_position != 'JUNGLE':
             for name in names:
@@ -153,7 +153,7 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors.append(1)
                     if not any(moving_vectors):
-                        if distance[0] > 2000:
+                        if 2000 < distance[0] < 12000:
                             warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is heading to you!")
                             self.warning_priority_queue.put((1, warning_html))
                         else:
@@ -229,7 +229,7 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors2.append(1)
                     if not any(moving_vectors1):
-                        if distance1[0] > 2000:
+                        if 2000 < distance1[0] < 12000:
                             warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
                                                                                            "is heading to Baron/Herald!")
                             self.warning_priority_queue.put((1, warning_html))
@@ -238,7 +238,7 @@ class UserInGameInfo(object):
                                                                                            "is moving towards Baron/Herald.")
                             self.warning_priority_queue.put((3, warning_html))
                     elif not any(moving_vectors2):
-                        if distance2[0] > 2000:
+                        if 2000 < distance2[0] < 12000:
                             warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
                                                                                            "is heading to Dragon!")
                             self.warning_priority_queue.put((1, warning_html))
