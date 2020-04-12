@@ -154,7 +154,7 @@ def itemSuggestion(position: str, champion_name: str, enemy_build: list) -> list
     res_list = []
     temp = 0
     for i in range(len(input_file)):
-        if champion_name.strip() == input_file.iloc[i, 0].strip():
+        if champion_name.replace(' ','').strip() == input_file.iloc[i, 0].strip():
             X = input_file.iloc[i, 1:4]
             winRate = winRatePred(champion_name, list(X), enemy_build)
 
