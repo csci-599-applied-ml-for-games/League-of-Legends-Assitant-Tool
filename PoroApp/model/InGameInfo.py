@@ -93,10 +93,11 @@ class UserInGameInfo(object):
         """
         self.enemy_position_deque = self.getEnemyPositionDetail()
 
-        temp_dict = copy.deepcopy(self.enemy_position_deque)
-        for data_key in data_dict.keys():
-            if data_key in temp_dict.keys():
-                self.enemy_position_deque.get(data_key).append(data_dict.get(data_key))
+        for enemy_key in self.enemy_team_champ_list:
+            if enemy_key in data_dict.keys():
+                self.enemy_position_deque.get(enemy_key).append(data_dict.get(enemy_key))
+            else:
+                self.enemy_position_deque.get(enemy_key).append((-1, -1))
 
     def analysisEnemyPosition(self):
         names = list(self.enemy_position_deque.keys())
