@@ -127,7 +127,7 @@ class UserInGameInfo(object):
                 for item in enemyPosition:
                     if item == (-1, -1):
                         enemyPosition.remove(item)
-                if len(enemyPosition) > 3:
+                if len(enemyPosition) > 3 or len(enemyPosition) == 2:
                     for i in range(len(enemyPosition)):
                         distance.append(
                             np.square(position[0] - enemyPosition[i][0]) + np.square(position[1] - enemyPosition[i][1]))
@@ -143,7 +143,7 @@ class UserInGameInfo(object):
                         warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
                                                                                        "focuses on your teammates.")
                         self.warning_priority_queue.put((4, warning_html))
-                elif len(enemyPosition) > 1 and len(enemyPosition) <= 3:
+                elif len(enemyPosition) == 3:
                     for i in range(len(enemyPosition)):
                         distance.append(
                             np.square(position[0] - enemyPosition[i][0]) + np.square(position[1] - enemyPosition[i][1]))
@@ -184,7 +184,7 @@ class UserInGameInfo(object):
                 for item in enemyPosition:
                     if item == (-1, -1):
                         enemyPosition.remove(item)
-                if len(enemyPosition) > 3:
+                if len(enemyPosition) > 3 or len(enemyPosition) == 2:
                     for i in range(len(enemyPosition)):
                         distance1.append(np.square(position[0][0] - enemyPosition[i][0]) + np.square(
                             position[0][1] - enemyPosition[i][1]))
@@ -212,7 +212,7 @@ class UserInGameInfo(object):
                         warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name,
                                                                                        "focuses on your teammates.")
                         self.warning_priority_queue.put((4, warning_html))
-                elif 1 < len(enemyPosition) <= 3:
+                elif len(enemyPosition) == 3:
                     for i in range(len(enemyPosition)):
                         distance1.append(np.square(position[0][0] - enemyPosition[i][0]) + np.square(
                             position[0][1] - enemyPosition[i][1]))
