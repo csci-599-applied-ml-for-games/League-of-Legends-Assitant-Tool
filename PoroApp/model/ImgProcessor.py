@@ -57,7 +57,7 @@ class ImgCropType:
 
 
 class ImgCatcherThread(threading.Thread):
-    def __init__(self, name, client_info, crop_type, crop_position):
+    def __init__(self, name, client_info, crop_type, crop_position, beating_rate=IMG_CATCHER_RATE):
         threading.Thread.__init__(self)
         self.name = name
         self.client_info = client_info
@@ -65,7 +65,7 @@ class ImgCatcherThread(threading.Thread):
         self.crop_position = crop_position
         self.__running = threading.Event()  # a event using to stop thread
         self.__running.set()  # set() could enable thread to receive event
-        self._capture_rate = IMG_CATCHER_RATE
+        self._capture_rate = beating_rate
         self.self_ban_check_flag = 0
         self.enemy_ban_check_flag = 0
         self.enemy_team_check_flag = 0
@@ -143,7 +143,7 @@ class ImgCatcherThread(threading.Thread):
                         rect = win32gui.GetWindowRect(win32gui.FindWindow(None, LOL_IN_GAME_CLIENT_NAME))
                         factor = getEnlargementFactor(rect, "in_game")
                         new_area = genRelativePos(rect, self.crop_position, factor)
-                        user_profiles = grabImgByRect(new_area, binarize=False)
+                        user_profiles = grabImgByRect(new_area, binarize=False, save_file=True)
                         champ_name = ProfileModel.getInstance().predictSingleImg(user_profiles)
                         local_yourself_champ_list.add(champ_name)
                         if len(local_yourself_champ_list) == 1 and self.self_champ_check_flag == 2:

@@ -153,7 +153,7 @@ class UserInGameInfo(object):
                         else:
                             moving_vectors.append(1)
                     if not any(moving_vectors):
-                        if 3000 < distance[0] < 22000:
+                        if 3000 < distance[0] < 15000:
                             warning_html = ChampionBasicInfo.getInstance().toCustomizeHtml(name, "is heading to you!")
                             self.warning_priority_queue.put((1, warning_html))
                         else:

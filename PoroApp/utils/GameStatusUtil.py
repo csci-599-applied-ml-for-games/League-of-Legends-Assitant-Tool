@@ -125,7 +125,7 @@ def inGameAnalysis(client_info):
 
         mini_map_catcher = ImgCatcherThread("MINI_MAP_CATCHER", client_info,
                                             ImgCropType.MINI_MAP,
-                                            MINI_MAP_BOX)
+                                            MINI_MAP_BOX, 1)
         in_game_thread_pool.append(mini_map_catcher)
         mini_map_catcher.setDaemon(True)
         mini_map_catcher.start()
